@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +20,7 @@ export function Navigation() {
           <div className="flex items-center">
             <div className="flex items-center space-x-2">
               <div className="bg-accent p-2 rounded-lg">
-                <Zap className="h-6 w-6 text-white" />
+                <span className="h-6 w-6 text-white font-bold text-lg flex items-center justify-center">BS</span>
               </div>
               <span className="text-xl font-bold text-white">Bizli Solution</span>
             </div>

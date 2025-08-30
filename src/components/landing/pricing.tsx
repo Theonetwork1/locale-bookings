@@ -7,11 +7,11 @@ export function Pricing() {
     {
       name: "Free Trial",
       price: "$0",
-      period: "7 days",
+      period: "14 days",
       description: "Perfect to get started",
       features: [
         "Full platform access",
-        "Up to 50 bookings",
+        "Up to 20 bookings",
         "Basic customer management",
         "Email notifications",
         "Standard support"
@@ -21,9 +21,9 @@ export function Pricing() {
     },
     {
       name: "Monthly Plan",
-      price: "$39.97",
+      price: "$57.97",
       period: "per month",
-      description: "Great for growing businesses",
+      description: "Ideal for service providers of all sizes",
       features: [
         "Unlimited bookings",
         "Advanced customer management",
@@ -38,20 +38,17 @@ export function Pricing() {
     },
     {
       name: "Yearly Plan",
-      price: "$459",
+      price: "$665.64",
       period: "per year",
-      originalPrice: "$479.64",
-      description: "Best value - 1 month free!",
+      description: "Best value – 1 month free included",
       features: [
-        "Everything in Monthly",
+        "All features in Monthly",
         "Advanced integrations",
-        "White-label options",
         "Dedicated account manager",
         "Custom features",
-        "API access",
         "24/7 phone support"
       ],
-      cta: "Save $20.64",
+      cta: "Best Value",
       popular: false
     }
   ];
@@ -88,11 +85,6 @@ export function Pricing() {
                     <span className="text-4xl font-bold text-foreground">{plan.price}</span>
                     <span className="text-muted-foreground ml-1">/{plan.period}</span>
                   </div>
-                  {plan.originalPrice && (
-                    <div className="text-sm text-muted-foreground line-through mt-1">
-                      {plan.originalPrice}
-                    </div>
-                  )}
                 </div>
               </CardHeader>
               
