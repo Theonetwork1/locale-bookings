@@ -1,19 +1,34 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Users, CreditCard, Bell } from "lucide-react";
+import bizliLogo from "@/assets/bizli-logo.png";
+import heroBackground from "@/assets/hero-background.png";
 
 export function Hero() {
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Gradient */}
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style={{ backgroundImage: `url(${heroBackground})` }}
+      />
       <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
       
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
+          {/* Logo */}
+          <div className="mb-8 flex justify-center">
+            <img 
+              src={bizliLogo} 
+              alt="Bizli Solution" 
+              className="h-24 w-auto object-contain"
+            />
+          </div>
+          
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             Streamline Your Local Business with
             <span className="block bg-gradient-to-r from-accent-light to-white bg-clip-text text-transparent">
-              ServiceSync
+              Bizli Solution
             </span>
           </h1>
           
@@ -22,14 +37,24 @@ export function Hero() {
             Manage bookings, customers, and payments all in one place.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button size="lg" variant="secondary" className="text-lg px-8 py-4">
+          {/* Centered CTA Button with Animation */}
+          <div className="flex justify-center mb-6">
+            <Button 
+              size="lg" 
+              className="text-lg px-8 py-4 bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in hover:scale-105"
+            >
               Start Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-white/20 text-white hover:bg-white/10">
-              Watch Demo
-            </Button>
+          </div>
+          
+          {/* Pricing */}
+          <div className="mb-12 text-white">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-lg font-medium">
+              <span className="text-white/90">$57.97/mo</span>
+              <span className="hidden sm:block text-white/50">•</span>
+              <span className="text-white/90">$665.64/year</span>
+            </div>
           </div>
           
           {/* Feature Icons */}
