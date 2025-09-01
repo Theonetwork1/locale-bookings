@@ -4,9 +4,11 @@ import { Pricing } from "@/components/landing/pricing";
 import { Footer } from "@/components/landing/footer";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen">
@@ -15,20 +17,20 @@ const Index = () => {
       <Pricing />
       
       {/* Quick Demo Access */}
-      <section className="py-16 bg-muted/20">
+      <section id="overview" className="py-16 bg-muted/20">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold text-foreground mb-4">
-            Experience the Platform
+            {t.experiencePlatform}
           </h3>
           <p className="text-muted-foreground mb-6">
-            Take a look at our admin dashboard and see how Bizli Solution can transform your business operations.
+            {t.experienceDesc}
           </p>
           <Button 
             size="lg" 
             onClick={() => navigate('/dashboard')}
-            className="bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white"
+            className="bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white hover:scale-105 transition-transform duration-300"
           >
-            View Demo Dashboard
+            {t.viewDemoDashboard}
           </Button>
         </div>
       </section>

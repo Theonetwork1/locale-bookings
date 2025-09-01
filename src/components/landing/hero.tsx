@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Users, CreditCard, Bell, Smartphone, Star, Zap, TrendingUp } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Hero() {
+  const { t } = useLanguage();
+  
   return (
-    <div className="relative min-h-screen bg-[var(--gradient-hero)] overflow-hidden">
+    <div 
+      className="relative min-h-screen overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{ 
+        backgroundImage: `linear-gradient(rgba(15, 15, 31, 0.7), rgba(15, 15, 31, 0.7)), url(/lovable-uploads/179bca6d-8bcc-4237-811b-4ad291f95a59.png)`
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-screen flex items-center">
         <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
           {/* Left Content */}
@@ -16,35 +24,31 @@ export function Hero() {
             
             {/* Main Title */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight animate-fade-in">
-              Your Next
-              <br />
-              <span className="bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                Business Life
-              </span>
-              <br />
-              Adventure
+              {t.heroTitle}
             </h1>
             
             {/* Subtitle */}
             <p className="text-lg text-white/80 max-w-md animate-fade-in">
-              Since 2013, we've guided millions of local businesses on their digital success journey!
+              {t.heroSubtitle}
             </p>
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
               <Button 
                 size="lg" 
-                className="group bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                onClick={() => window.location.href = '#pricing'}
+                className="group bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
-                Get Started
+                {t.startFreeTrial}
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button 
                 variant="outline" 
                 size="lg"
+                onClick={() => window.location.href = '#overview'}
                 className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105"
               >
-                Learn More
+                {t.learnMore}
               </Button>
             </div>
             
@@ -69,9 +73,9 @@ export function Hero() {
             {/* Pricing */}
             <div className="text-white animate-fade-in">
               <div className="flex flex-row gap-6 items-center text-lg font-medium">
-                <span className="text-white">$57.97/mo</span>
+                <span className="text-white">{t.monthlyPrice}</span>
                 <span className="text-white/50">|</span>
-                <span className="text-white">$665.64/year</span>
+                <span className="text-white">{t.yearlyPrice}</span>
               </div>
             </div>
           </div>

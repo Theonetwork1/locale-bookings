@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const navItems = [
-    { name: "Services", href: "#services" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "Overview", href: "#overview" },
-    { name: "Resources", href: "#resources" }
+    { name: t.services, href: "#services" },
+    { name: t.pricing, href: "#pricing" },
+    { name: t.overview, href: "#overview" },
+    { name: t.resources, href: "#resources" }
   ];
 
   return (
@@ -41,13 +43,40 @@ export function Navigation() {
             </div>
           </div>
 
-          {/* Desktop Auth Buttons */}
+          {/* Language Switcher & Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
+            <div className="flex items-center bg-white/10 rounded-lg p-1">
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-3 py-1 text-sm font-medium rounded transition-all duration-300 ${
+                  language === 'en' 
+                    ? 'bg-[#7C5FFF] text-white' 
+                    : 'text-white/70 hover:text-white'
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLanguage('fr')}
+                className={`px-3 py-1 text-sm font-medium rounded transition-all duration-300 ${
+                  language === 'fr' 
+                    ? 'bg-[#7C5FFF] text-white' 
+                    : 'text-white/70 hover:text-white'
+                }`}
+              >
+                FR
+              </button>
+            </div>
             <Button variant="ghost" className="text-white hover:text-[#7C5FFF] hover:bg-white/10 transition-colors duration-300">
-              Sign In
+              {t.signIn}
             </Button>
-            <Button variant="secondary" size="sm">
-              Get Started
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={() => window.location.href = '#pricing'}
+              className="hover:scale-105 transition-transform duration-300"
+            >
+              {t.getStarted}
             </Button>
           </div>
 
@@ -78,11 +107,42 @@ export function Navigation() {
               </a>
             ))}
             <div className="pt-4 border-t border-white/10 space-y-2">
+              <div className="flex justify-center mb-3">
+                <div className="flex items-center bg-white/10 rounded-lg p-1">
+                  <button
+                    onClick={() => setLanguage('en')}
+                    className={`px-3 py-1 text-sm font-medium rounded transition-all duration-300 ${
+                      language === 'en' 
+                        ? 'bg-[#7C5FFF] text-white' 
+                        : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    onClick={() => setLanguage('fr')}
+                    className={`px-3 py-1 text-sm font-medium rounded transition-all duration-300 ${
+                      language === 'fr' 
+                        ? 'bg-[#7C5FFF] text-white' 
+                        : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    FR
+                  </button>
+                </div>
+              </div>
               <Button variant="ghost" className="w-full text-white hover:text-[#7C5FFF] hover:bg-white/10 transition-colors duration-300">
-                Sign In
+                {t.signIn}
               </Button>
-              <Button variant="secondary" className="w-full">
-                Get Started
+              <Button 
+                variant="secondary" 
+                className="w-full hover:scale-105 transition-transform duration-300"
+                onClick={() => {
+                  setIsOpen(false);
+                  window.location.href = '#pricing';
+                }}
+              >
+                {t.getStarted}
               </Button>
             </div>
           </div>

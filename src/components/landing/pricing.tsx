@@ -1,67 +1,70 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Star } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Pricing() {
+  const { t } = useLanguage();
+  
   const plans = [
     {
-      name: "Free Trial",
+      name: t.freeTrial,
       price: "$0",
       period: "14 days",
-      description: "Perfect to get started",
+      description: t.freeTrialDesc,
       features: [
-        "Full platform access",
-        "Up to 20 bookings",
-        "Basic customer management",
-        "Email notifications",
-        "Standard support"
+        t.fullPlatformAccess,
+        t.upTo20Bookings,
+        t.basicCustomerMgmt,
+        t.emailNotifications,
+        t.standardSupport
       ],
-      cta: "Start Free Trial",
+      cta: t.startFreeTrial,
       popular: false
     },
     {
-      name: "Monthly Plan",
+      name: t.monthlyPlan,
       price: "$57.97",
       period: "per month",
-      description: "Ideal for service providers of all sizes",
+      description: t.monthlyPlanDesc,
       features: [
-        "Unlimited bookings",
-        "Advanced customer management",
-        "SMS & Email notifications",
-        "Payment processing",
-        "Custom branding",
-        "Analytics dashboard",
-        "Priority support"
+        t.unlimitedBookings,
+        t.advancedCustomerMgmt,
+        t.smsEmailNotifications,
+        t.paymentProcessing,
+        t.customBranding,
+        t.analyticsDashboard,
+        t.prioritySupport
       ],
-      cta: "Get Started",
+      cta: t.getStarted,
       popular: true
     },
     {
-      name: "Yearly Plan",
+      name: t.yearlyPlan,
       price: "$665.64",
       period: "per year",
-      description: "Best value – 1 month free included",
+      description: t.yearlyPlanDesc,
       features: [
-        "All features in Monthly",
-        "Advanced integrations",
-        "Dedicated account manager",
-        "Custom features",
-        "24/7 phone support"
+        t.allFeaturesMonthly,
+        t.advancedIntegrations,
+        t.dedicatedAccountManager,
+        t.customFeatures,
+        t.phoneSupport247
       ],
-      cta: "Best Value",
+      cta: t.bestValue,
       popular: false
     }
   ];
 
   return (
-    <section className="py-24 bg-background-secondary">
+    <section id="pricing" className="py-24 bg-background-secondary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Simple, Transparent Pricing
+            {t.pricingTitle}
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choose the perfect plan for your business. All plans include our core features with no hidden fees.
+            {t.pricingSubtitle}
           </p>
         </div>
         
@@ -72,7 +75,7 @@ export function Pricing() {
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                   <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium flex items-center">
                     <Star className="h-4 w-4 mr-1" />
-                    Most Popular
+                    {t.mostPopular}
                   </div>
                 </div>
               )}
@@ -99,9 +102,16 @@ export function Pricing() {
                 </ul>
                 
                 <Button 
-                  className="w-full" 
+                  className="w-full hover:scale-105 transition-transform duration-300" 
                   size="lg"
                   variant={plan.popular ? "default" : "outline"}
+                  onClick={() => {
+                    if (plan.name === t.freeTrial) {
+                      window.location.href = '/dashboard';
+                    } else {
+                      window.location.href = '#contact';
+                    }
+                  }}
                 >
                   {plan.cta}
                 </Button>
@@ -112,7 +122,7 @@ export function Pricing() {
         
         <div className="text-center mt-12">
           <p className="text-muted-foreground">
-            All plans include 24/7 customer support and a 30-day money-back guarantee.
+            {t.pricingFooter}
           </p>
         </div>
       </div>

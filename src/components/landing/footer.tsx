@@ -1,7 +1,9 @@
 import bizliLogo from "@/assets/bizli-logo.png";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useLanguage();
   
   return (
     <footer className="bg-[#0F0F1F] py-8">
@@ -20,8 +22,8 @@ export function Footer() {
             
             {/* Contact Information */}
             <div className="text-white/80 text-sm space-y-1">
-              <div>Phone: +1 774 506 9615</div>
-              <div>Email: contact@bizlisolution.com</div>
+              <div>{t.phone}</div>
+              <div>{t.email}</div>
             </div>
           </div>
           
@@ -29,22 +31,22 @@ export function Footer() {
           <div className="flex space-x-6">
             <a 
               href="#privacy" 
-              className="text-white hover:text-[#7C5FFF] transition-colors duration-300 text-sm"
+              className="text-white hover:text-[#7C5FFF] transition-colors duration-300 text-sm hover:scale-105 transition-transform"
             >
-              Privacy Policy
+              {t.privacyPolicy}
             </a>
             <a 
               href="#contact" 
-              className="text-white hover:text-[#7C5FFF] transition-colors duration-300 text-sm"
+              className="text-white hover:text-[#7C5FFF] transition-colors duration-300 text-sm hover:scale-105 transition-transform"
             >
-              Contact
+              {t.contact}
             </a>
           </div>
         </div>
         
         <div className="mt-6 pt-6 border-t border-white/10 text-center">
           <p className="text-white/70 text-sm">
-            © {currentYear} Bizli Solution. All rights reserved.
+            © {currentYear} Bizli Solution. {t.allRightsReserved}
           </p>
         </div>
       </div>
