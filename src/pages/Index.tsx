@@ -27,7 +27,7 @@ const Index = () => {
           </p>
           <Button 
             size="lg" 
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/client-dashboard')}
             className="bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white hover:scale-105 transition-transform duration-300"
           >
             {t.viewDemoDashboard}

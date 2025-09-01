@@ -107,9 +107,9 @@ export function Pricing() {
                   variant={plan.popular ? "default" : "outline"}
                   onClick={() => {
                     if (plan.name === t.freeTrial) {
-                      window.location.href = '/dashboard';
+                      window.location.href = '/client-dashboard';
                     } else {
-                      window.location.href = '#contact';
+                      window.location.href = '/business-dashboard';
                     }
                   }}
                 >

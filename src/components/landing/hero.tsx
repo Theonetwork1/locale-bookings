@@ -36,7 +36,7 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
               <Button 
                 size="lg" 
-                onClick={() => window.location.href = '#pricing'}
+                onClick={() => window.location.href = '/client-dashboard'}
                 className="group bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 {t.startFreeTrial}
@@ -80,61 +80,6 @@ export function Hero() {
             </div>
           </div>
           
-          {/* Right Content - Interactive Visual */}
-          <div className="relative lg:block hidden">
-            {/* Main Character Area */}
-            <div className="relative">
-              {/* Gradient Background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 via-blue-400/20 to-purple-400/20 rounded-3xl blur-3xl"></div>
-              
-              {/* Central Figure Placeholder */}
-              <div className="relative z-10 w-96 h-96 mx-auto bg-gradient-to-br from-emerald-300 via-blue-300 to-purple-300 rounded-3xl flex items-center justify-center">
-                <div className="text-white text-6xl">👩‍💼</div>
-              </div>
-              
-              {/* Floating Elements */}
-              <div className="absolute -top-6 -left-6 w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center animate-bounce">
-                <Calendar className="w-8 h-8 text-white" />
-              </div>
-              
-              <div className="absolute top-12 -right-8 w-20 h-20 bg-pink-500/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-pulse">
-                <div className="text-2xl">💖</div>
-              </div>
-              
-              <div className="absolute -bottom-4 left-8 w-14 h-14 bg-blue-500/20 backdrop-blur-sm rounded-2xl flex items-center justify-center animate-bounce">
-                <Users className="w-7 h-7 text-white" />
-              </div>
-              
-              <div className="absolute bottom-16 -right-6 w-12 h-12 bg-yellow-500/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-pulse">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-              
-              <div className="absolute top-1/2 -left-8 w-10 h-10 bg-green-500/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-bounce">
-                <Zap className="w-5 h-5 text-white" />
-              </div>
-              
-              {/* Dotted Path */}
-              <div className="absolute bottom-0 right-1/4 w-32 h-16">
-                <svg className="w-full h-full" viewBox="0 0 100 50">
-                  <path 
-                    d="M10,40 Q30,10 50,25 T90,15" 
-                    stroke="white" 
-                    strokeWidth="2" 
-                    strokeDasharray="5,5" 
-                    fill="none" 
-                    opacity="0.5"
-                  />
-                </svg>
-              </div>
-              
-              {/* Stats Circles */}
-              <div className="absolute top-1/4 right-0 flex space-x-2">
-                <div className="w-3 h-3 bg-white/30 rounded-full animate-pulse"></div>
-                <div className="w-3 h-3 bg-white/50 rounded-full animate-pulse delay-100"></div>
-                <div className="w-3 h-3 bg-white/70 rounded-full animate-pulse delay-200"></div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       
