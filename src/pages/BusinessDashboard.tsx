@@ -1,272 +1,295 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { 
-  LayoutDashboard, 
   Calendar, 
   Users, 
-  MessageSquare, 
-  Bell, 
-  Settings,
-  Globe,
-  MessageCircle,
-  ChevronLeft,
-  ChevronRight,
-  Menu
-} from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useState } from "react";
+  Settings, 
+  Star,
+  Clock,
+  Mail,
+  Phone,
+  MapPin,
+  Plus,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  LogOut
+} from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useBusinessData } from '@/hooks/useBusinessData';
+import { useToast } from '@/hooks/use-toast';
+import BusinessSetup from '@/components/business/BusinessSetup';
+import ServiceForm from '@/components/business/ServiceForm';
+import { useNavigate } from 'react-router-dom';
 
 const BusinessDashboard = () => {
-  const { t } = useLanguage();
-  const [currentMonth, setCurrentMonth] = useState("April 2024");
-  
-  const services = [
-    { name: "Service One", price: "$100" },
-    { name: "Service Two", price: "$75" },
-    { name: "Service Three", price: "$30" },
-    { name: "Service Four", price: "$50" }
-  ];
+  const { language } = useLanguage();
+  const { signOut, profile } = useAuth();
+  const { business, services, appointments, loading, createBusiness, createService, updateAppointmentStatus } = useBusinessData();
+  const [showServiceForm, setShowServiceForm] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const upcomingAppointments = [
-    { client: "John Smith", date: "Apr 26, 2024", time: "", status: "Cancel" },
-    { client: "Emma Johnson", date: "Apr 28, 2024", time: "11:30 AM", status: "Confirmed" }
-  ];
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  // If business doesn't exist, show setup form
+  if (!loading && !business) {
+    return <BusinessSetup onBusinessCreated={() => window.location.reload()} createBusiness={createBusiness} />;
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your business dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   const sidebarItems = [
-    { icon: LayoutDashboard, label: "Dashboard", active: true },
-    { icon: Calendar, label: "Appointments", active: false },
-    { icon: Users, label: "Clients", active: false },
-    { icon: MessageSquare, label: "Messages", active: false },
-    { icon: Bell, label: "Notifications", active: false, badge: "1" },
-    { icon: Globe, label: "Business Page", active: false },
-    { icon: MessageCircle, label: "Live Chat", active: false }
-  ];
-
-  // Calendar days for April 2024
-  const calendarDays = [
-    ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-    [1, 2, 3, 4, 5, 6, 7],
-    [8, 9, 10, 11, 12, 13, 14],
-    [15, 16, 17, 18, 19, 20, 21],
-    [22, 23, 24, 25, 26, 27, 28],
-    [29, 30, 31, 1, 2, 3, 4],
-    [5, 6, 7, 8, 9, 10, 11]
+    { icon: Calendar, label: language === 'en' ? 'Dashboard' : 'Tablero', active: true },
+    { icon: Users, label: language === 'en' ? 'Clients' : 'Clientes', badge: appointments.length.toString() },
+    { icon: Settings, label: language === 'en' ? 'Services' : 'Servicios', badge: services.length.toString() },
+    { icon: Star, label: language === 'en' ? 'Reviews' : 'Reseñas' },
+    { icon: Mail, label: language === 'en' ? 'Messages' : 'Mensajes' },
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg">
-        {/* Header */}
-        <div className="p-6 border-b">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">
-              $
+      <div className="w-80 bg-card border-r border-border flex flex-col">
+        {/* Business Brand */}
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-lg">
+                {business?.name?.charAt(0) || 'B'}
+              </span>
             </div>
-            <span className="font-semibold text-gray-800">Business</span>
+            <div>
+              <h2 className="font-semibold text-card-foreground">{business?.name || 'Your Business'}</h2>
+              <p className="text-sm text-muted-foreground capitalize">{business?.category || 'Business'}</p>
+            </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-2">
-          {sidebarItems.map((item, index) => (
-            <div 
-              key={index}
-              className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                item.active 
-                  ? 'bg-blue-50 text-blue-600 border border-blue-200' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
+        <div className="flex-1 p-4">
+          <nav className="space-y-2">
+            {sidebarItems.map((item, index) => (
+              <div key={index} className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer transition-colors ${
+                item.active ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+              }`}>
                 <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                <span className="flex-1">{item.label}</span>
+                {item.badge && (
+                  <Badge variant="secondary" className="text-xs">
+                    {item.badge}
+                  </Badge>
+                )}
               </div>
-              {item.badge && (
-                <Badge className="bg-orange-500 text-white text-xs px-2 py-1">
-                  {item.badge}
-                </Badge>
-              )}
-            </div>
-          ))}
-        </nav>
+            ))}
+          </nav>
+        </div>
+        
+        {/* Logout Button */}
+        <div className="p-4 border-t border-border">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start gap-2 text-muted-foreground"
+            onClick={handleSignOut}
+          >
+            <LogOut className="w-4 h-4" />
+            {language === 'en' ? 'Sign Out' : 'Cerrar Sesión'}
+          </Button>
+        </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="bg-white shadow-sm border-b px-6 py-4">
+        <div className="p-6 border-b border-border bg-card">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-800">Business Dashboard</h1>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              John Doe
+            <h1 className="text-2xl font-bold text-card-foreground">
+              {language === 'en' ? 'Business Dashboard' : 'Panel de Negocio'}
+            </h1>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Users className="w-4 h-4" />
+              {profile?.full_name || 'Business Owner'}
             </Button>
           </div>
-        </header>
+        </div>
 
-        {/* Content */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Content - Main Dashboard */}
-            <div className="lg:col-span-2 space-y-6">
+        {/* Content Grid */}
+        <div className="flex-1 overflow-auto p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-6">
               {/* Business Info Card */}
-              <Card className="shadow-lg">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center text-white text-2xl font-bold">
-                      $
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings className="w-5 h-5" />
+                    {language === 'en' ? 'Business Information' : 'Información del Negocio'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Mail className="w-4 h-4" />
+                    {business?.email}
+                  </div>
+                  {business?.phone && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Phone className="w-4 h-4" />
+                      {business.phone}
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-blue-600 font-medium">Edit Business information</p>
-                          <h2 className="text-xl font-bold text-gray-800 mt-1">Business Name</h2>
-                        </div>
-                      </div>
-                      
-                      <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <p className="text-gray-600">123 Main St, City, State</p>
-                          <p className="text-gray-600">(122) 456-7890</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-600">09:00 AM - 06:00 PM</p>
-                          <p className="text-gray-600">info@business.com</p>
-                        </div>
-                      </div>
+                  )}
+                  {business?.address && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="w-4 h-4" />
+                      {business.address}
                     </div>
+                  )}
+                  <div className="pt-2">
+                    <Badge variant={business?.is_approved ? "default" : "secondary"}>
+                      {business?.is_approved ? 
+                        (language === 'en' ? 'Approved' : 'Aprobado') : 
+                        (language === 'en' ? 'Pending Approval' : 'Pendiente de Aprobación')
+                      }
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Services */}
-              <Card className="shadow-lg">
+              {/* Services Card with Add Button */}
+              <Card>
                 <CardHeader>
-                  <CardTitle className="text-xl font-bold text-gray-800">Services</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {services.map((service, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <span className="font-medium text-gray-800">{service.name}</span>
-                      <span className="font-semibold text-gray-600">{service.price}</span>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              {/* Upcoming Appointments */}
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-gray-800">Upcoming Appointments</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Star className="w-5 h-5" />
+                      {language === 'en' ? 'Your Services' : 'Tus Servicios'}
+                    </CardTitle>
+                    <Button 
+                      size="sm" 
+                      onClick={() => setShowServiceForm(true)}
+                      className="gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      {language === 'en' ? 'Add Service' : 'Agregar Servicio'}
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 text-gray-600 font-medium">Client</th>
-                          <th className="text-left py-3 text-gray-600 font-medium">Date</th>
-                          <th className="text-left py-3 text-gray-600 font-medium">Time</th>
-                          <th className="text-left py-3 text-gray-600 font-medium">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {upcomingAppointments.map((appointment, index) => (
-                          <tr key={index} className="border-b">
-                            <td className="py-3 font-medium text-gray-800">{appointment.client}</td>
-                            <td className="py-3 text-gray-600">{appointment.date}</td>
-                            <td className="py-3 text-gray-600">{appointment.time}</td>
-                            <td className="py-3">
-                              <Button 
-                                variant={appointment.status === "Cancel" ? "destructive" : "default"}
-                                size="sm"
-                                className="hover:scale-105 transition-transform"
-                              >
-                                {appointment.status}
-                              </Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  {services.length > 0 ? (
+                    <div className="space-y-3">
+                      {services.map((service) => (
+                        <div key={service.id} className="flex items-center justify-between p-3 bg-background-secondary rounded-md">
+                          <div>
+                            <h4 className="font-medium">{service.name}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {service.price && `$${service.price}`}
+                              {service.price && service.duration_minutes && ' • '}
+                              {service.duration_minutes && `${service.duration_minutes} min`}
+                            </p>
+                          </div>
+                          <Badge variant="outline">
+                            {language === 'en' ? 'Active' : 'Activo'}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 text-muted-foreground">
+                      <Star className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p>{language === 'en' ? 'No services yet' : 'No hay servicios aún'}</p>
+                      <p className="text-sm">{language === 'en' ? 'Add your first service to get started' : 'Agrega tu primer servicio para comenzar'}</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
 
-            {/* Right Sidebar */}
+            {/* Right Column */}
             <div className="space-y-6">
-              {/* Manage Availability Calendar */}
-              <Card className="shadow-lg">
+              {/* Quick Stats */}
+              <Card>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-bold text-gray-800">Manage Availability</CardTitle>
-                  </div>
-                  <div className="flex items-center justify-between mt-4">
-                    <Button variant="ghost" size="sm">
-                      <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                    <span className="font-semibold text-gray-800">{currentMonth}</span>
-                    <Button variant="ghost" size="sm">
-                      <ChevronRight className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    {language === 'en' ? 'Quick Stats' : 'Estadísticas Rápidas'}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-7 gap-1 text-center text-sm">
-                    {calendarDays.map((week, weekIndex) => (
-                      week.map((day, dayIndex) => (
-                        <div 
-                          key={`${weekIndex}-${dayIndex}`}
-                          className={`p-2 rounded cursor-pointer transition-colors ${
-                            weekIndex === 0 
-                              ? 'font-semibold text-gray-600' 
-                              : typeof day === 'number' && day > 28 && weekIndex > 4
-                                ? 'text-gray-400 hover:bg-gray-50'
-                                : 'text-gray-800 hover:bg-blue-50'
-                          } ${day === 27 ? 'bg-blue-600 text-white' : ''}`}
-                        >
-                          {day}
-                        </div>
-                      ))
-                    ))}
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      {language === 'en' ? 'Total Services' : 'Servicios Totales'}
+                    </span>
+                    <span className="font-medium">{services.length}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      {language === 'en' ? 'Total Appointments' : 'Citas Totales'}
+                    </span>
+                    <span className="font-medium">{appointments.length}</span>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Clients Section */}
-              <Card className="shadow-lg">
+              {/* Recent Appointments */}
+              <Card>
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-bold text-gray-800">Clients</CardTitle>
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                      Message All
-                    </Button>
-                  </div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5" />
+                    {language === 'en' ? 'Recent Appointments' : 'Citas Recientes'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="text-2xl font-bold text-gray-800">125 Total Clients</div>
-                    <p className="text-gray-600">Transaction History</p>
-                    
-                    <Separator />
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-gray-800">Clients</span>
-                      <Button variant="ghost" size="sm">
-                        <Menu className="w-4 h-4" />
-                      </Button>
+                  {appointments.length > 0 ? (
+                    <div className="space-y-3">
+                      {appointments.slice(0, 3).map((appointment) => (
+                        <div key={appointment.id} className="p-3 bg-background-secondary rounded-md">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="font-medium">{appointment.client?.full_name}</h4>
+                            <Badge variant="outline" className="capitalize">
+                              {appointment.status}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {appointment.service?.name} • {appointment.appointment_date}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="text-center py-6 text-muted-foreground">
+                      <Calendar className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                      <p>{language === 'en' ? 'No appointments yet' : 'No hay citas aún'}</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Service Form Modal */}
+      <ServiceForm
+        open={showServiceForm}
+        onOpenChange={setShowServiceForm}
+        onServiceCreated={() => window.location.reload()}
+        createService={createService}
+      />
     </div>
   );
 };
