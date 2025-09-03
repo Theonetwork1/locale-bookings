@@ -41,7 +41,14 @@ const BusinessDashboard = () => {
 
   // If business doesn't exist, show setup form
   if (!loading && !business) {
-    return <BusinessSetup onBusinessCreated={() => window.location.reload()} createBusiness={createBusiness} />;
+    return <BusinessSetup onBusinessCreated={() => {
+      // The createBusiness function already updates the business state
+      // No need to reload the page, the component will re-render automatically
+      toast({
+        title: "Welcome to Bizli Solution!",
+        description: "Your business dashboard is now ready.",
+      });
+    }} createBusiness={createBusiness} />;
   }
 
   if (loading) {
@@ -287,7 +294,13 @@ const BusinessDashboard = () => {
       <ServiceForm
         open={showServiceForm}
         onOpenChange={setShowServiceForm}
-        onServiceCreated={() => window.location.reload()}
+        onServiceCreated={() => {
+          setShowServiceForm(false);
+          toast({
+            title: "Service Created!",
+            description: "Your new service has been added successfully.",
+          });
+        }}
         createService={createService}
       />
     </div>

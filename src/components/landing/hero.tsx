@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Users, CreditCard, Bell, Smartphone, Star, Zap, TrendingUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 export function Hero() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   
   return (
     <div 
@@ -36,7 +38,7 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in">
               <Button 
                 size="lg" 
-                onClick={() => window.location.href = '/client-dashboard'}
+                onClick={() => navigate('/auth')}
                 className="group bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl"
               >
                 {t.startFreeTrial}
@@ -45,7 +47,12 @@ export function Hero() {
               <Button 
                 variant="outline" 
                 size="lg"
-                onClick={() => window.location.href = '#overview'}
+                onClick={() => {
+                  const element = document.getElementById('overview');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
                 className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105"
               >
                 {t.learnMore}
