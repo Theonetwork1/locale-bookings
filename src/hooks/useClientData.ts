@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
+// Public business interface - excludes sensitive contact information
 interface Business {
   id: string;
   name: string;
-  email: string;
-  phone: string | null;
   logo_url: string | null;
   description: string | null;
   category: string;
@@ -50,7 +49,7 @@ export const useClientData = () => {
     try {
       const { data, error } = await supabase
         .from('businesses')
-        .select('*')
+        .select('id, name, logo_url, description, category, address, opening_hours, branding_color')
         .eq('is_approved', true)
         .eq('is_active', true)
         .order('name');
@@ -69,7 +68,7 @@ export const useClientData = () => {
         .from('services')
         .select(`
           *,
-          business:businesses(*)
+          business:businesses(id, name, logo_url, description, category, address, opening_hours, branding_color)
         `)
         .eq('is_active', true)
         .eq('business.is_approved', true)
@@ -90,7 +89,7 @@ export const useClientData = () => {
         .from('appointments')
         .select(`
           *,
-          business:businesses(*),
+          business:businesses(id, name, logo_url, description, category, address, opening_hours, branding_color),
           service:services(*)
         `)
         .eq('client_id', profile.id)
@@ -122,7 +121,7 @@ export const useClientData = () => {
         })
         .select(`
           *,
-          business:businesses(*),
+          business:businesses(id, name, logo_url, description, category, address, opening_hours, branding_color),
           service:services(*)
         `)
         .single();
