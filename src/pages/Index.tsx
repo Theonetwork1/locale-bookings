@@ -5,10 +5,32 @@ import { Footer } from "@/components/landing/footer";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user, profile, loading } = useAuth();
+
+  // Redirect authenticated users to their appropriate dashboard
+  useEffect(() => {
+    if (!loading && user && profile) {
+      switch (profile.role) {
+        case 'admin':
+          navigate('/dashboard');
+          break;
+        case 'business':
+          navigate('/business-dashboard');
+          break;
+        case 'client':
+          navigate('/client-dashboard');
+          break;
+        default:
+          break;
+      }
+    }
+  }, [user, profile, loading, navigate]);
 
   return (
     <div className="min-h-screen">
