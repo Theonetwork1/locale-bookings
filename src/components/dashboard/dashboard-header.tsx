@@ -1,9 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, Search, Settings, User, Plus, Filter } from "lucide-react";
+import { Bell, Search, Settings, User, Plus, Filter, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export function DashboardHeader() {
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
+
   return (
     <header className="bg-primary border-b border-white/10 h-16">
       <div className="h-full px-6 flex items-center justify-between">
@@ -49,6 +59,15 @@ export function DashboardHeader() {
                 3
               </Badge>
             </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-white hover:text-white hover:bg-white/10"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
             <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
               <User className="h-4 w-4 text-white" />
             </div>

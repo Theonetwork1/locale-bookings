@@ -1,11 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Briefcase, Calendar, Mail, MessageSquare, MapPin, Clock, Eye } from "lucide-react";
+import { Search, Briefcase, Calendar, Mail, MessageSquare, MapPin, Clock, Eye, LogOut } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const ClientDashboard = () => {
   const { t } = useLanguage();
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   const upcomingAppointments = [
     {
@@ -53,9 +62,20 @@ const ClientDashboard = () => {
       {/* Header */}
       <div className="bg-[#7C5FFF] p-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-600">JD</span>
+        <div className="flex items-center space-x-4">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-white hover:text-white hover:bg-white/10"
+            onClick={handleSignOut}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
+          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+              <span className="text-sm font-medium text-gray-600">JD</span>
+            </div>
           </div>
         </div>
       </div>
