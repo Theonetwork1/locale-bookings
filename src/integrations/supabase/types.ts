@@ -86,6 +86,9 @@ export type Database = {
           created_at: string
           custom_url: string | null
           id: string
+          language: string | null
+          notification_preferences: Json | null
+          theme_color: string | null
           updated_at: string
         }
         Insert: {
@@ -98,6 +101,9 @@ export type Database = {
           created_at?: string
           custom_url?: string | null
           id?: string
+          language?: string | null
+          notification_preferences?: Json | null
+          theme_color?: string | null
           updated_at?: string
         }
         Update: {
@@ -110,6 +116,9 @@ export type Database = {
           created_at?: string
           custom_url?: string | null
           id?: string
+          language?: string | null
+          notification_preferences?: Json | null
+          theme_color?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -125,7 +134,7 @@ export type Database = {
       businesses: {
         Row: {
           address: string | null
-          branding_color: string | null
+          brand_color: string | null
           category: Database["public"]["Enums"]["business_category"]
           created_at: string
           description: string | null
@@ -138,11 +147,12 @@ export type Database = {
           opening_hours: Json | null
           owner_id: string
           phone: string | null
+          status: string | null
           updated_at: string
         }
         Insert: {
           address?: string | null
-          branding_color?: string | null
+          brand_color?: string | null
           category?: Database["public"]["Enums"]["business_category"]
           created_at?: string
           description?: string | null
@@ -155,11 +165,12 @@ export type Database = {
           opening_hours?: Json | null
           owner_id: string
           phone?: string | null
+          status?: string | null
           updated_at?: string
         }
         Update: {
           address?: string | null
-          branding_color?: string | null
+          brand_color?: string | null
           category?: Database["public"]["Enums"]["business_category"]
           created_at?: string
           description?: string | null
@@ -172,6 +183,7 @@ export type Database = {
           opening_hours?: Json | null
           owner_id?: string
           phone?: string | null
+          status?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -186,41 +198,45 @@ export type Database = {
       }
       messages: {
         Row: {
-          business_id: string
           content: string
           created_at: string
           id: string
-          send_method: Database["public"]["Enums"]["send_method"] | null
-          sent_at: string | null
-          target_clients: string[] | null
-          title: string
+          receiver_id: string
+          sender_id: string
+          sent_at: string
+          updated_at: string | null
         }
         Insert: {
-          business_id: string
           content: string
           created_at?: string
           id?: string
-          send_method?: Database["public"]["Enums"]["send_method"] | null
-          sent_at?: string | null
-          target_clients?: string[] | null
-          title: string
+          receiver_id: string
+          sender_id: string
+          sent_at?: string
+          updated_at?: string | null
         }
         Update: {
-          business_id?: string
           content?: string
           created_at?: string
           id?: string
-          send_method?: Database["public"]["Enums"]["send_method"] | null
-          sent_at?: string | null
-          target_clients?: string[] | null
-          title?: string
+          receiver_id?: string
+          sender_id?: string
+          sent_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "messages_business_id_fkey"
-            columns: ["business_id"]
+            foreignKeyName: "messages_receiver_id_fkey"
+            columns: ["receiver_id"]
             isOneToOne: false
-            referencedRelation: "businesses"
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -232,7 +248,7 @@ export type Database = {
           created_at: string
           id: string
           is_read: boolean | null
-          title: string
+          message: string | null
           type: Database["public"]["Enums"]["notification_type"]
           user_id: string | null
         }
@@ -242,7 +258,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_read?: boolean | null
-          title: string
+          message?: string | null
           type: Database["public"]["Enums"]["notification_type"]
           user_id?: string | null
         }
@@ -252,7 +268,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_read?: boolean | null
-          title?: string
+          message?: string | null
           type?: Database["public"]["Enums"]["notification_type"]
           user_id?: string | null
         }
@@ -308,6 +324,54 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          business_id: string
+          client_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          submitted_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          business_id: string
+          client_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          submitted_at?: string
+          updated_at?: string | null
+        }
+        Update: {
+          business_id?: string
+          client_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          submitted_at?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       services: {
         Row: {
