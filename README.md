@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Locale Bookings - Bizli Solution
 
 ## Project info
 
