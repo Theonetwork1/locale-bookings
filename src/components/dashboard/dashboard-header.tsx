@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+<<<<<<< HEAD
 import { Bell, Search, Settings, User, Plus, Filter, LogOut } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +15,12 @@ export function DashboardHeader() {
     navigate('/');
   };
 
+=======
+import { Bell, Search, Settings, User, Plus, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
+
+export function DashboardHeader() {
+>>>>>>> 6ae5ed6 (Sync changes to Lovable)
   return (
     <header className="bg-primary border-b border-white/10 h-16">
       <div className="h-full px-6 flex items-center justify-between">
@@ -59,6 +66,7 @@ export function DashboardHeader() {
                 3
               </Badge>
             </div>
+<<<<<<< HEAD
             <Button 
               variant="ghost" 
               size="sm" 
@@ -68,6 +76,8 @@ export function DashboardHeader() {
               <LogOut className="h-4 w-4 mr-2" />
               Sign Out
             </Button>
+=======
+>>>>>>> 6ae5ed6 (Sync changes to Lovable)
             <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
               <User className="h-4 w-4 text-white" />
             </div>

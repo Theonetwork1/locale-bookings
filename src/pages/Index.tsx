@@ -5,12 +5,16 @@ import { Footer } from "@/components/landing/footer";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+<<<<<<< HEAD
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
+=======
+>>>>>>> 6ae5ed6 (Sync changes to Lovable)
 
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+<<<<<<< HEAD
   const { user, profile, loading } = useAuth();
 
   // Redirect authenticated users to their appropriate dashboard
@@ -31,6 +35,8 @@ const Index = () => {
       }
     }
   }, [user, profile, loading, navigate]);
+=======
+>>>>>>> 6ae5ed6 (Sync changes to Lovable)
 
   return (
     <div className="min-h-screen">
@@ -50,7 +56,11 @@ const Index = () => {
           <Button 
             size="lg" 
             onClick={() => navigate('/client-dashboard')}
+<<<<<<< HEAD
             className="bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white hover:scale-105 transition-transform duration-300"
+=======
+            className="bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+>>>>>>> 6ae5ed6 (Sync changes to Lovable)
           >
             {t.viewDemoDashboard}
           </Button>
