@@ -31,7 +31,7 @@ export function AdminPaymentDashboard() {
   const [loading, setLoading] = useState(true);
   const [timeFilter, setTimeFilter] = useState<'7d' | '30d' | '90d' | '1y' | 'all'>('30d');
   const [planFilter, setPlanFilter] = useState<'all' | 'Pro' | 'Business' | 'Enterprise'>('all');
-  const [selectedPayment, setSelectedPayment] = useState<PlatformPayment | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<PlatformPayment & { businesses?: any; subscriptions?: any } | null>(null);
 
   useEffect(() => {
     fetchPayments();
@@ -392,11 +392,11 @@ export function AdminPaymentDashboard() {
                                 <div className="space-y-3 text-sm">
                                   <div className="flex justify-between">
                                     <span className="text-muted-foreground">Business:</span>
-                                    <span className="font-medium text-foreground">{selectedPayment.businesses?.name}</span>
+                                    <span className="font-medium text-foreground">{selectedPayment.businesses?.name || 'N/A'}</span>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className="text-muted-foreground">Plan:</span>
-                                    <span className="font-medium text-foreground">{selectedPayment.subscriptions?.plan}</span>
+                                    <span className="font-medium text-foreground">{selectedPayment.subscriptions?.plan || 'N/A'}</span>
                                   </div>
                                   <div className="flex justify-between">
                                     <span className="text-muted-foreground">Amount:</span>

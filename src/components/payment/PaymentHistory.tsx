@@ -28,7 +28,7 @@ export function PaymentHistory({ clientId }: PaymentHistoryProps) {
     appointments: Appointment 
   })[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPayment, setSelectedPayment] = useState<ClientPayment | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<ClientPayment & { businesses?: any; services?: any } | null>(null);
 
   useEffect(() => {
     fetchPayments();
@@ -181,11 +181,11 @@ export function PaymentHistory({ clientId }: PaymentHistoryProps) {
                               <div className="space-y-3 text-sm">
                                 <div className="flex justify-between">
                                   <span className="text-muted-foreground">Service:</span>
-                                  <span className="font-medium text-foreground">{selectedPayment.services?.name}</span>
+                                  <span className="font-medium text-foreground">{selectedPayment.services?.name || 'N/A'}</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-muted-foreground">Business:</span>
-                                  <span className="font-medium text-foreground">{selectedPayment.businesses?.name}</span>
+                                  <span className="font-medium text-foreground">{selectedPayment.businesses?.name || 'N/A'}</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-muted-foreground">Amount:</span>

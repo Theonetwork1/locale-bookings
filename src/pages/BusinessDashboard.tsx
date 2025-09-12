@@ -187,14 +187,13 @@ const BusinessDashboard = () => {
       }
 
       if (businessData) {
-        setBusiness(businessData);
-        setClientPaymentUrl(businessData.client_payment_url || "");
+        setClientPaymentUrl(businessData.logo_url || "");
         setBranding(prev => ({
           ...prev,
-          logoUrl: businessData.image_url || '',
-          primary: businessData.brand_primary || prev.primary,
-          secondary: businessData.brand_secondary || prev.secondary,
-          accent: businessData.brand_accent || prev.accent
+          logoUrl: businessData.logo_url || '',
+          primary: businessData.brand_color || prev.primary,
+          secondary: businessData.brand_color || prev.secondary,
+          accent: businessData.brand_color || prev.accent
         }));
 
         // Fetch services for this business
@@ -344,11 +343,9 @@ const BusinessDashboard = () => {
       const { error } = await supabase
         .from('businesses')
         .update({
-          brand_primary: branding.primary,
-          brand_secondary: branding.secondary,
-          brand_accent: branding.accent,
-          image_url: branding.logoUrl
-        })
+          brand_color: branding.primary,
+          logo_url: branding.logoUrl
+        } as any)
         .eq('id', business.id);
 
       if (error) throw error;

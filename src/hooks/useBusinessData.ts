@@ -1,60 +1,18 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-
-interface Business {
-  id: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  logo_url: string | null;
-  description: string | null;
-  category: string;
-  address: string | null;
-  opening_hours: any;
-  branding_color: string;
-  is_approved: boolean;
-  is_active: boolean;
-  created_at: string;
-}
-
-interface Service {
-  id: string;
-  business_id: string;
-  name: string;
-  description: string | null;
-  price: number | null;
-  duration_minutes: number | null;
-  is_active: boolean;
-}
-
-interface Appointment {
-  id: string;
-  client_id: string;
-  business_id: string;
-  service_id: string;
-  appointment_date: string;
-  appointment_time: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
-  notes: string | null;
-  service: Service;
-  client: {
-    full_name: string;
-    email: string;
-    phone: string | null;
-  };
-}
+import { BusinessWithExtras, ServiceWithBusiness, AppointmentWithRelations } from '@/types/database';
 
 export const useBusinessData = () => {
   const { profile } = useAuth();
-  const [business, setBusiness] = useState<Business | null>(null);
-  const [services, setServices] = useState<Service[]>([]);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [business, setBusiness] = useState<BusinessWithExtras | null>(null);
+  const [services, setServices] = useState<ServiceWithBusiness[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchBusiness = async () => {
-    if (!profile?.id || profile.role !== 'business') return;
+    if (!profile?.id) return;
 
     try {
       const { data, error } = await supabase
@@ -71,7 +29,15 @@ export const useBusinessData = () => {
           throw error;
         }
       } else {
-        setBusiness(data);
+        // Map database fields to expected interface
+        const businessData: BusinessWithExtras = {
+          ...data,
+          brand_primary: data.brand_color, // Map for backwards compatibility
+          brand_secondary: data.brand_color,
+          brand_accent: data.brand_color,
+          image_url: data.logo_url
+        };
+        setBusiness(businessData);
       }
     } catch (err) {
       console.error('Error fetching business:', err);
@@ -79,13 +45,15 @@ export const useBusinessData = () => {
     }
   };
 
-  const fetchServices = async (businessId: string) => {
+  const fetchServices = async () => {
+    if (!business?.id) return;
+
     try {
       const { data, error } = await supabase
         .from('services')
         .select('*')
-        .eq('business_id', businessId)
-        .eq('is_active', true);
+        .eq('business_id', business.id)
+        .order('name');
 
       if (error) throw error;
       setServices(data || []);
@@ -94,21 +62,32 @@ export const useBusinessData = () => {
     }
   };
 
-  const fetchAppointments = async (businessId: string) => {
+  const fetchAppointments = async () => {
+    if (!business?.id) return;
+
     try {
       const { data, error } = await supabase
         .from('appointments')
         .select(`
           *,
-          service:services(*),
-          client:profiles(full_name, email, phone)
+          profiles!inner(full_name, email)
         `)
-        .eq('business_id', businessId)
-        .order('appointment_date', { ascending: true })
-        .order('appointment_time', { ascending: true });
+        .eq('business_id', business.id)
+        .order('appointment_date', { ascending: false })
+        .order('appointment_time', { ascending: false });
 
       if (error) throw error;
-      setAppointments(data || []);
+      
+      // Transform the data to match expected format
+      const transformedData = data?.map(item => ({
+        ...item,
+        client: item.profiles ? {
+          full_name: item.profiles.full_name,
+          email: item.profiles.email
+        } : null
+      })) || [];
+      
+      setAppointments(transformedData);
     } catch (err) {
       console.error('Error fetching appointments:', err);
     }
@@ -116,38 +95,39 @@ export const useBusinessData = () => {
 
   const createBusiness = async (businessData: {
     name: string;
-    email: string;
-    phone?: string;
     description?: string;
-    category: 'restaurant' | 'salon' | 'hotel' | 'lawyer' | 'real_estate' | 'mechanic' | 'healthcare' | 'fitness' | 'beauty' | 'education' | 'other';
     address?: string;
+    phone?: string;
+    email: string;
+    category: string;
   }) => {
-    if (!profile?.id) return { error: 'No user logged in' };
+    if (!profile?.id) return { error: 'Not logged in' };
 
     try {
       const { data, error } = await supabase
         .from('businesses')
         .insert({
           owner_id: profile.id,
-          ...businessData
-        })
+          ...businessData,
+          is_approved: false,
+          is_active: true
+        } as any)
         .select()
         .single();
 
       if (error) throw error;
 
-      // Create default business settings
-      await supabase
-        .from('business_settings')
-        .insert({
-          business_id: data.id,
-          chat_enabled: true,
-          accept_payments: false,
-          auto_confirm_bookings: false
-        });
-
-      setBusiness(data);
-      return { data, error: null };
+      // Map database fields to expected interface
+      const businessData_mapped: BusinessWithExtras = {
+        ...data,
+        brand_primary: data.brand_color,
+        brand_secondary: data.brand_color,
+        brand_accent: data.brand_color,
+        image_url: data.logo_url
+      };
+      
+      setBusiness(businessData_mapped);
+      return { data: businessData_mapped, error: null };
     } catch (err) {
       console.error('Error creating business:', err);
       return { error: err };
@@ -167,12 +147,14 @@ export const useBusinessData = () => {
         .from('services')
         .insert({
           business_id: business.id,
-          ...serviceData
+          ...serviceData,
+          is_active: true
         })
         .select()
         .single();
 
       if (error) throw error;
+      
       setServices(prev => [...prev, data]);
       return { data, error: null };
     } catch (err) {
@@ -181,7 +163,7 @@ export const useBusinessData = () => {
     }
   };
 
-  const updateAppointmentStatus = async (appointmentId: string, status: 'confirmed' | 'cancelled' | 'completed') => {
+  const updateAppointmentStatus = async (appointmentId: string, status: 'pending' | 'confirmed' | 'cancelled' | 'completed') => {
     try {
       const { error } = await supabase
         .from('appointments')
@@ -198,27 +180,38 @@ export const useBusinessData = () => {
       
       return { error: null };
     } catch (err) {
-      console.error('Error updating appointment status:', err);
+      console.error('Error updating appointment:', err);
+      return { error: err };
+    }
+  };
+
+  const deleteService = async (serviceId: string) => {
+    try {
+      const { error } = await supabase
+        .from('services')
+        .delete()
+        .eq('id', serviceId);
+
+      if (error) throw error;
+      
+      setServices(prev => prev.filter(service => service.id !== serviceId));
+      return { error: null };
+    } catch (err) {
+      console.error('Error deleting service:', err);
       return { error: err };
     }
   };
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await fetchBusiness();
-      setLoading(false);
-    };
-
     if (profile) {
-      loadData();
+      fetchBusiness();
     }
   }, [profile]);
 
   useEffect(() => {
-    if (business?.id) {
-      fetchServices(business.id);
-      fetchAppointments(business.id);
+    if (business) {
+      fetchServices();
+      fetchAppointments();
     }
   }, [business]);
 
@@ -231,10 +224,12 @@ export const useBusinessData = () => {
     createBusiness,
     createService,
     updateAppointmentStatus,
+    deleteService,
     refetch: () => {
-      if (business?.id) {
-        fetchServices(business.id);
-        fetchAppointments(business.id);
+      fetchBusiness();
+      if (business) {
+        fetchServices();
+        fetchAppointments();
       }
     }
   };

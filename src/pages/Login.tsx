@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/contexts/AuthContext';
+
+type UserRole = 'client' | 'business' | 'admin';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,19 +25,23 @@ const Login = () => {
     setError('');
 
     try {
-      await login(email, password, role);
+      const { error } = await signIn(email, password);
       
-      // Navigate based on role
-      switch (role) {
-        case 'admin':
-          navigate('/dashboard');
-          break;
-        case 'business':
-          navigate('/business-dashboard');
-          break;
-        case 'client':
-          navigate('/client-dashboard');
-          break;
+      if (error) {
+        setError(error.message || 'Login failed');
+      } else {
+        // Navigate based on role
+        switch (role) {
+          case 'admin':
+            navigate('/dashboard');
+            break;
+          case 'business':
+            navigate('/business-dashboard');
+            break;
+          case 'client':
+            navigate('/client-dashboard');
+            break;
+        }
       }
     } catch (err) {
       setError('Login failed. Please try again.');

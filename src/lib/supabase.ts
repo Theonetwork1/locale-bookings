@@ -9,22 +9,24 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export interface Business {
   id: string
   name: string
-  description: string
-  address: string
-  phone: string
+  description?: string
+  address?: string
+  phone?: string
   email: string
   category: string
-  rating: number
-  image_url?: string
-  brand_primary?: string
-  brand_secondary?: string
-  brand_accent?: string
+  rating?: number
+  logo_url?: string
+  brand_color?: string
   country?: string
   state?: string
   city?: string
   client_payment_url?: string
   created_at: string
   updated_at: string
+  is_approved?: boolean
+  is_active?: boolean
+  owner_id?: string
+  status?: string
 }
 
 export interface Subscription {

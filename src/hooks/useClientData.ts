@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-// Public business interface - excludes sensitive contact information
-interface Business {
+// Use Supabase generated types from the database
+type Business = {
   id: string;
   name: string;
   logo_url: string | null;
@@ -11,20 +11,23 @@ interface Business {
   category: string;
   address: string | null;
   opening_hours: any;
-  branding_color: string;
-}
+  brand_color: string | null;
+  is_approved: boolean;
+  is_active: boolean;
+};
 
-interface Service {
+type Service = {
   id: string;
   business_id: string;
   name: string;
   description: string | null;
   price: number | null;
   duration_minutes: number | null;
+  is_active: boolean;
   business?: Business;
-}
+};
 
-interface Appointment {
+type Appointment = {
   id: string;
   client_id: string;
   business_id: string;
@@ -35,7 +38,7 @@ interface Appointment {
   notes: string | null;
   business?: Business;
   service?: Service;
-}
+};
 
 export const useClientData = () => {
   const { profile } = useAuth();
@@ -49,7 +52,7 @@ export const useClientData = () => {
     try {
       const { data, error } = await supabase
         .from('businesses')
-        .select('id, name, logo_url, description, category, address, opening_hours, branding_color')
+        .select('id, name, logo_url, description, category, address, opening_hours, brand_color, is_approved, is_active')
         .eq('is_approved', true)
         .eq('is_active', true)
         .order('name');
@@ -67,15 +70,28 @@ export const useClientData = () => {
       const { data, error } = await supabase
         .from('services')
         .select(`
-          *,
-          business:businesses(id, name, logo_url, description, category, address, opening_hours, branding_color)
+          id, business_id, name, description, price, duration_minutes, is_active,
+          businesses!inner(id, name, logo_url, description, category, address, opening_hours, brand_color, is_approved, is_active)
         `)
         .eq('is_active', true)
-        .eq('business.is_approved', true)
-        .eq('business.is_active', true);
+        .eq('businesses.is_approved', true)
+        .eq('businesses.is_active', true);
 
       if (error) throw error;
-      setServices(data || []);
+      
+      // Transform the joined data
+      const transformedData = data?.map(item => ({
+        id: item.id,
+        business_id: item.business_id,
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        duration_minutes: item.duration_minutes,
+        is_active: item.is_active,
+        business: Array.isArray(item.businesses) ? item.businesses[0] : item.businesses
+      })) || [];
+      
+      setServices(transformedData);
     } catch (err) {
       console.error('Error fetching services:', err);
     }
@@ -88,16 +104,31 @@ export const useClientData = () => {
       const { data, error } = await supabase
         .from('appointments')
         .select(`
-          *,
-          business:businesses(id, name, logo_url, description, category, address, opening_hours, branding_color),
-          service:services(*)
+          id, client_id, business_id, service_id, appointment_date, appointment_time, status, notes,
+          businesses!inner(id, name, logo_url, description, category, address, opening_hours, brand_color),
+          services!inner(id, name, description, price, duration_minutes)
         `)
         .eq('client_id', profile.id)
         .order('appointment_date', { ascending: false })
         .order('appointment_time', { ascending: false });
 
       if (error) throw error;
-      setAppointments(data || []);
+      
+      // Transform the joined data
+      const transformedData = data?.map(item => ({
+        id: item.id,
+        client_id: item.client_id,
+        business_id: item.business_id,
+        service_id: item.service_id,
+        appointment_date: item.appointment_date,
+        appointment_time: item.appointment_time,
+        status: item.status,
+        notes: item.notes,
+        business: Array.isArray(item.businesses) ? item.businesses[0] : item.businesses,
+        service: Array.isArray(item.services) ? item.services[0] : item.services
+      })) || [];
+      
+      setAppointments(transformedData);
     } catch (err) {
       console.error('Error fetching appointments:', err);
     }
@@ -120,16 +151,30 @@ export const useClientData = () => {
           ...appointmentData
         })
         .select(`
-          *,
-          business:businesses(id, name, logo_url, description, category, address, opening_hours, branding_color),
-          service:services(*)
+          id, client_id, business_id, service_id, appointment_date, appointment_time, status, notes,
+          businesses!inner(id, name, logo_url, description, category, address, opening_hours, brand_color),
+          services!inner(id, name, description, price, duration_minutes)
         `)
         .single();
 
       if (error) throw error;
       
-      setAppointments(prev => [data, ...prev]);
-      return { data, error: null };
+      // Transform the joined data
+      const transformedData = {
+        id: data.id,
+        client_id: data.client_id,
+        business_id: data.business_id,
+        service_id: data.service_id,
+        appointment_date: data.appointment_date,
+        appointment_time: data.appointment_time,
+        status: data.status,
+        notes: data.notes,
+        business: Array.isArray(data.businesses) ? data.businesses[0] : data.businesses,
+        service: Array.isArray(data.services) ? data.services[0] : data.services
+      };
+      
+      setAppointments(prev => [transformedData, ...prev]);
+      return { data: transformedData, error: null };
     } catch (err) {
       console.error('Error booking appointment:', err);
       return { error: err };
