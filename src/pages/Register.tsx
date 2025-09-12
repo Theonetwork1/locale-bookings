@@ -8,9 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, User, Building2, Mail, Lock, Phone, MapPin } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/contexts/AuthContext';
+
 import { useToast } from '@/hooks/use-toast';
-import { createUserProfile, hashPassword } from '@/lib/supabase';
+
 
 const Register = () => {
   const [step, setStep] = useState<'account-type' | 'details' | 'verification'>('account-type');
@@ -63,27 +63,21 @@ const Register = () => {
     setLoading(true);
     
     try {
-      // Hash password
-      const passwordHash = await hashPassword(formData.password);
-      
-      // Create user profile in database
-      const userProfile = await createUserProfile({
-        email: formData.email,
-        password_hash: passwordHash,
-        name: formData.name,
-        phone: formData.phone,
-        role: accountType as 'client' | 'business',
-        business_name: accountType === 'business' ? formData.businessName : undefined,
-        business_address: accountType === 'business' ? formData.businessAddress : undefined,
-        business_category: accountType === 'business' ? formData.businessCategory : undefined,
-        business_description: accountType === 'business' ? formData.businessDescription : undefined,
-        is_active: true,
-        email_verified: false
+      // Create account via Supabase Auth and profiles trigger
+      const { error } = await signUp(formData.email, formData.password, {
+        full_name: formData.name,
+        role: accountType as 'client' | 'business'
       });
-      
-      // Auto-login after registration
-      await login(formData.email, formData.password, accountType as UserRole);
-      
+
+      if (error) {
+        toast({
+          title: 'Registration Failed',
+          description: error.message || 'Unable to create account. Please try again.',
+          variant: 'destructive'
+        });
+        return;
+      }
+
       toast({
         title: 'Account Created!',
         description: `Welcome to Bizli Solution! Your ${accountType} account is ready.`

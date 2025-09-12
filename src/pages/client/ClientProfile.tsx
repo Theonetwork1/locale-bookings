@@ -8,31 +8,31 @@ import { Separator } from '@/components/ui/separator';
 import { User, Mail, Phone, Camera, Save, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { updateUserProfile, getUserProfileById } from '@/lib/supabase';
+
 import { useNavigate } from 'react-router-dom';
 
 const ClientProfile = () => {
-  const { user } = useAuth();
+  const { user, profile, updateProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
+    name: profile?.full_name || '',
     email: user?.email || '',
-    phone: user?.phone || '',
-    avatar_url: user?.avatar_url || ''
+    phone: profile?.phone || '',
+    avatar_url: profile?.avatar_url || ''
   });
 
   useEffect(() => {
-    if (user) {
+    if (user || profile) {
       setFormData({
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        avatar_url: user.avatar_url || ''
+        name: profile?.full_name || '',
+        email: user?.email || '',
+        phone: profile?.phone || '',
+        avatar_url: profile?.avatar_url || ''
       });
     }
-  }, [user]);
+  }, [user, profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,21 +40,13 @@ const ClientProfile = () => {
 
     setLoading(true);
     try {
-      // Update user profile in database
-      await updateUserProfile(user.id, {
-        name: formData.name,
+      // Update profile in database
+      const { error } = await updateProfile({
+        full_name: formData.name,
         phone: formData.phone,
         avatar_url: formData.avatar_url
       });
-
-      // Update local user data
-      const updatedUser = {
-        ...user,
-        name: formData.name,
-        phone: formData.phone,
-        avatar_url: formData.avatar_url
-      };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      if (error) throw error;
 
       toast({
         title: 'Profile Updated',
@@ -146,7 +138,7 @@ const ClientProfile = () => {
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-foreground">{formData.name}</h3>
-                  <p className="text-muted-foreground">{user.role} Account</p>
+                  <p className="text-muted-foreground">{profile?.role} Account</p>
                   <p className="text-sm text-muted-foreground mt-1">
                     Click the camera icon to update your profile picture
                   </p>

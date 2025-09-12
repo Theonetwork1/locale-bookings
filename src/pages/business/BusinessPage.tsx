@@ -30,16 +30,16 @@ import { useToast } from '@/hooks/use-toast';
 import { Business, updateBusinessClientPaymentUrl, supabase } from '@/lib/supabase';
 
 const BusinessPage = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [previewing, setPreviewing] = useState(false);
   
   const [businessInfo, setBusinessInfo] = useState({
-    name: user?.business_name || 'Your Business',
-    description: user?.business_description || 'Professional services with expert staff providing top-quality services in a welcoming environment.',
-    address: user?.business_address || '123 Main St, City, State 12345',
-    phone: user?.phone || '(555) 123-4567',
+    name: 'Your Business',
+    description: 'Professional services with expert staff providing top-quality services in a welcoming environment.',
+    address: '123 Main St, City, State 12345',
+    phone: profile?.phone || '(555) 123-4567',
     email: user?.email || 'info@yourbusiness.com',
     website: 'www.yourbusiness.com',
     hours: 'Mon-Fri: 9:00 AM - 6:00 PM, Sat: 10:00 AM - 4:00 PM',
@@ -58,18 +58,15 @@ const BusinessPage = () => {
   ]);
 
   useEffect(() => {
-    // Initialize with user data
-    if (user) {
+    // Initialize with profile/user data
+    if (user || profile) {
       setBusinessInfo(prev => ({
         ...prev,
-        name: user.business_name || prev.name,
-        description: user.business_description || prev.description,
-        address: user.business_address || prev.address,
-        phone: user.phone || prev.phone,
-        email: user.email || prev.email
+        phone: profile?.phone || prev.phone,
+        email: user?.email || prev.email
       }));
     }
-  }, [user]);
+  }, [user, profile]);
 
   const handleSave = async () => {
     setSaving(true);

@@ -96,7 +96,7 @@ const ClientAppointments = () => {
             email: 'info@glosalon.com',
             category: 'Beauty & Wellness',
             rating: 4.8,
-            image_url: '',
+            logo_url: '',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           },
@@ -133,7 +133,7 @@ const ClientAppointments = () => {
             email: 'info@elitefitness.com',
             category: 'Fitness & Health',
             rating: 4.9,
-            image_url: '',
+            logo_url: '',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           },
@@ -170,7 +170,7 @@ const ClientAppointments = () => {
             email: 'info@glosalon.com',
             category: 'Beauty & Wellness',
             rating: 4.8,
-            image_url: '',
+            logo_url: '',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           },

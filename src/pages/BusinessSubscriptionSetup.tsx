@@ -11,7 +11,7 @@ const BusinessSubscriptionSetup = () => {
   const [selectedPlan, setSelectedPlan] = useState<'Free Trial' | 'Monthly Plan' | 'Yearly Plan' | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { toast } = useToast();
 
   const plans = [
@@ -138,7 +138,7 @@ const BusinessSubscriptionSetup = () => {
             Back to Registration
           </Button>
           <div className="text-white text-sm">
-            Welcome, {user?.name}!
+            Welcome, {profile?.full_name || user?.email}!
           </div>
         </div>
 

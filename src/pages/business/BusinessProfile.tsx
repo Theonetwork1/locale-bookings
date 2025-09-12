@@ -24,7 +24,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const BusinessProfile = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
 
   const handleContactSupport = () => {
@@ -124,16 +124,16 @@ const BusinessProfile = () => {
             <CardContent className="space-y-6">
               <div className="flex items-center space-x-6">
                 <Avatar className="w-24 h-24">
-                  <AvatarImage src={user.avatar_url} alt={user.business_name || user.name} />
+                  <AvatarImage src={profile?.avatar_url || ''} alt={profile?.full_name || 'User'} />
                   <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">
-                    {(user.business_name || user.name).charAt(0).toUpperCase()}
+                    {(profile?.full_name || 'U').charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="text-2xl font-semibold text-foreground">
-                    {user.business_name || user.name}
+                    {profile?.full_name || 'Not provided'}
                   </h3>
-                  <p className="text-muted-foreground">{user.business_category || 'Business'}</p>
+                  <p className="text-muted-foreground">Business</p>
                   <div className="flex items-center mt-2">
                     <Badge variant="secondary" className="mr-2">
                       {user.role} Account
@@ -164,7 +164,7 @@ const BusinessProfile = () => {
                     Business Name
                   </Label>
                   <Input
-                    value={user.business_name || 'Not provided'}
+                    value={profile?.full_name || 'Not provided'}
                     disabled
                     className="bg-muted cursor-not-allowed"
                   />
@@ -176,7 +176,7 @@ const BusinessProfile = () => {
                     Category
                   </Label>
                   <Input
-                    value={user.business_category || 'Not provided'}
+                    value={'Not provided'}
                     disabled
                     className="bg-muted cursor-not-allowed"
                   />
@@ -188,7 +188,7 @@ const BusinessProfile = () => {
                     Contact Name
                   </Label>
                   <Input
-                    value={user.name}
+                    value={profile?.full_name || 'Not provided'}
                     disabled
                     className="bg-muted cursor-not-allowed"
                   />
@@ -200,7 +200,7 @@ const BusinessProfile = () => {
                     Phone Number
                   </Label>
                   <Input
-                    value={user.phone || 'Not provided'}
+                    value={profile?.phone || 'Not provided'}
                     disabled
                     className="bg-muted cursor-not-allowed"
                   />
@@ -213,7 +213,7 @@ const BusinessProfile = () => {
                   Email Address
                 </Label>
                 <Input
-                  value={user.email}
+                  value={user?.email || 'Not provided'}
                   disabled
                   className="bg-muted cursor-not-allowed"
                 />
@@ -225,23 +225,12 @@ const BusinessProfile = () => {
                   Business Address
                 </Label>
                 <Input
-                  value={user.business_address || 'Not provided'}
+                  value={'Not provided'}
                   disabled
                   className="bg-muted cursor-not-allowed"
                 />
               </div>
 
-              {user.business_description && (
-                <div className="space-y-2">
-                  <Label className="text-muted-foreground flex items-center">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Business Description
-                  </Label>
-                  <div className="p-3 bg-muted rounded-md">
-                    <p className="text-sm text-foreground">{user.business_description}</p>
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
 
