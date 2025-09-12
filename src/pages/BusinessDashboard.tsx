@@ -182,11 +182,13 @@ const BusinessDashboard = () => {
     return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
   };
 
-  const brandingVars = previewBranding ? {
-    ['--primary' as any]: hexToHsl(branding.primary),
-    ['--secondary' as any]: hexToHsl(branding.secondary),
-    ['--accent' as any]: hexToHsl(branding.accent),
-  } : undefined;
+  const brandingVars = previewBranding
+    ? ({
+        ['--primary' as string]: hexToHsl(branding.primary),
+        ['--secondary' as string]: hexToHsl(branding.secondary),
+        ['--accent' as string]: hexToHsl(branding.accent),
+      } as React.CSSProperties)
+    : undefined;
 
   useEffect(() => {
     fetchBusinessData();
@@ -215,9 +217,9 @@ const BusinessDashboard = () => {
       setBranding(prev => ({
         ...prev,
         logoUrl: mockBusiness.image_url || '',
-        primary: (mockBusiness as any).brand_primary || prev.primary,
-        secondary: (mockBusiness as any).brand_secondary || prev.secondary,
-        accent: (mockBusiness as any).brand_accent || prev.accent
+        primary: mockBusiness.brand_primary || prev.primary,
+        secondary: mockBusiness.brand_secondary || prev.secondary,
+        accent: mockBusiness.brand_accent || prev.accent
       }));
 
       // Fetch services
@@ -751,7 +753,7 @@ const BusinessDashboard = () => {
       />
 =======
   return (
-    <div className="min-h-screen bg-muted" style={brandingVars as any}>
+    <div className="min-h-screen bg-muted" style={brandingVars}>
         {/* Content */}
         <div className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -1155,7 +1157,7 @@ const BusinessDashboard = () => {
                           variant="ghost" 
                           size="sm" 
                           onClick={() => handleToggleService(service.id)}
-                          className={`hover:bg-${service.is_active ? 'warning' : 'success'}/10 hover:text-${service.is_active ? 'warning' : 'success'}`}
+                          className={service.is_active ? "hover:bg-warning/10 hover:text-warning" : "hover:bg-success/10 hover:text-success"}
                           title={service.is_active ? 'Hide service' : 'Show service'}
                         >
                           {service.is_active ? (

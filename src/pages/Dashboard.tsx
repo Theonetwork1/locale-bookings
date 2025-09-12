@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { DashboardStats } from "@/components/dashboard/dashboard-stats";
-import { BusinessTable } from "@/components/dashboard/business-table";
-
-const Dashboard = () => {
-  return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader />
-      
-      <main className="container mx-auto px-6 py-8 space-y-8">
-=======
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import { BusinessTable } from "@/components/dashboard/business-table";
 import { useAuth } from "@/contexts/AuthContext";
@@ -47,7 +35,6 @@ const Dashboard = () => {
           </div>
         </div>
         
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
         <DashboardStats />
         <BusinessTable />
       </main>

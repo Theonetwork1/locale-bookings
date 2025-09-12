@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,29 +10,10 @@ interface Profile {
   role: 'client' | 'business' | 'admin';
   department: string | null;
   avatar_url: string | null;
-=======
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase, getUserProfileByEmail, verifyPassword } from '@/lib/supabase';
-
-export type UserRole = 'admin' | 'business' | 'client';
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: UserRole;
-  phone?: string;
-  avatar_url?: string;
-  business_name?: string;
-  business_address?: string;
-  business_category?: string;
-  business_description?: string;
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
 }
 
 interface AuthContextType {
   user: User | null;
-<<<<<<< HEAD
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
@@ -41,17 +21,10 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>;
-=======
-  loading: boolean;
-  login: (email: string, password: string, role: UserRole) => Promise<void>;
-  logout: () => Promise<void>;
-  switchRole: (role: UserRole) => void;
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-<<<<<<< HEAD
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
@@ -101,68 +74,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setProfile(null);
         }
         
-=======
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // 1) Restore user from localStorage to keep role and show sidebar after reload
-    const savedUserRaw = localStorage.getItem('user');
-    if (savedUserRaw) {
-      try {
-        const savedUser: User = JSON.parse(savedUserRaw);
-        setUser(savedUser);
-        setLoading(false);
-      } catch {
-        // ignore parse errors
-      }
-    }
-
-    // 2) Additionally check Supabase session (optional demo fallback)
-    const checkSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          const mockUser: User = {
-            id: session.user.id,
-            email: session.user.email || '',
-            name: 'John Doe',
-            role: 'client',
-            avatar_url: session.user.user_metadata?.avatar_url
-          };
-          setUser(prev => prev ?? mockUser);
-        }
-      } catch (error) {
-        console.error('Error checking session:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          const mockUser: User = {
-            id: session.user.id,
-            email: session.user.email || '',
-            name: 'John Doe',
-            role: 'client',
-            avatar_url: session.user.user_metadata?.avatar_url
-          };
-          setUser(mockUser);
-        } else {
-          setUser(null);
-        }
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
         setLoading(false);
       }
     );
 
-<<<<<<< HEAD
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -235,98 +150,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signIn,
     signOut,
     updateProfile
-=======
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const login = async (email: string, password: string, role: UserRole) => {
-    try {
-      setLoading(true);
-      
-      // Try to get user profile from database
-      try {
-        const userProfile = await getUserProfileByEmail(email);
-        
-        // Verify password
-        const isValidPassword = await verifyPassword(password, userProfile.password_hash);
-        if (!isValidPassword) {
-          throw new Error('Invalid credentials');
-        }
-        
-        // Check if role matches
-        if (userProfile.role !== role) {
-          throw new Error(`This account is registered as ${userProfile.role}, not ${role}`);
-        }
-        
-        const user: User = {
-          id: userProfile.id,
-          email: userProfile.email,
-          name: userProfile.name,
-          role: userProfile.role as UserRole,
-          phone: userProfile.phone,
-          avatar_url: userProfile.avatar_url,
-          business_name: userProfile.business_name,
-          business_address: userProfile.business_address,
-          business_category: userProfile.business_category,
-          business_description: userProfile.business_description
-        };
-        
-        setUser(user);
-        localStorage.setItem('user', JSON.stringify(user));
-        
-      } catch (dbError) {
-        // Fallback to demo mode if user not found in database
-        console.log('User not found in database, using demo mode');
-        const mockUser: User = {
-          id: 'mock-user-id',
-          email,
-          name: email.split('@')[0],
-          role,
-          avatar_url: undefined
-        };
-        
-        setUser(mockUser);
-        localStorage.setItem('user', JSON.stringify(mockUser));
-      }
-      
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      setLoading(true);
-      setUser(null);
-      localStorage.removeItem('user');
-      
-      // In a real app, you'd also sign out from Supabase
-      // await supabase.auth.signOut();
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const switchRole = (role: UserRole) => {
-    if (user) {
-      const updatedUser = { ...user, role };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-    }
-  };
-
-  const value = {
-    user,
-    loading,
-    login,
-    logout,
-    switchRole
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
   };
 
   return (
@@ -334,16 +157,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-<<<<<<< HEAD
 };
-=======
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
->>>>>>> 6ae5ed6 (Sync changes to Lovable)

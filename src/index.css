@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,16 +8,6 @@
 
 @layer base {
   :root {
-<<<<<<< HEAD
-    /* Brand Colors */
-    --primary: 238 45% 22%;      /* Deep navy blue #1a1b3a */
-    --primary-foreground: 0 0% 100%;
-    --primary-light: 245 35% 35%; /* Lighter navy */
-    --primary-glow: 245 60% 65%;  /* Purple glow */
-    
-    /* Background System */
-    --background: 0 0% 100%;
-=======
     /* Brand Colors - Updated */
     --primary: 230 100% 50%;      /* Deep blue #3C50E0 */
     --primary-foreground: 0 0% 100%;
@@ -29,7 +16,6 @@
     
     /* Background System */
     --background: 0 0% 100%;        /* Pure white for light theme */
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
     --background-secondary: 240 6% 97%;
     --foreground: 222 10% 15%;
     
@@ -41,16 +27,6 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 10% 15%;
     
-<<<<<<< HEAD
-    /* Secondary & Accent */
-    --secondary: 240 6% 97%;
-    --secondary-foreground: 222 10% 15%;
-    --secondary-button: 245 15% 25%;
-    
-    --accent: 270 65% 60%;        /* Professional purple */
-    --accent-foreground: 0 0% 100%;
-    --accent-light: 270 65% 70%;
-=======
     /* Secondary & Accent - Updated */
     --secondary: 200 100% 60%;    /* Light blue #38BDF8 */
     --secondary-foreground: 0 0% 100%;
@@ -59,7 +35,6 @@
     --accent: 25 95% 53%;         /* Orange #F97316 */
     --accent-foreground: 0 0% 100%;
     --accent-light: 25 95% 63%;   /* Lighter orange */
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
     
     /* Status Colors */
     --success: 142 72% 29%;       /* Professional green */
@@ -78,22 +53,6 @@
     --pending-foreground: 0 0% 100%;
     --pending-light: 210 100% 95%;
     
-<<<<<<< HEAD
-    /* Neutral System */
-    --muted: 240 4% 94%;
-    --muted-foreground: 240 4% 46%;
-    --muted-dark: 240 4% 84%;
-    
-    /* Interactive Elements */
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 238 45% 22%;
-    
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(238 45% 22%), hsl(245 35% 35%));
-    --gradient-accent: linear-gradient(135deg, hsl(270 65% 60%), hsl(270 65% 70%));
-    --gradient-hero: linear-gradient(135deg, hsl(238 45% 22%) 0%, hsl(270 65% 60%) 100%);
-=======
     /* Neutral System - Updated */
     --muted: 210 40% 98%;         /* Light gray #F1F5F9 */
     --muted-foreground: 215 16% 47%; /* Medium gray */
@@ -108,7 +67,6 @@
     --gradient-primary: linear-gradient(135deg, #3C50E0, #5B6FE8);
     --gradient-accent: linear-gradient(135deg, #38BDF8, #5CC9F9);
     --gradient-hero: linear-gradient(135deg, #3C50E0 0%, #38BDF8 100%);
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
     
     /* Shadows */
     --shadow-sm: 0 1px 2px 0 hsl(240 4% 46% / 0.05);
@@ -140,11 +98,7 @@
   }
 
   .dark {
-<<<<<<< HEAD
-    --background: 222.2 84% 4.9%;
-=======
     --background: 222.2 84% 4.9%;    /* Dark background #111111 equivalent */
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
     --foreground: 210 40% 98%;
 
     --card: 222.2 84% 4.9%;
@@ -208,8 +162,6 @@
   .animate-fade-in {
     animation: fade-in 0.6s ease-out;
   }
-<<<<<<< HEAD
-=======
 
   /* Bizli Solution Branding - Orange CTA Buttons */
   .btn-orange {
@@ -228,5 +180,4 @@
   .bg-hover-orange {
     @apply hover:bg-[#F97316] hover:text-white transition-all duration-200;
   }
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
 }

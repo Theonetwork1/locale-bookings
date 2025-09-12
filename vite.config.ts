@@ -8,10 +8,7 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-<<<<<<< HEAD
-=======
     historyApiFallback: true,
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
   },
   plugins: [
     react(),

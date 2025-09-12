@@ -2,17 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Star } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 
 export function Pricing() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-=======
-
-export function Pricing() {
-  const { t } = useLanguage();
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
   
   const plans = [
     {
@@ -115,15 +109,9 @@ export function Pricing() {
                   variant={plan.popular ? "default" : "outline"}
                   onClick={() => {
                     if (plan.name === t.freeTrial) {
-<<<<<<< HEAD
                       navigate('/client-dashboard');
                     } else {
                       navigate('/auth');
-=======
-                      window.location.href = '/client-dashboard';
-                    } else {
-                      window.location.href = '/business-dashboard';
->>>>>>> 6ae5ed6 (Sync changes to Lovable)
                     }
                   }}
                 >
