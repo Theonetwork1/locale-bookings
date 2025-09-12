@@ -27,7 +27,7 @@ interface SidebarItem {
 }
 
 const Sidebar = () => {
-  const { user, logout } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -35,7 +35,7 @@ const Sidebar = () => {
   const getSidebarItems = (): SidebarItem[] => {
     if (!user) return [];
 
-    switch (user.role) {
+    switch (profile?.role) {
       case 'admin':
         return [
           { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -78,7 +78,7 @@ const Sidebar = () => {
   const sidebarItems = getSidebarItems();
 
   const handleLogout = async () => {
-    await logout();
+    await signOut();
     navigate('/login');
   };
 
@@ -144,12 +144,12 @@ const Sidebar = () => {
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
               <span className="text-sm font-medium text-muted-foreground">
-                {user?.name?.charAt(0) || 'U'}
+                {profile?.full_name?.charAt(0) || 'U'}
               </span>
             </div>
             {!isCollapsed && (
               <div>
-                <p className="text-sm font-medium text-foreground">{user?.name || 'User'}</p>
+                <p className="text-sm font-medium text-foreground">{profile?.full_name || 'User'}</p>
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
             )}

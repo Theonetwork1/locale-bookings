@@ -37,10 +37,10 @@ const roleTabs: Record<Role, { label: string; path: string }[]> = {
 };
 
 const Topbar = () => {
-  const { user, logout } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const role = (user?.role || 'client') as Role;
+  const role = (profile?.role || 'client') as Role;
 
   const tabs = useMemo(() => roleTabs[role], [role]);
   const active = useMemo(() => location.pathname, [location.pathname]);
@@ -149,7 +149,7 @@ const Topbar = () => {
           <Button
             variant="outline"
             onClick={async () => {
-              await logout();
+              await signOut();
               navigate('/login');
             }}
             className="bg-primary text-primary-foreground border-primary-foreground/20 hover:bg-primary-foreground/10"
