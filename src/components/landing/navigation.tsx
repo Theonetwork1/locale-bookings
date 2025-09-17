@@ -46,7 +46,7 @@ export function Navigation() {
                 <button
                   key={item.name}
                   onClick={() => handleNavClick(item.href)}
-                  className="text-white hover:text-[#7C5FFF] px-3 py-2 text-sm font-medium transition-all duration-300 relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-[#7C5FFF] after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left"
+                  className="text-white hover:text-[#F97316] px-3 py-2 text-sm font-medium transition-all duration-300 relative after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-[#F97316] after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left"
                 >
                   {item.name}
                 </button>
@@ -61,7 +61,7 @@ export function Navigation() {
                 onClick={() => setLanguage('en')}
                 className={`px-3 py-1 text-sm font-medium rounded transition-all duration-300 ${
                   language === 'en' 
-                    ? 'bg-[#7C5FFF] text-white' 
+                    ? 'bg-[#F97316] text-white' 
                     : 'text-white/70 hover:text-white'
                 }`}
               >
@@ -71,7 +71,7 @@ export function Navigation() {
                 onClick={() => setLanguage('fr')}
                 className={`px-3 py-1 text-sm font-medium rounded transition-all duration-300 ${
                   language === 'fr' 
-                    ? 'bg-[#7C5FFF] text-white' 
+                    ? 'bg-[#F97316] text-white' 
                     : 'text-white/70 hover:text-white'
                 }`}
               >
@@ -80,7 +80,7 @@ export function Navigation() {
             </div>
             <Button 
               variant="ghost" 
-              className="text-white hover:text-[#7C5FFF] hover:bg-white/10 transition-colors duration-300"
+              className="text-white hover:text-[#F97316] hover:bg-white/10 transition-colors duration-300"
               onClick={() => navigate('/auth')}
             >
               {t.signIn}
@@ -115,7 +115,7 @@ export function Navigation() {
               <button
                 key={item.name}
                 onClick={() => handleNavClick(item.href)}
-                className="text-white hover:text-[#7C5FFF] block px-3 py-2 text-base font-medium transition-colors duration-300 w-full text-left"
+                className="text-white hover:text-[#F97316] block px-3 py-2 text-base font-medium transition-colors duration-300 w-full text-left"
               >
                 {item.name}
               </button>
@@ -127,7 +127,7 @@ export function Navigation() {
                     onClick={() => setLanguage('en')}
                     className={`px-3 py-1 text-sm font-medium rounded transition-all duration-300 ${
                       language === 'en' 
-                        ? 'bg-[#7C5FFF] text-white' 
+                        ? 'bg-[#F97316] text-white' 
                         : 'text-white/70 hover:text-white'
                     }`}
                   >
@@ -137,7 +137,7 @@ export function Navigation() {
                     onClick={() => setLanguage('fr')}
                     className={`px-3 py-1 text-sm font-medium rounded transition-all duration-300 ${
                       language === 'fr' 
-                        ? 'bg-[#7C5FFF] text-white' 
+                        ? 'bg-[#F97316] text-white' 
                         : 'text-white/70 hover:text-white'
                     }`}
                   >
@@ -147,7 +147,7 @@ export function Navigation() {
               </div>
               <Button 
                 variant="ghost" 
-                className="w-full text-white hover:text-[#7C5FFF] hover:bg-white/10 transition-colors duration-300"
+                className="w-full text-white hover:text-[#F97316] hover:bg-white/10 transition-colors duration-300"
                 onClick={() => navigate('/auth')}
               >
                 {t.signIn}

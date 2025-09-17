@@ -35,6 +35,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "@/hooks/useTranslations";
 import { BusinessRevenueTracker } from "@/components/payment/BusinessRevenueTracker";
 
 interface Business {
@@ -91,8 +92,9 @@ interface Client {
 }
 
 const BusinessDashboard = () => {
-  const { user, session } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const t = useTranslations();
   const [business, setBusiness] = useState<Business | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -106,9 +108,9 @@ const BusinessDashboard = () => {
 
   const [branding, setBranding] = useState({
     logoUrl: '',
-    primary: '#3C50E0',
-    secondary: '#38BDF8',
-    accent: '#F97316'
+    primary: '#4B2AAD',
+    secondary: '#A68BFA',
+    accent: '#1A1A1A'
   });
   const [savingBranding, setSavingBranding] = useState(false);
   const [previewBranding, setPreviewBranding] = useState(false);
@@ -165,10 +167,12 @@ const BusinessDashboard = () => {
     : undefined;
 
   useEffect(() => {
-    if (session) {
-      fetchBusinessData();
+    if (!user) {
+      setLoading(false);
+      return;
     }
-  }, [session]);
+    fetchBusinessData();
+  }, [user]);
 
   const fetchBusinessData = async () => {
     try {
@@ -187,6 +191,7 @@ const BusinessDashboard = () => {
       }
 
       if (businessData) {
+        setBusiness(businessData as any);
         setClientPaymentUrl(businessData.logo_url || "");
         setBranding(prev => ({
           ...prev,
@@ -214,6 +219,42 @@ const BusinessDashboard = () => {
 
         if (!appointmentsError) {
           setAppointments(appointmentsData || []);
+        }
+      } else {
+        // If no business data exists but user has business info in profile, create business record
+        if (user?.business_name && user?.business_address && user?.business_category) {
+          try {
+            const { data: newBusinessData, error: createError } = await supabase
+              .from('businesses')
+              .insert({
+                name: user.business_name,
+                description: user.business_description || '',
+                category: user.business_category,
+                address: user.business_address,
+                phone: user.phone || '',
+                email: user.email,
+                country: user.country || '',
+                state: user.state || '',
+                city: user.city || '',
+                latitude: user.latitude,
+                longitude: user.longitude,
+                owner_id: user.id
+              })
+              .select()
+              .single();
+
+            if (!createError && newBusinessData) {
+              setBusiness(newBusinessData as any);
+              
+              // Update user profile to mark business setup as complete
+              await supabase
+                .from('user_profiles')
+                .update({ is_business_setup: true })
+                .eq('id', user.id);
+            }
+          } catch (createError) {
+            console.error('Error creating business from profile:', createError);
+          }
         }
       }
 
@@ -374,25 +415,26 @@ const BusinessDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-muted items-center justify-center">
+      <div className="flex h-screen bg-white items-center justify-center">
         <div className="text-xl">Loading...</div>
       </div>
     );
   }
 
-  if (!business) {
+  // Check if business profile is complete - redirect to onboarding if not
+  if (user?.role === 'business' && !user?.isBusinessProfileComplete) {
     return (
-      <div className="min-h-screen bg-muted flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle>Setup Your Business</CardTitle>
+            <CardTitle>Complete Business Setup</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
-              You need to set up your business profile first.
+              Please complete your business profile setup to access the dashboard.
             </p>
-            <Button onClick={() => navigate('/business/profile')} className="w-full">
-              Set Up Business
+            <Button onClick={() => navigate('/business-onboarding')} className="w-full">
+              Complete Setup
             </Button>
           </CardContent>
         </Card>
@@ -400,35 +442,52 @@ const BusinessDashboard = () => {
     );
   }
 
+  if (!business) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Loading Business Data</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Loading your business information...
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-muted" style={brandingVars}>
+    <div className="min-h-screen bg-white" style={brandingVars}>
       {/* Header */}
-      <div className="bg-background border-b">
+      <div className="bg-white border-b border-gray-200">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-[#4B2AAD] rounded-lg flex items-center justify-center">
                 {branding.logoUrl ? (
                   <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-cover rounded-lg" />
                 ) : (
-                  <span className="text-primary-foreground font-bold">
+                  <span className="text-white font-bold">
                     {business.name.charAt(0)}
                   </span>
                 )}
               </div>
               <div>
-                <h1 className="text-xl font-semibold">Business Dashboard</h1>
-                <p className="text-sm text-muted-foreground">{business.name}</p>
+                <h1 className="text-xl font-semibold text-[#1A1A1A]">{t.dashboard || 'Business Dashboard'}</h1>
+                <p className="text-sm text-gray-600">{business.name}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => navigate('/business/profile')}>
                 <Settings className="w-4 h-4 mr-2" />
-                Settings
+                {t.settings || 'Settings'}
               </Button>
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                {t.logout || 'Logout'}
               </Button>
             </div>
           </div>
@@ -441,10 +500,10 @@ const BusinessDashboard = () => {
           {/* Left Content - Main Dashboard */}
           <div className="lg:col-span-2 space-y-6">
             {/* Business Info Card */}
-            <Card className="shadow-lg border-0">
+            <Card className="shadow-md border border-gray-100 bg-white">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
-                  <div className="w-16 h-16 bg-primary rounded-md flex items-center justify-center text-primary-foreground text-2xl font-bold overflow-hidden">
+                  <div className="w-16 h-16 bg-[#4B2AAD] rounded-md flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
                     {branding.logoUrl ? (
                       <img src={branding.logoUrl} alt="Business Logo" className="w-full h-full object-cover" />
                     ) : (
@@ -454,14 +513,14 @@ const BusinessDashboard = () => {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-primary font-medium">Business Information</p>
-                        <h2 className="text-xl font-bold text-foreground mt-1">{business.name}</h2>
+                        <p className="text-sm text-[#4B2AAD] font-medium">Business Information</p>
+                        <h2 className="text-xl font-bold text-[#1A1A1A] mt-1">{business.name}</h2>
                       </div>
                       <div className="flex items-center gap-2">
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="border-primary text-primary hover:bg-primary/10"
+                          className="border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#EEF1FF]"
                           onClick={() => navigate('/business/profile')}
                         >
                           <Edit className="w-4 h-4 mr-2" />
@@ -486,13 +545,13 @@ const BusinessDashboard = () => {
             </Card>
 
             {/* Services Management */}
-            <Card className="shadow-lg border-0">
+            <Card className="shadow-md border border-gray-100 bg-white">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl font-bold text-foreground">Services</CardTitle>
-                  <Button onClick={() => setShowAddService(true)} size="sm">
+                  <CardTitle className="text-xl font-bold text-[#1A1A1A]">{t.services || 'Services'}</CardTitle>
+                  <Button onClick={() => setShowAddService(true)} size="sm" className="bg-[#4B2AAD] hover:bg-[#A68BFA] text-white">
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Service
+                    {t.addService || 'Add Service'}
                   </Button>
                 </div>
               </CardHeader>
@@ -500,7 +559,7 @@ const BusinessDashboard = () => {
                 {services.length > 0 ? (
                   <div className="space-y-4">
                     {services.map((service) => (
-                      <div key={service.id} className="flex items-center justify-between p-4 bg-muted rounded-lg">
+                      <div key={service.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                         <div className="flex-1">
                           <h3 className="font-semibold">{service.name}</h3>
                           <p className="text-sm text-muted-foreground">{service.description}</p>
@@ -541,8 +600,8 @@ const BusinessDashboard = () => {
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
                     <Star className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>No services yet</p>
-                    <p className="text-sm">Add your first service to get started</p>
+                    <p>{t.noServicesYet || 'No services yet'}</p>
+                    <p className="text-sm">{t.addFirstService || 'Add your first service to get started'}</p>
                   </div>
                 )}
               </CardContent>
@@ -555,31 +614,32 @@ const BusinessDashboard = () => {
           {/* Right Sidebar */}
           <div className="space-y-6">
             {/* Quick Stats */}
-            <Card className="shadow-lg border-0">
+            <Card className="shadow-md border border-gray-100 bg-white">
               <CardHeader>
-                <CardTitle className="text-lg font-bold">Quick Stats</CardTitle>
+                <CardTitle className="text-lg font-bold text-[#1A1A1A]">{t.quickStats || 'Quick Stats'}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Total Services</span>
+                  <span className="text-sm text-muted-foreground">{t.services || 'Total Services'}</span>
                   <span className="font-semibold">{services.length}</span>
                 </div>
                 <Separator />
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Total Appointments</span>
+                  <span className="text-sm text-muted-foreground">{t.appointments || 'Total Appointments'}</span>
                   <span className="font-semibold">{appointments.length}</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* Branding */}
-            <Card className="shadow-lg border-0">
+            <Card className="shadow-md border border-gray-100 bg-white">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-bold">Branding</CardTitle>
+                  <CardTitle className="text-lg font-bold text-[#1A1A1A]">Branding</CardTitle>
                   <Button
                     variant={previewBranding ? "default" : "outline"}
                     size="sm"
+                    className={previewBranding ? "bg-[#4B2AAD] hover:bg-[#A68BFA] text-white" : "border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#EEF1FF]"}
                     onClick={() => setPreviewBranding(v => !v)}
                   >
                     {previewBranding ? 'Preview On' : 'Preview Off'}
@@ -614,7 +674,7 @@ const BusinessDashboard = () => {
                 <Button
                   onClick={handleSaveBranding}
                   disabled={savingBranding}
-                  className="w-full"
+                  className="w-full bg-[#4B2AAD] hover:bg-[#A68BFA] text-white"
                 >
                   {savingBranding ? 'Saving...' : 'Save Branding'}
                 </Button>
@@ -628,30 +688,30 @@ const BusinessDashboard = () => {
       <Dialog open={showAddService} onOpenChange={setShowAddService}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Service</DialogTitle>
+            <DialogTitle>{t.addNewService || 'Add New Service'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="service-name">Service Name</Label>
+              <Label htmlFor="service-name">{t.serviceName || 'Service Name'}</Label>
               <Input
                 id="service-name"
                 value={serviceForm.name}
                 onChange={(e) => setServiceForm(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="e.g. Haircut"
+                placeholder={t.serviceNamePlaceholder || 'e.g. Haircut'}
               />
             </div>
             <div>
-              <Label htmlFor="service-description">Description</Label>
+              <Label htmlFor="service-description">{t.description || 'Description'}</Label>
               <Textarea
                 id="service-description"
                 value={serviceForm.description}
                 onChange={(e) => setServiceForm(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Describe your service..."
+                placeholder={t.serviceDescriptionPlaceholder || 'Describe your service...'}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="service-price">Price ($)</Label>
+                <Label htmlFor="service-price">{t.price || 'Price'} ($)</Label>
                 <Input
                   id="service-price"
                   type="number"
@@ -661,7 +721,7 @@ const BusinessDashboard = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="service-duration">Duration (min)</Label>
+                <Label htmlFor="service-duration">{t.duration || 'Duration'} (min)</Label>
                 <Input
                   id="service-duration"
                   type="number"
@@ -677,10 +737,10 @@ const BusinessDashboard = () => {
                 disabled={addingService || !serviceForm.name}
                 className="flex-1"
               >
-                {addingService ? 'Adding...' : 'Add Service'}
+                {addingService ? (t.adding || 'Adding...') : (t.addService || 'Add Service')}
               </Button>
               <Button variant="outline" onClick={() => setShowAddService(false)}>
-                Cancel
+                {t.cancel || 'Cancel'}
               </Button>
             </div>
           </div>

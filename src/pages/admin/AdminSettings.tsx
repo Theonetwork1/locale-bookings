@@ -25,8 +25,66 @@ const AdminSettings = () => {
     autoApproveBusinesses: false,
     maxAppointmentsPerDay: 50,
     defaultTimezone: 'UTC',
-    termsOfService: 'Terms of service content...',
-    privacyPolicy: 'Privacy policy content...'
+    termsOfService: `Terms of Service
+Effective Date: [Insert Date]
+
+Welcome to Bizli Solution LLC. These Terms of Service ("Terms") govern your access and use of our web-based platform ("Bizli" or "the Service"), which allows businesses to manage bookings, online payments, and client interactions. By creating an account or using our platform, you agree to these Terms.
+
+1. Eligibility
+   You must be at least 18 years old or of legal age in your country to use Bizli.
+
+2. Account Responsibility
+   You are responsible for all activity under your account. You agree to provide accurate business and contact information and to keep it up to date.
+
+3. Subscription & Payments
+   - Bizli operates on a monthly or annual subscription model.
+   - Businesses may also collect client payments via Stripe links embedded in their profiles.
+   - Bizli does not store or process payment information directly.
+
+4. Service Usage
+   - You may not use Bizli for illegal or abusive purposes.
+   - We reserve the right to suspend any business profile that violates these Terms or posts misleading information.
+
+5. Intellectual Property
+   All content, branding, and platform code are the property of Bizli Solution LLC. You may not copy or redistribute platform elements without permission.
+
+6. Limitation of Liability
+   Bizli Solution LLC is not responsible for business-client disputes, third-party payment issues, or damages resulting from misuse of the platform.
+
+7. Modifications
+   Bizli may update these Terms. Users will be notified of material changes.
+
+For questions, contact us at support@bizlisolution.com.`,
+    privacyPolicy: `Privacy Policy
+Effective Date: [Insert Date]
+
+Bizli Solution LLC ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and protect your personal and business data.
+
+1. Data We Collect
+   - Business and user registration info (name, email, business name, phone)
+   - Location data if enabled
+   - Stripe payment link (if provided)
+   - Usage data (login history, appointment activity)
+
+2. How We Use Data
+   - To operate the Bizli platform and provide services
+   - To help customers find businesses based on categories and location
+   - To send platform updates and support communication
+   - To ensure business accounts comply with Bizli standards
+
+3. Third-Party Services
+   We use third-party tools like Stripe for payment and Firebase/GitHub for hosting. These services may process limited user data under their own privacy terms.
+
+4. Data Security
+   We implement reasonable security measures to protect your data, including encryption and secure authentication.
+
+5. Your Rights
+   You may request access, modification, or deletion of your data by contacting us.
+
+6. Data Retention
+   We retain your data as long as your account is active or as required by law.
+
+For more information, contact: privacy@bizlisolution.com.`
   });
 
   const handleSave = () => {
@@ -47,7 +105,7 @@ const AdminSettings = () => {
             <h1 className="text-2xl font-bold text-foreground">Platform Settings</h1>
             <p className="text-muted-foreground">Configure platform-wide settings</p>
           </div>
-          <Button onClick={handleSave} className="bg-primary hover:bg-primary-dark text-primary-foreground">
+          <Button onClick={handleSave} className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Save className="w-4 h-4 mr-2" />
             Save Changes
           </Button>
@@ -198,7 +256,8 @@ const AdminSettings = () => {
                 id="terms"
                 value={settings.termsOfService}
                 onChange={(e) => handleInputChange('termsOfService', e.target.value)}
-                rows={6}
+                rows={20}
+                className="font-mono text-sm"
               />
             </div>
             <div>
@@ -207,7 +266,8 @@ const AdminSettings = () => {
                 id="privacy"
                 value={settings.privacyPolicy}
                 onChange={(e) => handleInputChange('privacyPolicy', e.target.value)}
-                rows={6}
+                rows={20}
+                className="font-mono text-sm"
               />
             </div>
           </CardContent>

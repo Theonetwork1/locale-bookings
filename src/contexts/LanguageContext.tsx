@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type Language = 'en' | 'fr';
+type Language = 'en' | 'fr' | 'ht' | 'es';
 
 interface Translations {
   // Navigation
@@ -186,6 +186,128 @@ const translations: Record<Language, Translations> = {
     experiencePlatform: 'Découvrez la Plateforme',
     experienceDesc: 'Jetez un œil à notre tableau de bord administrateur et voyez comment Bizli Solution peut transformer vos opérations commerciales.',
     viewDemoDashboard: 'Voir le Tableau de Bord Démo'
+  },
+  es: {
+    // Navigation
+    services: 'Servicios',
+    pricing: 'Precios',
+    overview: 'Resumen',
+    resources: 'Recursos',
+    signIn: 'Iniciar Sesión',
+    getStarted: 'Comenzar',
+    
+    // Hero Section
+    heroTitle: 'Optimiza Tu Negocio Local con Bizli Solution',
+    heroSubtitle: '¡Desde 2013, hemos guiado a millones de negocios locales en su viaje hacia el éxito digital!',
+    startFreeTrial: 'Prueba Gratuita',
+    learnMore: 'Saber Más',
+    monthlyPrice: '$57.97/mes',
+    yearlyPrice: '$665.64/año',
+    
+    // Pricing Section
+    pricingTitle: 'Precios Simples y Transparentes',
+    pricingSubtitle: 'Elige el plan perfecto para tu negocio. Todos los planes incluyen nuestras características principales sin tarifas ocultas.',
+    freeTrial: 'Prueba Gratuita',
+    freeTrialDesc: 'Perfecto para empezar',
+    monthlyPlan: 'Plan Mensual',
+    monthlyPlanDesc: 'Ideal para proveedores de servicios de todos los tamaños',
+    yearlyPlan: 'Plan Anual',
+    yearlyPlanDesc: 'Mejor valor – 1 mes gratis incluido',
+    mostPopular: 'Más Popular',
+    bestValue: 'Mejor Valor',
+    pricingFooter: 'Todos los planes incluyen soporte al cliente 24/7 y una garantía de devolución de dinero de 30 días.',
+    
+    // Features
+    fullPlatformAccess: 'Acceso completo a la plataforma',
+    upTo20Bookings: 'Hasta 20 reservas',
+    basicCustomerMgmt: 'Gestión básica de clientes',
+    emailNotifications: 'Notificaciones por email',
+    standardSupport: 'Soporte estándar',
+    unlimitedBookings: 'Reservas ilimitadas',
+    advancedCustomerMgmt: 'Gestión avanzada de clientes',
+    smsEmailNotifications: 'Notificaciones SMS y Email',
+    paymentProcessing: 'Procesamiento de pagos',
+    customBranding: 'Marca personalizada',
+    analyticsDashboard: 'Panel de análisis',
+    prioritySupport: 'Soporte prioritario',
+    allFeaturesMonthly: 'Todas las características del plan Mensual',
+    advancedIntegrations: 'Integraciones avanzadas',
+    dedicatedAccountManager: 'Gerente de cuenta dedicado',
+    customFeatures: 'Características personalizadas',
+    phoneSupport247: 'Soporte telefónico 24/7',
+    
+    // Footer
+    phone: 'Teléfono: +1 774 506 9615',
+    email: 'Email: contact@bizlisolution.com',
+    privacyPolicy: 'Política de Privacidad',
+    contact: 'Contacto',
+    allRightsReserved: 'Todos los derechos reservados.',
+    
+    // Demo Section
+    experiencePlatform: 'Experimenta la Plataforma',
+    experienceDesc: 'Echa un vistazo a nuestro panel de administración y ve cómo Bizli Solution puede transformar las operaciones de tu negocio.',
+    viewDemoDashboard: 'Ver Panel de Demostración'
+  },
+  ht: {
+    // Navigation
+    services: 'Sèvis',
+    pricing: 'Pri',
+    overview: 'Apèsi',
+    resources: 'Resous',
+    signIn: 'Konekte',
+    getStarted: 'Kòmanse',
+    
+    // Hero Section
+    heroTitle: 'Optimize Biznis Lokal Ou ak Bizli Solution',
+    heroSubtitle: 'Depi 2013, nou te gide dè milyon biznis lokal nan vwayaj siksè dijital yo!',
+    startFreeTrial: 'Eseye Gratis',
+    learnMore: 'Aprann Plis',
+    monthlyPrice: '$57.97/mwa',
+    yearlyPrice: '$665.64/ane',
+    
+    // Pricing Section
+    pricingTitle: 'Pri Senp ak Transparan',
+    pricingSubtitle: 'Chwazi plan ki pafè pou biznis ou. Tout plan yo genyen karakteristik prensipal nou yo san frè kache.',
+    freeTrial: 'Eseye Gratis',
+    freeTrialDesc: 'Pafè pou kòmanse',
+    monthlyPlan: 'Plan Mwa',
+    monthlyPlanDesc: 'Ideal pou founisè sèvis nan tout gwosè',
+    yearlyPlan: 'Plan Ane',
+    yearlyPlanDesc: 'Pi bon valè – 1 mwa gratis enkli',
+    mostPopular: 'Pi Popilè',
+    bestValue: 'Pi Bon Valè',
+    pricingFooter: 'Tout plan yo genyen sipò kliyan 24/7 ak garanti rembousman 30 jou.',
+    
+    // Features
+    fullPlatformAccess: 'Aksè konplè nan platfòm nan',
+    upTo20Bookings: 'Jiska 20 rezèvasyon',
+    basicCustomerMgmt: 'Jesyon kliyan debaz',
+    emailNotifications: 'Notifikasyon email',
+    standardSupport: 'Sipò estanda',
+    unlimitedBookings: 'Rezèvasyon san limit',
+    advancedCustomerMgmt: 'Jesyon kliyan avanse',
+    smsEmailNotifications: 'Notifikasyon SMS ak Email',
+    paymentProcessing: 'Tretman peman',
+    customBranding: 'Mak pèsonalize',
+    analyticsDashboard: 'Tablèt analiz',
+    prioritySupport: 'Sipò priyorite',
+    allFeaturesMonthly: 'Tout karakteristik nan plan Mwa',
+    advancedIntegrations: 'Entegrasyon avanse',
+    dedicatedAccountManager: 'Manadjè kont dedye',
+    customFeatures: 'Karakteristik pèsonalize',
+    phoneSupport247: 'Sipò telefòn 24/7',
+    
+    // Footer
+    phone: 'Telefòn: +1 774 506 9615',
+    email: 'Email: contact@bizlisolution.com',
+    privacyPolicy: 'Règleman Konfidansyalite',
+    contact: 'Kontak',
+    allRightsReserved: 'Tout dwa rezève.',
+    
+    // Demo Section
+    experiencePlatform: 'Eksperyans Platfòm nan',
+    experienceDesc: 'Gade tablèt administrateur nou an epi wè kijan Bizli Solution ka transfòme operasyon biznis ou yo.',
+    viewDemoDashboard: 'Gade Tablèt Demo'
   }
 };
 

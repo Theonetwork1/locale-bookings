@@ -7,33 +7,47 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
+import { ArrowRight, Search, Briefcase } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { user, profile, loading } = useAuth();
+  const { user, loading } = useAuth();
 
-  // Redirect authenticated users to their appropriate dashboard
-  useEffect(() => {
-    if (!loading && user && profile) {
-      switch (profile.role) {
-        case 'admin':
-          navigate('/dashboard');
-          break;
-        case 'business':
-          navigate('/business-dashboard');
-          break;
-        case 'client':
-          navigate('/client-dashboard');
-          break;
-        default:
-          break;
-      }
-    }
-  }, [user, profile, loading, navigate]);
+  // Redirect authenticated users to their appropriate dashboard (disabled for testing)
+  // useEffect(() => {
+  //   if (!loading && user) {
+  //     switch (user.role) {
+  //       case 'admin':
+  //         navigate('/dashboard');
+  //         break;
+  //       case 'business':
+  //         navigate('/business-dashboard');
+  //         break;
+  //       case 'client':
+  //         navigate('/client-dashboard');
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   }
+  // }, [user, loading, navigate]);
+
+  // Debug: Afficher le statut de chargement
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-foreground">Loading Bizli Solution...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <Navigation />
       <Hero />
       <Pricing />
@@ -50,7 +64,7 @@ const Index = () => {
           <Button 
             size="lg" 
             onClick={() => navigate('/client-dashboard')}
-            className="bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white hover:scale-105 transition-transform duration-300"
+            className="bg-[#F97316] hover:bg-[#EA580C] text-white font-semibold hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             {t.viewDemoDashboard}
           </Button>

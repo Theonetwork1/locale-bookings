@@ -5,7 +5,88 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-// Database types
+// Geographic types
+export interface Country {
+  id: string
+  code: string
+  name_en: string
+  name_fr: string
+  name_es: string
+  name_ht: string
+  currency_code?: string
+  phone_code?: string
+  created_at: string
+}
+
+export interface State {
+  id: string
+  country_id: string
+  code?: string
+  name_en: string
+  name_fr: string
+  name_es: string
+  name_ht: string
+  latitude?: number
+  longitude?: number
+  created_at: string
+}
+
+export interface Department {
+  id: string
+  state_id?: string
+  country_id: string
+  code?: string
+  name_en: string
+  name_fr: string
+  name_es: string
+  name_ht: string
+  latitude?: number
+  longitude?: number
+  created_at: string
+}
+
+export interface City {
+  id: string
+  department_id?: string
+  state_id?: string
+  country_id: string
+  code?: string
+  name_en: string
+  name_fr: string
+  name_es: string
+  name_ht: string
+  latitude?: number
+  longitude?: number
+  population?: number
+  is_capital: boolean
+  created_at: string
+}
+
+export interface Neighborhood {
+  id: string
+  city_id: string
+  name_en: string
+  name_fr: string
+  name_es: string
+  name_ht: string
+  latitude?: number
+  longitude?: number
+  created_at: string
+}
+
+export interface AdministrativeLevel {
+  id: string
+  country_id: string
+  level_number: number
+  name_en: string
+  name_fr: string
+  name_es: string
+  name_ht: string
+  is_required: boolean
+  created_at: string
+}
+
+// Database types avec géolocalisation complète
 export interface Business {
   id: string
   name: string
@@ -17,9 +98,20 @@ export interface Business {
   rating?: number
   logo_url?: string
   brand_color?: string
-  country?: string
-  state?: string
-  city?: string
+  // GÉOLOCALISATION COMPLÈTE
+  country: string
+  state: string
+  city: string
+  latitude?: number
+  longitude?: number
+  postal_code?: string
+  full_address?: string
+  // NOUVELLES RÉFÉRENCES GÉOGRAPHIQUES
+  country_id?: string
+  state_id?: string
+  department_id?: string
+  city_id?: string
+  neighborhood_id?: string
   client_payment_url?: string
   created_at: string
   updated_at: string
@@ -128,6 +220,19 @@ export interface UserProfile {
   phone?: string
   role: 'client' | 'business' | 'admin'
   avatar_url?: string
+  // GÉOLOCALISATION UTILISATEUR COMPLÈTE
+  country: string
+  state: string
+  city: string
+  latitude?: number
+  longitude?: number
+  full_address?: string
+  // NOUVELLES RÉFÉRENCES GÉOGRAPHIQUES
+  country_id?: string
+  state_id?: string
+  department_id?: string
+  city_id?: string
+  neighborhood_id?: string
   business_name?: string
   business_address?: string
   business_category?: string
@@ -136,6 +241,141 @@ export interface UserProfile {
   email_verified: boolean
   created_at: string
   updated_at: string
+}
+
+// Geographic database functions
+export const getCountries = async (): Promise<Country[]> => {
+  const { data, error } = await supabase
+    .from('countries')
+    .select('*')
+    .order('name_en', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching countries:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export const getStatesByCountry = async (countryId: string): Promise<State[]> => {
+  const { data, error } = await supabase
+    .from('states')
+    .select('*')
+    .eq('country_id', countryId)
+    .order('name_en', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching states:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export const getDepartmentsByState = async (stateId: string): Promise<Department[]> => {
+  const { data, error } = await supabase
+    .from('departments')
+    .select('*')
+    .eq('state_id', stateId)
+    .order('name_en', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching departments:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export const getDepartmentsByCountry = async (countryId: string): Promise<Department[]> => {
+  const { data, error } = await supabase
+    .from('departments')
+    .select('*')
+    .eq('country_id', countryId)
+    .order('name_en', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching departments:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export const getCitiesByDepartment = async (departmentId: string): Promise<City[]> => {
+  const { data, error } = await supabase
+    .from('cities')
+    .select('*')
+    .eq('department_id', departmentId)
+    .order('name_en', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching cities:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export const getCitiesByState = async (stateId: string): Promise<City[]> => {
+  const { data, error } = await supabase
+    .from('cities')
+    .select('*')
+    .eq('state_id', stateId)
+    .order('name_en', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching cities:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export const getCitiesByCountry = async (countryId: string): Promise<City[]> => {
+  const { data, error } = await supabase
+    .from('cities')
+    .select('*')
+    .eq('country_id', countryId)
+    .order('name_en', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching cities:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export const getNeighborhoodsByCity = async (cityId: string): Promise<Neighborhood[]> => {
+  const { data, error } = await supabase
+    .from('neighborhoods')
+    .select('*')
+    .eq('city_id', cityId)
+    .order('name_en', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching neighborhoods:', error)
+    return []
+  }
+
+  return data || []
+}
+
+export const getAdministrativeLevels = async (countryId: string): Promise<AdministrativeLevel[]> => {
+  const { data, error } = await supabase
+    .from('administrative_levels')
+    .select('*')
+    .eq('country_id', countryId)
+    .order('level_number', { ascending: true })
+
+  if (error) {
+    console.error('Error fetching administrative levels:', error)
+    return []
+  }
+
+  return data || []
 }
 
 // Database functions
@@ -435,4 +675,68 @@ export const hashPassword = async (password: string): Promise<string> => {
 export const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
   // In production, use bcrypt.compare or similar
   return btoa(password + 'salt123') === hash
+}
+
+// Nouvelles fonctions de géolocalisation
+export const getBusinessesByLocation = async (country: string, state?: string, city?: string, radius?: number, userLat?: number, userLng?: number) => {
+  let query = supabase
+    .from('businesses')
+    .select('*')
+    .eq('country', country)
+    .eq('is_active', true)
+
+  if (state) query = query.eq('state', state)
+  if (city) query = query.eq('city', city)
+
+  const { data, error } = await query.order('rating', { ascending: false })
+  
+  if (error) throw error
+  
+  // Si rayon et position utilisateur fournis, filtrer par distance
+  if (radius && userLat && userLng) {
+    return (data as Business[]).filter(business => {
+      if (!business.latitude || !business.longitude) return false
+      const distance = calculateDistance(userLat, userLng, business.latitude, business.longitude)
+      return distance <= radius
+    }).sort((a, b) => {
+      const distA = calculateDistance(userLat, userLng, a.latitude!, a.longitude!)
+      const distB = calculateDistance(userLat, userLng, b.latitude!, b.longitude!)
+      return distA - distB
+    })
+  }
+  
+  return data as Business[]
+}
+
+// Calcul de distance (formule haversine)
+export const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+  const R = 6371 // Rayon de la Terre en km
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLng/2) * Math.sin(dLng/2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+  return R * c
+}
+
+// Géocodage d'adresse (utilise une API externe)
+export const geocodeAddress = async (address: string): Promise<{lat: number, lng: number} | null> => {
+  try {
+    // Utiliser Nominatim (gratuit) ou Google Geocoding API
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+    const data = await response.json()
+    
+    if (data && data.length > 0) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lng: parseFloat(data[0].lon)
+      }
+    }
+    return null
+  } catch (error) {
+    console.error('Geocoding error:', error)
+    return null
+  }
 }

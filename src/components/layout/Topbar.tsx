@@ -1,161 +1,238 @@
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Bell, ChevronDown, Settings, Menu } from 'lucide-react';
+import { Bell, ChevronDown, Settings, Menu, User, LogOut, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
-
-type Role = 'admin' | 'business' | 'client';
-
-const roleTabs: Record<Role, { label: string; path: string }[]> = {
-  admin: [
-    { label: 'Dashboard', path: '/dashboard' },
-    { label: 'Manage Businesses', path: '/admin/businesses' },
-    { label: 'Subscriptions & Payments', path: '/admin/appointments' },
-    { label: 'Team & Permissions', path: '/admin/users' },
-    { label: 'Notifications', path: '/admin/notifications' }
-  ],
-  business: [
-    { label: 'Dashboard', path: '/business-dashboard' },
-    { label: 'Appointments', path: '/business/appointments' },
-    { label: 'Clients', path: '/business/clients' },
-    { label: 'Messages', path: '/business/messages' },
-    { label: 'Notifications', path: '/business/notifications' }
-  ],
-  client: [
-    { label: 'Dashboard', path: '/client-dashboard' },
-    { label: 'My Appointments', path: '/client/appointments' },
-    { label: 'Messages', path: '/client/messages' },
-    { label: 'Notifications', path: '/client/notifications' }
-  ]
-};
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Topbar = () => {
   const { user, profile, signOut } = useAuth();
+  const { language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
-  const role = (profile?.role || 'client') as Role;
 
-  const tabs = useMemo(() => roleTabs[role], [role]);
-  const active = useMemo(() => location.pathname, [location.pathname]);
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/login');
+  };
 
-  const goTo = (path: string) => navigate(path);
+  const getLanguageLabel = (lang: string) => {
+    const labels = {
+      'en': 'English',
+      'fr': 'Français', 
+      'es': 'Español',
+      'ht': 'Kreyòl Ayisyen'
+    };
+    return labels[lang as keyof typeof labels] || lang;
+  };
 
-  const notifPath = role === 'admin'
-    ? '/admin/notifications'
-    : role === 'business'
-      ? '/business/notifications'
-      : '/client/notifications';
+  const getLanguageFlag = (lang: string) => {
+    const flags = {
+      'en': '🇺🇸',
+      'fr': '🇫🇷',
+      'es': '🇪🇸', 
+      'ht': '🇭🇹'
+    };
+    return flags[lang as keyof typeof flags] || '🌐';
+  };
+
+  const getNotificationCount = () => {
+    // Mock notification count - in real app, this would come from API
+    return 3;
+  };
+
+  const notificationCount = getNotificationCount();
 
   return (
-    <div className="sticky top-0 z-40 w-full border-b border-border bg-primary text-primary-foreground">
-      <div className="mx-auto flex h-14 items-center justify-between px-4">
-        <div className="flex items-center gap-3">
+    <div className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white shadow-sm">
+      <div className="mx-auto flex h-16 items-center justify-between px-4 lg:px-6">
+        {/* Left Section - Logo and Mobile Menu */}
+        <div className="flex items-center gap-4">
+          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-primary-foreground">
+                <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="p-0 w-72">
-                <div className="p-4 border-b font-semibold">Bizli Solution</div>
-                <nav className="p-2">
-                  {tabs.map(t => (
-                    <button
-                      key={t.path}
-                      onClick={() => goTo(t.path)}
-                      className={`w-full text-left px-4 py-3 rounded-md transition ${
-                        active === t.path ? 'bg-muted text-foreground' : 'hover:bg-muted'
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </nav>
+                <div className="p-4 border-b">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-[#4B2AAD] rounded-md flex items-center justify-center text-white font-bold">
+                      B
+                    </div>
+                    <span className="font-semibold text-[#1A1A1A]">Bizli Solution</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-gray-600 mb-4">Navigation menu will be here</p>
+                </div>
               </SheetContent>
             </Sheet>
           </div>
+
+          {/* Logo */}
           <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-md bg-primary-foreground/20 flex items-center justify-center font-bold text-base text-primary-foreground">
-              BS
+            <div className="w-8 h-8 bg-[#4B2AAD] rounded-md flex items-center justify-center text-white font-bold">
+              B
             </div>
-            <span className="font-semibold hidden sm:inline">Bizli Solution</span>
+            <span className="font-semibold text-[#1A1A1A] hidden sm:inline">Bizli Solution</span>
           </div>
-          <nav className="hidden md:flex items-center gap-1">
-            {tabs.map((t) => (
-              <button
-                key={t.path}
-                onClick={() => goTo(t.path)}
-                className={`px-3 py-2 rounded-md text-sm transition ${
-                  active === t.path ? 'bg-primary-foreground/10' : 'hover:bg-primary-foreground/10'
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </nav>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Right Section - Language, Notifications, User Menu */}
+        <div className="flex items-center gap-3">
+          {/* Language Switcher */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              >
+                <Globe className="h-4 w-4 mr-2" />
+                <span className="hidden sm:inline">{getLanguageFlag(language)} {getLanguageLabel(language)}</span>
+                <span className="sm:hidden">{getLanguageFlag(language)}</span>
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem 
+                onClick={() => setLanguage('en')}
+                className={`cursor-pointer ${language === 'en' ? 'bg-[#EEF1FF] text-[#4B2AAD]' : ''}`}
+              >
+                <span className="mr-2">🇺🇸</span>
+                English
+                {language === 'en' && <span className="ml-auto text-[#4B2AAD]">✓</span>}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setLanguage('fr')}
+                className={`cursor-pointer ${language === 'fr' ? 'bg-[#EEF1FF] text-[#4B2AAD]' : ''}`}
+              >
+                <span className="mr-2">🇫🇷</span>
+                Français
+                {language === 'fr' && <span className="ml-auto text-[#4B2AAD]">✓</span>}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setLanguage('es')}
+                className={`cursor-pointer ${language === 'es' ? 'bg-[#EEF1FF] text-[#4B2AAD]' : ''}`}
+              >
+                <span className="mr-2">🇪🇸</span>
+                Español
+                {language === 'es' && <span className="ml-auto text-[#4B2AAD]">✓</span>}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setLanguage('ht')}
+                className={`cursor-pointer ${language === 'ht' ? 'bg-[#EEF1FF] text-[#4B2AAD]' : ''}`}
+              >
+                <span className="mr-2">🇭🇹</span>
+                Kreyòl Ayisyen
+                {language === 'ht' && <span className="ml-auto text-[#4B2AAD]">✓</span>}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Notifications */}
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => goTo(notifPath)}
-            className="text-primary-foreground hover:bg-primary-foreground/10"
+            onClick={() => {
+              const notifPath = user?.role === 'admin'
+                ? '/admin/notifications'
+                : user?.role === 'business'
+                  ? '/business/notifications'
+                  : '/client/notifications';
+              navigate(notifPath);
+            }}
+            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 relative"
             title="Notifications"
           >
-            <div className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -right-1 -top-1 h-4 min-w-4 rounded-full bg-accent text-[10px] leading-4 text-white px-1 text-center">
-                3
+            <Bell className="h-5 w-5" />
+            {notificationCount > 0 && (
+              <span className="absolute -right-1 -top-1 h-5 min-w-5 rounded-full bg-[#F97316] text-[10px] leading-5 text-white px-1 text-center font-medium">
+                {notificationCount > 9 ? '9+' : notificationCount}
               </span>
-            </div>
+            )}
           </Button>
 
-          {role === 'admin' && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="bg-primary text-primary-foreground border-primary-foreground/20 hover:bg-primary-foreground/10"
-                >
-                  Admin Tools <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-56">
-                <DropdownMenuItem onClick={() => goTo('/admin/settings')}>
-                  <Settings className="mr-2 h-4 w-4" /> Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => goTo('/admin/users')}>
-                  Team & Permissions
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => goTo('/admin/appointments')}>
-                  Subscriptions & Payments
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => goTo('/admin/businesses')}>
-                  Manage Businesses
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-
-          <Button
-            variant="outline"
-            onClick={async () => {
-              await signOut();
-              navigate('/login');
-            }}
-            className="bg-primary text-primary-foreground border-primary-foreground/20 hover:bg-primary-foreground/10"
-          >
-            Logout
-          </Button>
+          {/* User Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+              >
+                <div className="w-8 h-8 bg-[#4B2AAD] rounded-full flex items-center justify-center text-white text-sm font-medium">
+                  {profile?.full_name?.charAt(0) || user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                </div>
+                <div className="hidden sm:block text-left">
+                  <p className="text-sm font-medium text-[#1A1A1A]">
+                    {profile?.full_name || user?.name || 'User'}
+                  </p>
+                  <p className="text-xs text-gray-600 truncate max-w-32">
+                    {user?.email}
+                  </p>
+                </div>
+                <ChevronDown className="h-4 w-4 text-gray-600" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="px-2 py-1.5">
+                <p className="text-sm font-medium text-[#1A1A1A]">
+                  {profile?.full_name || user?.name || 'User'}
+                </p>
+                <p className="text-xs text-gray-600 truncate">
+                  {user?.email}
+                </p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={() => {
+                  const profilePath = user?.role === 'admin'
+                    ? '/admin/profile'
+                    : user?.role === 'business'
+                      ? '/business/profile'
+                      : '/client/profile';
+                  navigate(profilePath);
+                }}
+                className="cursor-pointer"
+              >
+                <User className="mr-2 h-4 w-4" />
+                View Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => {
+                  const settingsPath = user?.role === 'admin'
+                    ? '/admin/settings'
+                    : user?.role === 'business'
+                      ? '/business/settings'
+                      : '/client/settings';
+                  navigate(settingsPath);
+                }}
+                className="cursor-pointer"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={handleLogout}
+                className="cursor-pointer text-red-600 focus:text-red-600"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </div>
@@ -163,5 +240,3 @@ const Topbar = () => {
 };
 
 export default Topbar;
-
-

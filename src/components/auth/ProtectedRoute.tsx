@@ -14,7 +14,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRole, 
   redirectTo = '/auth' 
 }) => {
-  const { user, profile, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -31,9 +31,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={redirectTo} replace />;
   }
 
-  if (requiredRole && profile?.role !== requiredRole) {
+  if (requiredRole && user?.role !== requiredRole) {
     // Redirect based on user role
-    switch (profile?.role) {
+    switch (user?.role) {
       case 'admin':
         return <Navigate to="/dashboard" replace />;
       case 'business':

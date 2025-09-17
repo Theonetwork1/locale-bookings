@@ -257,7 +257,7 @@ const BusinessChat = () => {
                       <Button
                         onClick={handleSendMessage}
                         disabled={!newMessage.trim()}
-                        className="bg-primary hover:bg-primary-dark text-primary-foreground"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground"
                       >
                         <Send className="w-4 h-4" />
                       </Button>

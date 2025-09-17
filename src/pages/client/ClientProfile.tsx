@@ -3,54 +3,164 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { User, Mail, Phone, Camera, Save, ArrowLeft } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Building2, Save, Upload, MapPin, Navigation, Camera, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-
+import { updateUserProfile, updateBusinessClientPaymentUrl, geocodeAddress } from '@/lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { LocationSelector } from '@/components/location/LocationSelector';
+import { BusinessMap } from '@/components/location/BusinessMap';
 
-const ClientProfile = () => {
-  const { user, profile, updateProfile } = useAuth();
+const BusinessProfile = () => {
+  const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: profile?.full_name || '',
+    name: user?.name || '',
     email: user?.email || '',
-    phone: profile?.phone || '',
-    avatar_url: profile?.avatar_url || ''
+    phone: user?.phone || '',
+    avatar_url: user?.avatar_url || '',
+    business_name: user?.business_name || '',
+    business_description: user?.business_description || '',
+    business_category: user?.business_category || '',
+    // GÉOLOCALISATION
+    country: user?.country || '',
+    state: user?.state || '',
+    city: user?.city || '',
+    latitude: user?.latitude,
+    longitude: user?.longitude,
+    full_address: user?.full_address || '',
+    business_address: user?.business_address || ''
   });
 
-  useEffect(() => {
-    if (user || profile) {
-      setFormData({
-        name: profile?.full_name || '',
-        email: user?.email || '',
-        phone: profile?.phone || '',
-        avatar_url: profile?.avatar_url || ''
+  const categories = [
+    'Beauty & Wellness',
+    'Healthcare',
+    'Fitness & Sports',
+    'Education & Training',
+    'Professional Services',
+    'Home & Garden Services',
+    'Automotive',
+    'Food & Beverage',
+    'Entertainment',
+    'Technology',
+    'Other'
+  ];
+
+  const handleLocationChange = (location: any) => {
+    setFormData({
+      ...formData,
+      country: location.country,
+      state: location.state,
+      city: location.city,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      full_address: location.full_address
+    });
+  };
+
+  const handleAddressGeocode = async () => {
+    if (!formData.business_address) return;
+
+    try {
+      const coords = await geocodeAddress(formData.business_address);
+      if (coords) {
+        setFormData({
+          ...formData,
+          latitude: coords.lat,
+          longitude: coords.lng
+        });
+        toast({
+          title: 'Location Found',
+          description: 'GPS coordinates updated from business address.'
+        });
+      } else {
+        toast({
+          title: 'Location Not Found',
+          description: 'Unable to find GPS coordinates for this address.',
+          variant: 'destructive'
+        });
+      }
+    } catch (error) {
+      console.error('Geocoding error:', error);
+      toast({
+        title: 'Geocoding Failed',
+        description: 'Unable to process address. Please try again.',
+        variant: 'destructive'
       });
     }
-  }, [user, profile]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
+    // Validation géolocalisation obligatoire
+    if (!formData.country || !formData.state || !formData.city) {
+      toast({
+        title: 'Location Required',
+        description: 'Please provide complete location information.',
+        variant: 'destructive'
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      // Update profile in database
-      const { error } = await updateProfile({
-        full_name: formData.name,
+      // Géocodage automatique si pas de coordonnées
+      if (!formData.latitude || !formData.longitude) {
+        const address = formData.business_address || `${formData.city}, ${formData.state}, ${formData.country}`;
+        const coords = await geocodeAddress(address);
+        if (coords) {
+          formData.latitude = coords.lat;
+          formData.longitude = coords.lng;
+        }
+      }
+
+      // Mise à jour du profil utilisateur
+      await updateUserProfile(user.id, {
+        name: formData.name,
         phone: formData.phone,
-        avatar_url: formData.avatar_url
+        avatar_url: formData.avatar_url,
+        business_name: formData.business_name,
+        business_description: formData.business_description,
+        business_category: formData.business_category,
+        business_address: formData.business_address,
+        country: formData.country,
+        state: formData.state,
+        city: formData.city,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        full_address: formData.full_address
       });
-      if (error) throw error;
+
+      // Mise à jour localStorage
+      const updatedUser = {
+        ...user,
+        name: formData.name,
+        phone: formData.phone,
+        avatar_url: formData.avatar_url,
+        business_name: formData.business_name,
+        business_description: formData.business_description,
+        business_category: formData.business_category,
+        business_address: formData.business_address,
+        country: formData.country,
+        state: formData.state,
+        city: formData.city,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        full_address: formData.full_address
+      };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
 
       toast({
         title: 'Profile Updated',
-        description: 'Your profile information has been successfully updated.'
+        description: 'Your business profile and location have been successfully updated.'
       });
 
     } catch (error) {
@@ -65,222 +175,258 @@ const ClientProfile = () => {
     }
   };
 
-  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // In a real app, you would upload to Supabase Storage
-      // For demo, we'll just create a URL
-      const url = URL.createObjectURL(file);
-      setFormData(prev => ({ ...prev, avatar_url: url }));
-      
-      toast({
-        title: 'Avatar Updated',
-        description: 'Your profile picture has been updated.'
-      });
-    }
-  };
-
-  if (!user) {
-    return (
-      <div className="container mx-auto px-6 py-8">
-        <div className="text-center">
-          <p className="text-muted-foreground">Please log in to view your profile.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto px-6 py-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <Button
               variant="ghost"
-              onClick={() => navigate('/client-dashboard')}
+              onClick={() => navigate('/business-dashboard')}
               className="mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </Button>
-            <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
+            <h1 className="text-3xl font-bold text-foreground">Business Profile</h1>
             <p className="text-muted-foreground mt-2">
-              Manage your personal information and preferences
+              Manage your business information and location settings
             </p>
           </div>
         </div>
 
-        <div className="space-y-6">
-          {/* Profile Picture Section */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-foreground">Profile Picture</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center space-x-6">
-                <div className="relative">
-                  <Avatar className="w-24 h-24">
-                    <AvatarImage src={formData.avatar_url} alt={formData.name} />
-                    <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">
-                      {formData.name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <label className="absolute bottom-0 right-0 p-2 bg-[#F97316] rounded-full cursor-pointer hover:bg-[#EA580C] transition-colors">
-                    <Camera className="w-4 h-4 text-white" />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleAvatarUpload}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground">{formData.name}</h3>
-                  <p className="text-muted-foreground">{profile?.role} Account</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Click the camera icon to update your profile picture
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Personal Information */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-foreground">Personal Information</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Update your personal details below
-              </p>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Formulaire principal */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Informations de base */}
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>Business Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="business_name">Business Name *</Label>
                       <Input
-                        id="name"
-                        type="text"
-                        placeholder="Enter your full name"
-                        value={formData.name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                        className="pl-10"
+                        id="business_name"
+                        value={formData.business_name}
+                        onChange={(e) => setFormData({...formData, business_name: e.target.value})}
+                        placeholder="Enter business name"
                         required
                       />
                     </div>
+
+                    <div>
+                      <Label htmlFor="business_category">Category *</Label>
+                      <Select value={formData.business_category} onValueChange={(value) => setFormData({...formData, business_category: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category} value={category}>
+                              {category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <Label htmlFor="business_description">Description</Label>
+                    <Textarea
+                      id="business_description"
+                      value={formData.business_description}
+                      onChange={(e) => setFormData({...formData, business_description: e.target.value})}
+                      placeholder="Describe your business and services"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="business_address">Business Address</Label>
+                    <div className="flex space-x-2">
+                      <Input
+                        id="business_address"
+                        value={formData.business_address}
+                        onChange={(e) => setFormData({...formData, business_address: e.target.value})}
+                        placeholder="Enter complete business address"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleAddressGeocode}
+                        disabled={!formData.business_address}
+                      >
+                        <MapPin className="w-4 h-4 mr-2" />
+                        Find GPS
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Géolocalisation */}
+                  <div>
+                    <LocationSelector
+                      value={{
+                        country: formData.country,
+                        state: formData.state,
+                        city: formData.city,
+                        latitude: formData.latitude,
+                        longitude: formData.longitude,
+                        full_address: formData.full_address
+                      }}
+                      onChange={handleLocationChange}
+                      required={true}
+                      showGPS={true}
+                    />
+                  </div>
+
+                  <Separator />
+
+                  {/* Contact */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        className="bg-muted cursor-not-allowed"
+                        disabled
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="phone">Phone Number</Label>
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="Enter your phone number"
                         value={formData.phone}
-                        onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                        className="pl-10"
+                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        placeholder="Enter phone number"
                       />
                     </div>
                   </div>
+
+                  <div className="flex justify-end space-x-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => navigate('/business-dashboard')}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-[#F97316] hover:bg-[#EA580C] text-white transition-all duration-200 hover:scale-105"
+                    >
+                      {loading ? (
+                        <div className="flex items-center">
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                          Saving...
+                        </div>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4 mr-2" />
+                          Save Changes
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar - Aperçu et carte */}
+          <div className="space-y-6">
+            {/* Aperçu business */}
+            <Card className="border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle>Business Preview</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center">
+                  <Avatar className="w-24 h-24 mx-auto mb-4">
+                    <AvatarImage src={formData.avatar_url} alt={formData.business_name} />
+                    <AvatarFallback className="text-2xl font-bold bg-primary/10 text-primary">
+                      {formData.business_name?.charAt(0)?.toUpperCase() || 'B'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="text-lg font-semibold">{formData.business_name || 'Business Name'}</h3>
+                  <p className="text-sm text-muted-foreground">{formData.business_category || 'Category'}</p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      className="pl-10 bg-muted cursor-not-allowed"
-                      disabled
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center">
+                    <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
+                    <span>{formData.city && formData.state ? `${formData.city}, ${formData.state}` : 'Location not set'}</span>
+                  </div>
+                  {formData.phone && (
+                    <div className="flex items-center">
+                      <Phone className="w-4 h-4 mr-2 text-muted-foreground" />
+                      <span>{formData.phone}</span>
+                    </div>
+                  )}
+                </div>
+
+                {formData.business_description && (
+                  <p className="text-sm text-muted-foreground">{formData.business_description}</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Carte de localisation */}
+            {formData.latitude && formData.longitude && (
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <MapPin className="w-5 h-5 mr-2" />
+                    Business Location
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-48 rounded-lg overflow-hidden">
+                    <BusinessMap
+                      businesses={[{
+                        id: 'preview',
+                        name: formData.business_name || 'Your Business',
+                        category: formData.business_category || 'Business',
+                        latitude: formData.latitude,
+                        longitude: formData.longitude,
+                        address: formData.business_address,
+                        country: formData.country,
+                        state: formData.state,
+                        city: formData.city,
+                        email: formData.email,
+                        created_at: '',
+                        updated_at: ''
+                      } as Business]}
+                      userLocation={null}
+                      className="h-full w-full"
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Email address cannot be changed. Contact support if you need to update this.
-                  </p>
-                </div>
-
-                <Separator />
-
-                <div className="flex justify-end space-x-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => navigate('/client-dashboard')}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-[#F97316] hover:bg-[#EA580C] text-white transition-all duration-200 hover:scale-105"
-                  >
-                    {loading ? (
-                      <div className="flex items-center">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                        Saving...
-                      </div>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Save Changes
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Account Information */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold text-foreground">Account Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-muted-foreground">Account Type</p>
-                  <p className="font-semibold text-foreground capitalize">{user.role}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Member Since</p>
-                  <p className="font-semibold text-foreground">
-                    {new Date().toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Account Status</p>
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-success rounded-full mr-2"></div>
-                    <p className="font-semibold text-success">Active</p>
+                  <div className="mt-3 text-xs text-muted-foreground">
+                    <div className="flex items-center">
+                      <Navigation className="w-3 h-3 mr-1" />
+                      GPS: {formData.latitude?.toFixed(6)}, {formData.longitude?.toFixed(6)}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Email Verified</p>
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 bg-success rounded-full mr-2"></div>
-                    <p className="font-semibold text-success">Verified</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default ClientProfile;
+export default BusinessProfile;

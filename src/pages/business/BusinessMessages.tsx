@@ -196,7 +196,7 @@ const BusinessMessages = () => {
                     />
                     <Button 
                       onClick={() => handleReply(selectedMessage.id)}
-                      className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                       disabled={!replyText.trim()}
                     >
                       <Send className="w-4 h-4 mr-2" />

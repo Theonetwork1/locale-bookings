@@ -128,7 +128,7 @@ const BookAppointment = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#7C5FFF] to-[#9C4FFF] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
         <div className="text-white text-xl">Loading...</div>
       </div>
     );
@@ -136,16 +136,16 @@ const BookAppointment = () => {
 
   if (!business) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#7C5FFF] to-[#9C4FFF] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
         <div className="text-white text-xl">Business not found</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#7C5FFF] to-[#9C4FFF]">
+    <div className="min-h-screen bg-gradient-to-br from-primary to-secondary">
       {/* Header */}
-      <div className="bg-[#7C5FFF] p-6 flex items-center justify-between">
+      <div className="bg-primary p-6 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button 
             variant="ghost" 
@@ -272,7 +272,7 @@ const BookAppointment = () => {
                 {/* Submit Button */}
                 <Button 
                   type="submit" 
-                  className="w-full bg-[#7C5FFF] hover:bg-[#6B4FE0] text-white"
+                  className="w-full bg-primary hover:bg-primary/90 text-white"
                   disabled={!selectedService || !appointmentDate || !appointmentTime || submitting}
                 >
                   {submitting ? 'Booking...' : 'Book Appointment'}

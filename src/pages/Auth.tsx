@@ -8,14 +8,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslations } from '@/hooks/useTranslations';
 import { Loader2, UserPlus, LogIn } from 'lucide-react';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const t = useTranslations();
 
   // Redirect if already logged in
   useEffect(() => {
@@ -24,9 +26,11 @@ const Auth = () => {
     }
   }, [user, navigate]);
 
+  // Modifier loginForm pour inclure le rôle :
   const [loginForm, setLoginForm] = useState({
     email: '',
-    password: ''
+    password: '',
+    role: 'client' as 'client' | 'business' | 'admin'
   });
 
   const [signupForm, setSignupForm] = useState({
@@ -42,20 +46,24 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(loginForm.email, loginForm.password);
+      await login(loginForm.email, loginForm.password, loginForm.role);
       
-      if (error) {
-        toast({
-          title: "Login Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Welcome back!",
-          description: "You have been successfully logged in.",
-        });
-        navigate('/');
+      toast({
+        title: "Welcome back!",
+        description: "You have been successfully logged in.",
+      });
+      // Rediriger selon le rôle
+      switch (loginForm.role) {
+        case 'admin':
+          navigate('/dashboard');
+          break;
+        case 'business':
+          navigate('/business-dashboard');
+          break;
+        case 'client':
+        default:
+          navigate('/client-dashboard');
+          break;
       }
     } catch (error) {
       toast({
@@ -92,24 +100,16 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(signupForm.email, signupForm.password, {
+      await signUp(signupForm.email, signupForm.password, {
         full_name: signupForm.fullName,
         role: signupForm.role
       });
       
-      if (error) {
-        toast({
-          title: "Signup Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Account Created!",
-          description: "Please check your email to verify your account.",
-        });
-        setActiveTab('login');
-      }
+      toast({
+        title: "Account Created!",
+        description: "You can now sign in with your credentials.",
+      });
+      setActiveTab('login');
     } catch (error) {
       toast({
         title: "Signup Failed",
@@ -122,21 +122,23 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#4B2AAD] via-[#A68BFA] to-[#8B5CF6] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Card className="shadow-lg">
-          <CardHeader className="space-y-4 text-center">
-            <div className="flex items-center justify-center">
-              <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-xl">SS</span>
-              </div>
+        {/* Logo Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-[#1A1A1A] rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-2xl">BS</span>
             </div>
-            <div>
-              <CardTitle className="text-2xl">SS Bizli Solution</CardTitle>
-              <CardDescription>
-                Connect businesses with clients seamlessly
-              </CardDescription>
-            </div>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">Bizli Solution</h1>
+          <p className="text-white/80 text-lg">Connect businesses with clients seamlessly</p>
+        </div>
+
+        <Card className="bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-2xl font-bold text-gray-900">Welcome</CardTitle>
+            <p className="text-gray-600 text-base">Choose your access method</p>
           </CardHeader>
           
           <CardContent>
@@ -144,22 +146,22 @@ const Auth = () => {
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="login" className="flex items-center gap-2">
                   <LogIn className="w-4 h-4" />
-                  Login
+                  {t.login || 'Login'}
                 </TabsTrigger>
                 <TabsTrigger value="signup" className="flex items-center gap-2">
                   <UserPlus className="w-4 h-4" />
-                  Sign Up
+                  {t.signUp || 'Sign Up'}
                 </TabsTrigger>
               </TabsList>
               
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t.email || 'Email'}</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder={t.enterEmail || 'Enter your email'}
                       value={loginForm.email}
                       onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
                       required
@@ -167,25 +169,44 @@ const Auth = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{t.password || 'Password'}</Label>
                     <Input
                       id="password"
                       type="password"
-                      placeholder="Enter your password"
+                      placeholder={t.enterPassword || 'Enter your password'}
                       value={loginForm.password}
                       onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
                       required
                     />
                   </div>
                   
+                  <div className="space-y-2">
+                    <Label htmlFor="role">Account Type</Label>
+                    <Select 
+                      value={loginForm.role} 
+                      onValueChange={(value: 'client' | 'business' | 'admin') => 
+                        setLoginForm(prev => ({ ...prev, role: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select account type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="client">Client - Browse & Book Services</SelectItem>
+                        <SelectItem value="business">Business - Manage Services & Clients</SelectItem>
+                        <SelectItem value="admin">Administrator - Platform Management</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
                   <Button type="submit" className="w-full" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Signing in...
+                        {t.signingIn || 'Signing in...'}
                       </>
                     ) : (
-                      'Sign In'
+                      t.signIn || 'Sign In'
                     )}
                   </Button>
                 </form>
@@ -194,11 +215,11 @@ const Auth = () => {
               <TabsContent value="signup">
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="fullName">Full Name</Label>
+                    <Label htmlFor="fullName">{t.fullName || 'Full Name'}</Label>
                     <Input
                       id="fullName"
                       type="text"
-                      placeholder="Enter your full name"
+                      placeholder={t.enterFullName || 'Enter your full name'}
                       value={signupForm.fullName}
                       onChange={(e) => setSignupForm(prev => ({ ...prev, fullName: e.target.value }))}
                       required
@@ -206,11 +227,11 @@ const Auth = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="signupEmail">Email</Label>
+                    <Label htmlFor="signupEmail">{t.email || 'Email'}</Label>
                     <Input
                       id="signupEmail"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder={t.enterEmail || 'Enter your email'}
                       value={signupForm.email}
                       onChange={(e) => setSignupForm(prev => ({ ...prev, email: e.target.value }))}
                       required
@@ -218,25 +239,25 @@ const Auth = () => {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="role">Account Type</Label>
+                    <Label htmlFor="role">{t.accountType || 'Account Type'}</Label>
                     <Select value={signupForm.role} onValueChange={(value: 'client' | 'business') => 
                       setSignupForm(prev => ({ ...prev, role: value }))}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select account type" />
+                        <SelectValue placeholder={t.selectAccountType || 'Select account type'} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="client">Client - Browse & Book Services</SelectItem>
-                        <SelectItem value="business">Business - Manage Services & Clients</SelectItem>
+                        <SelectItem value="client">{t.clientAccount || 'Client - Browse & Book Services'}</SelectItem>
+                        <SelectItem value="business">{t.businessAccount || 'Business - Manage Services & Clients'}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="signupPassword">Password</Label>
+                    <Label htmlFor="signupPassword">{t.password || 'Password'}</Label>
                     <Input
                       id="signupPassword"
                       type="password"
-                      placeholder="Create a password (min 6 characters)"
+                      placeholder={t.createPassword || 'Create a password (min 6 characters)'}
                       value={signupForm.password}
                       onChange={(e) => setSignupForm(prev => ({ ...prev, password: e.target.value }))}
                       required
@@ -259,10 +280,10 @@ const Auth = () => {
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating account...
+                        {t.creatingAccount || 'Creating account...'}
                       </>
                     ) : (
-                      'Create Account'
+                      t.createAccount || 'Create Account'
                     )}
                   </Button>
                 </form>

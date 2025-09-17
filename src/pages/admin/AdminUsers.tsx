@@ -171,17 +171,17 @@ const AdminUsers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="bg-white shadow-sm border-b px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Team Members & Permissions</h1>
-            <p className="text-muted-foreground">Manage internal collaborators and permissions</p>
+            <h1 className="text-2xl font-bold text-[#1A1A1A]">Team Members & Permissions</h1>
+            <p className="text-gray-600">Manage internal collaborators and permissions</p>
           </div>
           <Dialog open={showInvite} onOpenChange={setShowInvite}>
             <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary-dark text-primary-foreground">
+              <Button className="bg-[#4B2AAD] hover:bg-[#A68BFA] text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Member
               </Button>
@@ -212,7 +212,7 @@ const AdminUsers = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={handleInvite} className="w-full bg-primary hover:bg-primary-dark text-primary-foreground">Send Invite</Button>
+                <Button onClick={handleInvite} className="w-full bg-[#4B2AAD] hover:bg-[#A68BFA] text-white">Send Invite</Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -264,7 +264,7 @@ const AdminUsers = () => {
                             <span className="text-sm font-medium text-muted-foreground">{m.name.charAt(0)}</span>
                           </div>
                           <div>
-                            <p className="font-medium text-foreground">{m.name}</p>
+                            <p className="font-medium text-[#1A1A1A]">{m.name}</p>
                             <div className="flex items-center space-x-1 text-sm text-muted-foreground">
                               <Mail className="w-3 h-3" />
                               <span>{m.email}</span>

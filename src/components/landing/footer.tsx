@@ -30,14 +30,14 @@ export function Footer() {
           {/* Right side - Links */}
           <div className="flex space-x-6">
             <a 
-              href="#privacy" 
-              className="text-white hover:text-[#7C5FFF] transition-colors duration-300 text-sm hover:scale-105 transition-transform"
+              href="/legal" 
+              className="text-white hover:text-[#F97316] transition-colors duration-300 text-sm hover:scale-105 transition-transform"
             >
-              {t.privacyPolicy}
+              Legal Documents
             </a>
             <a 
               href="#contact" 
-              className="text-white hover:text-[#7C5FFF] transition-colors duration-300 text-sm hover:scale-105 transition-transform"
+              className="text-white hover:text-[#F97316] transition-colors duration-300 text-sm hover:scale-105 transition-transform"
             >
               {t.contact}
             </a>

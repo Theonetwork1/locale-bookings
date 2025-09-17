@@ -13,8 +13,12 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BusinessSubscriptionSetup from "./pages/BusinessSubscriptionSetup";
 import Dashboard from "./pages/Dashboard";
+import SimpleDashboard from "./pages/SimpleDashboard";
 import ClientDashboard from "./pages/ClientDashboard";
 import BusinessDashboard from "./pages/BusinessDashboard";
+import SimpleClientDashboard from "./pages/SimpleClientDashboard";
+import SimpleBusinessDashboard from "./pages/SimpleBusinessDashboard";
+import AdminTeamManagement from "./pages/admin/AdminTeamManagement";
 import FindBusiness from "./pages/FindBusiness";
 import MyDepartments from "./pages/MyDepartments";
 import BookAppointment from "./pages/BookAppointment";
@@ -37,12 +41,21 @@ import BusinessNotifications from "./pages/business/BusinessNotifications";
 import BusinessPage from "./pages/business/BusinessPage";
 import BusinessChat from "./pages/business/BusinessChat";
 import BusinessProfile from "./pages/business/BusinessProfile";
+import BusinessSettings from "./pages/business/BusinessSettings";
+import BusinessOnboarding from "./pages/business/BusinessOnboarding";
 
 // Client pages
 import ClientAppointments from "./pages/client/ClientAppointments";
 import ClientMessages from "./pages/client/ClientMessages";
 import ClientNotifications from "./pages/client/ClientNotifications";
 import ClientProfile from "./pages/client/ClientProfile";
+import ClientSettings from "./pages/client/ClientSettings";
+
+// Legal pages
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import LegalDocuments from "./pages/LegalDocuments";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -62,10 +75,18 @@ const App = () => (
                   <Route path="/register" element={<Register />} />
                   <Route path="/business-subscription-setup" element={<BusinessSubscriptionSetup />} />
                   <Route 
+                    path="/business-onboarding" 
+                    element={
+                      <ProtectedRoute requiredRole="business">
+                        <BusinessOnboarding />
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
                     path="/dashboard" 
                     element={
                       <ProtectedRoute requiredRole="admin">
-                        <Dashboard />
+                        <SimpleDashboard />
                       </ProtectedRoute>
                     } 
                   />
@@ -73,7 +94,7 @@ const App = () => (
                     path="/client-dashboard" 
                     element={
                       <ProtectedRoute requiredRole="client">
-                        <ClientDashboard />
+                        <SimpleClientDashboard />
                       </ProtectedRoute>
                     } 
                   />
@@ -81,7 +102,7 @@ const App = () => (
                     path="/business-dashboard" 
                     element={
                       <ProtectedRoute requiredRole="business">
-                        <BusinessDashboard />
+                        <SimpleBusinessDashboard />
                       </ProtectedRoute>
                     } 
                   />
@@ -96,6 +117,14 @@ const App = () => (
                   <Route path="/admin/messages" element={<AdminMessages />} />
                   <Route path="/admin/notifications" element={<AdminNotifications />} />
                   <Route path="/admin/settings" element={<AdminSettings />} />
+                  <Route 
+                    path="/admin/team-management" 
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <AdminTeamManagement />
+                      </ProtectedRoute>
+                    } 
+                  />
                   
                   {/* Business Routes */}
                   <Route path="/business/appointments" element={<BusinessAppointments />} />
@@ -105,12 +134,19 @@ const App = () => (
                   <Route path="/business/page" element={<BusinessPage />} />
                   <Route path="/business/chat" element={<BusinessChat />} />
                   <Route path="/business/profile" element={<BusinessProfile />} />
+                  <Route path="/business/settings" element={<BusinessSettings />} />
                   
                   {/* Client Routes */}
                   <Route path="/client/appointments" element={<ClientAppointments />} />
                   <Route path="/client/messages" element={<ClientMessages />} />
                   <Route path="/client/notifications" element={<ClientNotifications />} />
                   <Route path="/client/profile" element={<ClientProfile />} />
+                  <Route path="/client/settings" element={<ClientSettings />} />
+                  
+                  {/* Legal Routes */}
+                  <Route path="/legal" element={<LegalDocuments />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

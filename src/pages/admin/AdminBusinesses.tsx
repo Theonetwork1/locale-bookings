@@ -123,17 +123,17 @@ const AdminBusinesses = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted">
+    <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="bg-white shadow-sm border-b px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Business Management</h1>
-            <p className="text-muted-foreground">Manage all businesses on the platform</p>
+            <h1 className="text-2xl font-bold text-[#1A1A1A]">Business Management</h1>
+            <p className="text-gray-600">Manage all businesses on the platform</p>
           </div>
           <Dialog open={showAddBusiness} onOpenChange={setShowAddBusiness}>
             <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary-dark text-primary-foreground">
+              <Button className="bg-[#4B2AAD] hover:bg-[#A68BFA] text-white">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Business
               </Button>
@@ -207,7 +207,7 @@ const AdminBusinesses = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={handleAddBusiness} className="w-full bg-primary hover:bg-primary-dark text-primary-foreground">
+                <Button onClick={handleAddBusiness} className="w-full bg-[#4B2AAD] hover:bg-[#A68BFA] text-white">
                   Add Business
                 </Button>
               </div>
@@ -238,11 +238,11 @@ const AdminBusinesses = () => {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-primary/10 rounded-md flex items-center justify-center">
-                      <Building2 className="w-6 h-6 text-primary" />
+                    <div className="w-12 h-12 bg-[#EEF1FF] rounded-md flex items-center justify-center">
+                      <Building2 className="w-6 h-6 text-[#4B2AAD]" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg font-bold text-foreground">{business.name}</CardTitle>
+                      <CardTitle className="text-lg font-bold text-[#1A1A1A]">{business.name}</CardTitle>
                       <Badge variant="secondary" className="mt-1">{business.category}</Badge>
                     </div>
                   </div>
@@ -276,8 +276,8 @@ const AdminBusinesses = () => {
 
                 <div className="flex items-center justify-between pt-2 border-t">
                   <div className="flex items-center space-x-1">
-                    <Star className="w-4 h-4 text-accent fill-current" />
-                    <span className="text-sm font-medium text-foreground">{business.rating}</span>
+                    <Star className="w-4 h-4 text-[#4B2AAD] fill-current" />
+                    <span className="text-sm font-medium text-[#1A1A1A]">{business.rating}</span>
                   </div>
                   <Badge variant={business.rating >= 4.5 ? 'default' : 'secondary'}>
                     {business.rating >= 4.5 ? 'Excellent' : 'Good'}
@@ -291,8 +291,8 @@ const AdminBusinesses = () => {
         {filteredBusinesses.length === 0 && (
           <div className="text-center py-12">
             <Building2 className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-foreground mb-2">No businesses found</h3>
-            <p className="text-muted-foreground">Try adjusting your search criteria</p>
+            <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">No businesses found</h3>
+            <p className="text-gray-600">Try adjusting your search criteria</p>
           </div>
         )}
       </div>

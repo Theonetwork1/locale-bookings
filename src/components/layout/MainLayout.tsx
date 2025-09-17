@@ -10,8 +10,8 @@ interface MainLayoutProps {
 const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
 
-  // Hide layout on landing, auth, and onboarding pages
-  const hideLayoutPaths = ['/', '/login', '/register', '/business-subscription-setup'];
+  // Hide layout on landing, auth, onboarding, and legal pages
+  const hideLayoutPaths = ['/', '/login', '/register', '/business-subscription-setup', '/business-onboarding', '/test', '/legal', '/terms-of-service', '/privacy-policy'];
   if (hideLayoutPaths.includes(location.pathname)) {
     return <>{children}</>;
   }

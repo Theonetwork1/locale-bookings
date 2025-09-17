@@ -1,155 +1,315 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase, getUserProfileByEmail, verifyPassword } from '@/lib/supabase';
 
-interface Profile {
+export type UserRole = 'admin' | 'business' | 'client';
+
+export interface User {
   id: string;
   email: string;
-  full_name: string | null;
-  phone: string | null;
-  role: 'client' | 'business' | 'admin';
-  department: string | null;
-  avatar_url: string | null;
+  name: string;
+  role: UserRole;
+  phone?: string;
+  avatar_url?: string;
+  business_name?: string;
+  business_address?: string;
+  business_category?: string;
+  business_description?: string;
+  // GÉOLOCALISATION AJOUTÉE
+  country?: string;
+  state?: string;
+  city?: string;
+  latitude?: number;
+  longitude?: number;
+  full_address?: string;
+  is_business_setup?: boolean;
+  isBusinessProfileComplete?: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
-  session: Session | null;
-  profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, userData: { full_name: string; role: 'client' | 'business' }) => Promise<{ error: any }>;
+  login: (email: string, password: string, role: UserRole) => Promise<void>;
+  logout: () => Promise<void>;
+  switchRole: (role: UserRole) => void;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, userData: { 
+    full_name: string; 
+    role: 'client' | 'business';
+    country?: string;
+    state?: string;
+    city?: string;
+    latitude?: number;
+    longitude?: number;
+    phone?: string;
+    business_name?: string;
+    business_address?: string;
+    business_category?: string;
+    business_description?: string;
+  }) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
-  updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>;
+  profile: User | null;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching profile:', error);
-        return;
-      }
-      
-      setProfile(data);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    }
-  };
-
   useEffect(() => {
-    // Set up auth state listener
+    // 1) Restore user from localStorage to keep role and show sidebar after reload
+    const savedUserRaw = localStorage.getItem('user');
+    if (savedUserRaw) {
+      try {
+        const savedUser: User = JSON.parse(savedUserRaw);
+        setUser(savedUser);
+        setLoading(false);
+      } catch {
+        // ignore parse errors
+      }
+    }
+
+    // 2) Additionally check Supabase session (optional demo fallback)
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const mockUser: User = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: 'John Doe',
+            role: 'client',
+            avatar_url: session.user.user_metadata?.avatar_url
+          };
+          setUser(prev => prev ?? mockUser);
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
+
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
         if (session?.user) {
-          // Defer profile fetching to avoid blocking
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-          }, 0);
+          const mockUser: User = {
+            id: session.user.id,
+            email: session.user.email || '',
+            name: 'John Doe',
+            role: 'client',
+            avatar_url: session.user.user_metadata?.avatar_url
+          };
+          setUser(mockUser);
         } else {
-          setProfile(null);
+          setUser(null);
         }
-        
         setLoading(false);
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        setTimeout(() => {
-          fetchProfile(session.user.id);
-        }, 0);
-      }
-      
-      setLoading(false);
-    });
-
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, userData: { full_name: string; role: 'client' | 'business' }) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: userData.full_name,
-          role: userData.role
+  const login = async (email: string, password: string, role: UserRole) => {
+    try {
+      setLoading(true);
+      
+      // Try to get user profile from database
+      try {
+        const userProfile = await getUserProfileByEmail(email);
+        
+        // Verify password
+        const isValidPassword = await verifyPassword(password, userProfile.password_hash);
+        if (!isValidPassword) {
+          throw new Error('Invalid credentials');
         }
+        
+        // Check if role matches
+        if (userProfile.role !== role) {
+          throw new Error(`This account is registered as ${userProfile.role}, not ${role}`);
+        }
+        
+        // For existing business users, check if they have business data
+        // If they have business data in their profile, they should be considered as setup complete
+        let isBusinessSetup = userProfile.is_business_setup;
+        let isBusinessProfileComplete = userProfile.isBusinessProfileComplete || false;
+        
+        if (userProfile.role === 'business' && !isBusinessSetup) {
+          // Check if user has business data in their profile
+          if (userProfile.business_name && userProfile.business_address && userProfile.business_category) {
+            isBusinessSetup = true;
+            // Update the database to reflect this
+            try {
+              await supabase
+                .from('user_profiles')
+                .update({ is_business_setup: true })
+                .eq('id', userProfile.id);
+            } catch (error) {
+              console.error('Error updating business setup status:', error);
+            }
+          }
+        }
+
+        const user: User = {
+          id: userProfile.id,
+          email: userProfile.email,
+          name: userProfile.name,
+          role: userProfile.role as UserRole,
+          phone: userProfile.phone,
+          avatar_url: userProfile.avatar_url,
+          business_name: userProfile.business_name,
+          business_address: userProfile.business_address,
+          business_category: userProfile.business_category,
+          business_description: userProfile.business_description,
+          is_business_setup: isBusinessSetup,
+          isBusinessProfileComplete: isBusinessProfileComplete
+        };
+        
+        setUser(user);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+      } catch (dbError) {
+        // Fallback to demo mode if user not found in database
+        console.log('User not found in database, using demo mode');
+        const mockUser: User = {
+          id: 'mock-user-id',
+          email,
+          name: email.split('@')[0],
+          role,
+          avatar_url: undefined
+        };
+        
+        setUser(mockUser);
+        localStorage.setItem('user', JSON.stringify(mockUser));
       }
-    });
-    
-    return { error };
-  };
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    
-    return { error };
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-  };
-
-  const updateProfile = async (updates: Partial<Profile>) => {
-    if (!user) return { error: new Error('No user logged in') };
-    
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', user.id);
-    
-    if (!error && profile) {
-      setProfile({ ...profile, ...updates });
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
-    
-    return { error };
   };
 
-  const value: AuthContextType = {
+  const logout = async () => {
+    try {
+      setLoading(true);
+      setUser(null);
+      localStorage.removeItem('user');
+      
+      // In a real app, you'd also sign out from Supabase
+      // await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const switchRole = (role: UserRole) => {
+    if (user) {
+      const updatedUser = { ...user, role };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
+  };
+
+  // Compatibility methods for new auth system
+  const signIn = async (email: string, password: string) => {
+    try {
+      await login(email, password, 'client'); // Default to client for compatibility
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  // Mise à jour de la méthode signUp pour inclure la géolocalisation
+  const signUp = async (email: string, password: string, userData: { 
+    full_name: string; 
+    role: 'client' | 'business';
+    country?: string;
+    state?: string;
+    city?: string;
+    latitude?: number;
+    longitude?: number;
+    phone?: string;
+    business_name?: string;
+    business_address?: string;
+    business_category?: string;
+    business_description?: string;
+  }) => {
+    try {
+      const mockUser: User = {
+        id: Date.now().toString(),
+        email,
+        name: userData.full_name,
+        role: userData.role,
+        avatar_url: undefined,
+        country: userData.country,
+        state: userData.state,
+        city: userData.city,
+        latitude: userData.latitude,
+        longitude: userData.longitude,
+        phone: userData.phone,
+        business_name: userData.business_name,
+        business_address: userData.business_address,
+        business_category: userData.business_category,
+        business_description: userData.business_description
+      };
+      
+      setUser(mockUser);
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      return { error: null };
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  const refreshUser = async () => {
+    if (!user) return;
+    
+    try {
+      const userProfile = await getUserProfileByEmail(user.email);
+      if (userProfile) {
+        const updatedUser: User = {
+          id: userProfile.id,
+          email: userProfile.email,
+          name: userProfile.name,
+          role: userProfile.role as UserRole,
+          phone: userProfile.phone,
+          avatar_url: userProfile.avatar_url,
+          business_name: userProfile.business_name,
+          business_address: userProfile.business_address,
+          business_category: userProfile.business_category,
+          business_description: userProfile.business_description,
+          is_business_setup: userProfile.is_business_setup,
+          isBusinessProfileComplete: userProfile.isBusinessProfileComplete
+        };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+    }
+  };
+
+  const value = {
     user,
-    session,
-    profile,
     loading,
-    signUp,
+    login,
+    logout,
+    switchRole,
     signIn,
-    signOut,
-    updateProfile
+    signUp,
+    signOut: logout, // Alias pour logout
+    profile: user, // For compatibility with ProtectedRoute
+    refreshUser
   };
 
   return (
@@ -157,4 +317,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       {children}
     </AuthContext.Provider>
   );
-};
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
