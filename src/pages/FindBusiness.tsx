@@ -190,11 +190,12 @@ const FindBusiness = () => {
   // Function to calculate distance between two points
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371; // Radius of the Earth in kilometers
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const PI = Math.PI;
+    const dLat = (lat2 - lat1) * PI / 180;
+    const dLon = (lon2 - lon1) * PI / 180;
     const a = 
       Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.cos(lat1 * PI / 180) * Math.cos(lat2 * PI / 180) * 
       Math.sin(dLon/2) * Math.sin(dLon/2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c; // Distance in kilometers
@@ -427,383 +428,382 @@ const FindBusiness = () => {
             Find Businesses
           </CardTitle>
         </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Search Bar */}
-            <div className="space-y-2">
-              <label htmlFor="search" className="text-[#1A1A1A] block text-sm font-medium">Search by Name</label>
-              <div className="flex gap-2">
-                <input
-                  id="search"
-                  type="text"
-                  placeholder="Search businesses..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD]"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <Button
-                  onClick={handleSearch}
-                  className="bg-[#4B2AAD] hover:bg-[#A68BFA] text-white"
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* Advanced Filters Toggle */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+        <CardContent className="space-y-4">
+          {/* Search Bar */}
+          <div className="space-y-2">
+            <label htmlFor="search" className="text-[#1A1A1A] block text-sm font-medium">Search by Name</label>
+            <div className="flex gap-2">
+              <input
+                id="search"
+                type="text"
+                placeholder="Search businesses..."
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD]"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               <Button
-                variant="outline"
-                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                className={`border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white transition-all duration-200 ${
-                  showAdvancedFilters ? 'bg-[#4B2AAD] text-white' : ''
-                }`}
+                onClick={handleSearch}
+                className="bg-[#4B2AAD] hover:bg-[#A68BFA] text-white"
               >
-                <Filter className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters</span>
-                <span className="sm:hidden">Filters</span>
-                <ChevronDown className={`h-4 w-4 ml-2 transition-transform duration-200 ${
-                  showAdvancedFilters ? 'rotate-180' : ''
-                }`} />
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50 text-sm"
-              >
-                Clear All
+                <Search className="h-4 w-4" />
               </Button>
             </div>
-
-            {/* Advanced Filters */}
-            {showAdvancedFilters && (
-              <div className="space-y-4 sm:space-y-6 pt-4 border-t border-gray-200 animate-in slide-in-from-top-2 duration-300">
-                {/* Location Filters Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                  {/* Country Filter */}
-                  <div className="space-y-2">
-                    <label className="text-[#1A1A1A] block text-sm font-medium">Country</label>
-                    <select
-                      value={selectedCountry}
-                      onChange={(e) => setSelectedCountry(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD]"
-                    >
-                      {countries.map((country) => (
-                        <option key={country.value} value={country.value}>
-                          {country.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* State/Department Filter */}
-                  <div className="space-y-2">
-                    <label className="text-[#1A1A1A] block text-sm font-medium">State/Department</label>
-                    <select
-                      value={selectedState}
-                      onChange={(e) => setSelectedState(e.target.value)}
-                      disabled={!selectedCountry}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD] disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    >
-                      {selectedCountry && states[selectedCountry as keyof typeof states] ? (
-                        states[selectedCountry as keyof typeof states].map((state) => (
-                          <option key={state.value} value={state.value}>
-                            {state.label}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="">Select a country first</option>
-                      )}
-                    </select>
-                  </div>
-
-                  {/* City Filter */}
-                  <div className="space-y-2">
-                    <label className="text-[#1A1A1A] block text-sm font-medium">City</label>
-                    <select
-                      value={selectedCity}
-                      onChange={(e) => setSelectedCity(e.target.value)}
-                      disabled={!selectedState}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD] disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    >
-                      {selectedState && cities[selectedState as keyof typeof cities] ? (
-                        cities[selectedState as keyof typeof cities].map((city) => (
-                          <option key={city.value} value={city.value}>
-                            {city.label}
-                          </option>
-                        ))
-                      ) : (
-                        <option value="">Select a state first</option>
-                      )}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Category and Distance Filters Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  {/* Business Category Filter */}
-                  <div className="space-y-2">
-                    <label className="text-[#1A1A1A] block text-sm font-medium">Business Category</label>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD]"
-                    >
-                      {businessCategories.map((category) => (
-                        <option key={category.value} value={category.value}>
-                          {category.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Distance Filter */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[#1A1A1A] block text-sm font-medium">Distance Radius</label>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={getCurrentLocation}
-                        className="text-xs border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white"
-                      >
-                        <Navigation className="h-3 w-3 mr-1" />
-                        Get Location
-                      </Button>
-                    </div>
-                    <select
-                      value={selectedDistance}
-                      onChange={(e) => setSelectedDistance(e.target.value)}
-                      disabled={!userLocation}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD] disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    >
-                      {distanceOptions.map((distance) => (
-                        <option key={distance.value} value={distance.value}>
-                          {distance.label}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="text-xs text-gray-500">
-                      {userLocation 
-                        ? `Location detected. Select distance to filter nearby businesses.`
-                        : "Click 'Get Location' to enable distance filtering"
-                      }
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Popular Categories - Show when no search is active */}
-        {!searchTerm && !selectedCategory && !selectedCountry && (
-          <Card className="bg-gradient-to-r from-[#EEF1FF] to-[#F8FAFC] border-0">
-            <CardContent className="p-4 sm:p-6">
-              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">Popular Categories</h3>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { name: 'Restaurant', value: 'restaurant', icon: '🍽️' },
-                  { name: 'Clinic', value: 'clinic', icon: '🏥' },
-                  { name: 'Hotel', value: 'hotel', icon: '🏨' },
-                  { name: 'Beauty Studio', value: 'beauty-studio', icon: '💄' },
-                  { name: 'Garage', value: 'garage', icon: '🔧' },
-                  { name: 'Pharmacy', value: 'pharmacy', icon: '💊' },
-                  { name: 'Gym', value: 'gym', icon: '💪' },
-                  { name: 'Café', value: 'cafe', icon: '☕' }
-                ].map((category) => (
-                  <button
-                    key={category.value}
-                    onClick={() => {
-                      setSelectedCategory(category.value);
-                      if (!showAdvancedFilters) setShowAdvancedFilters(true);
-                    }}
-                    className="flex items-center gap-2 px-3 py-2 text-sm bg-white text-[#4B2AAD] rounded-full hover:bg-[#4B2AAD] hover:text-white transition-all duration-200 shadow-sm border border-[#4B2AAD] border-opacity-20"
-                  >
-                    <span>{category.icon}</span>
-                    <span>{category.name}</span>
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Results Section */}
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <h2 className="text-lg sm:text-xl font-semibold text-[#1A1A1A]">
-              {filteredBusinesses.length} Business{filteredBusinesses.length !== 1 ? 'es' : ''} Found
-            </h2>
-            {userLocation && selectedDistance && (
-              <div className="flex items-center text-sm text-gray-600">
-                <MapPin className="h-4 w-4 mr-1" />
-                <span>Within {selectedDistance} km of your location</span>
-              </div>
-            )}
           </div>
 
-          {/* Results Content */}
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4B2AAD]"></div>
-              <span className="ml-3 text-[#1A1A1A]">Loading businesses...</span>
-            </div>
-          ) : filteredBusinesses.length === 0 ? (
-            <Card className="bg-white border-0 shadow-lg">
-              <CardContent className="p-6 sm:p-8 text-center">
-                <div className="max-w-md mx-auto">
-                  <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">No businesses found</h3>
-                  <p className="text-gray-600 mb-6 text-sm sm:text-base">
-                    We couldn't find any businesses matching your criteria. Try adjusting your search or explore popular categories.
-                  </p>
-                  
-                  {/* Quick Actions */}
-                  <div className="space-y-4">
-                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={clearFilters}
-                        className="border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white"
-                      >
-                        Clear All Filters
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSearchTerm("");
-                          setSelectedCategory("");
-                        }}
-                        className="border-gray-300 text-gray-600 hover:bg-gray-50"
-                      >
-                        Reset Search
-                      </Button>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <p className="text-sm font-medium text-gray-700">Try these popular categories:</p>
-                      <div className="flex flex-wrap justify-center gap-2">
-                        {[
-                          { name: 'Restaurant', value: 'restaurant', icon: '🍽️' },
-                          { name: 'Clinic', value: 'clinic', icon: '🏥' },
-                          { name: 'Hotel', value: 'hotel', icon: '🏨' },
-                          { name: 'Beauty Studio', value: 'beauty-studio', icon: '💄' },
-                          { name: 'Garage', value: 'garage', icon: '🔧' }
-                        ].map((category) => (
-                          <button
-                            key={category.value}
-                            onClick={() => {
-                              setSelectedCategory(category.value);
-                              setSearchTerm("");
-                              if (!showAdvancedFilters) setShowAdvancedFilters(true);
-                            }}
-                            className="flex items-center gap-1 px-3 py-2 text-xs sm:text-sm bg-[#EEF1FF] text-[#4B2AAD] rounded-full hover:bg-[#4B2AAD] hover:text-white transition-all duration-200"
-                          >
-                            <span>{category.icon}</span>
-                            <span>{category.name}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+          {/* Advanced Filters Toggle */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+              className={`border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white transition-all duration-200 ${
+                showAdvancedFilters ? 'bg-[#4B2AAD] text-white' : ''
+              }`}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">{showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters</span>
+              <span className="sm:hidden">Filters</span>
+              <ChevronDown className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                showAdvancedFilters ? 'rotate-180' : ''
+              }`} />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50 text-sm"
+            >
+              Clear All
+            </Button>
+          </div>
+
+          {/* Advanced Filters */}
+          {showAdvancedFilters && (
+            <div className="space-y-4 sm:space-y-6 pt-4 border-t border-gray-200 animate-in slide-in-from-top-2 duration-300">
+              {/* Location Filters Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                {/* Country Filter */}
+                <div className="space-y-2">
+                  <label className="text-[#1A1A1A] block text-sm font-medium">Country</label>
+                  <select
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD]"
+                  >
+                    {countries.map((country) => (
+                      <option key={country.value} value={country.value}>
+                        {country.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {filteredBusinesses.map((business) => {
-                const businessDistance = userLocation && business.latitude && business.longitude 
-                  ? calculateDistance(userLocation.lat, userLocation.lng, business.latitude, business.longitude)
-                  : null;
 
-                return (
-                  <Card key={business.id} className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-start space-x-3 mb-3">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#4B2AAD] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
-                              <span className="text-[#4B2AAD] font-bold text-sm sm:text-lg">
-                                {business.name.charAt(0)}
-                              </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-lg sm:text-xl font-bold text-[#1A1A1A] truncate">
-                                {business.name}
-                              </h3>
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                                <span className="px-2 py-1 bg-[#EEF1FF] text-[#4B2AAD] text-xs rounded-full w-fit">
-                                  {business.category}
-                                </span>
-                                {business.rating && (
-                                  <div className="flex items-center">
-                                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                                    <span className="ml-1 text-sm font-medium">{business.rating}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
+                {/* State/Department Filter */}
+                <div className="space-y-2">
+                  <label className="text-[#1A1A1A] block text-sm font-medium">State/Department</label>
+                  <select
+                    value={selectedState}
+                    onChange={(e) => setSelectedState(e.target.value)}
+                    disabled={!selectedCountry}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    {selectedCountry && states[selectedCountry as keyof typeof states] ? (
+                      states[selectedCountry as keyof typeof states].map((state) => (
+                        <option key={state.value} value={state.value}>
+                          {state.label}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">Select a country first</option>
+                    )}
+                  </select>
+                </div>
 
-                          {business.description && (
-                            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                              {business.description}
-                            </p>
-                          )}
+                {/* City Filter */}
+                <div className="space-y-2">
+                  <label className="text-[#1A1A1A] block text-sm font-medium">City</label>
+                  <select
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                    disabled={!selectedState}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    {selectedState && cities[selectedState as keyof typeof cities] ? (
+                      cities[selectedState as keyof typeof cities].map((city) => (
+                        <option key={city.value} value={city.value}>
+                          {city.label}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">Select a state first</option>
+                    )}
+                  </select>
+                </div>
+              </div>
 
-                          <div className="space-y-2">
-                            {business.address && (
-                              <div className="flex items-start text-sm text-gray-600">
-                                <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
-                                <span className="break-words">{business.address}</span>
-                              </div>
-                            )}
-                            {businessDistance && (
-                              <div className="flex items-center text-sm text-[#4B2AAD] font-medium">
-                                <Navigation className="w-4 h-4 mr-2 flex-shrink-0" />
-                                <span>{businessDistance.toFixed(1)} km away</span>
-                              </div>
-                            )}
-                            {business.phone && (
-                              <div className="flex items-center text-sm text-gray-600">
-                                <span className="w-4 h-4 mr-2 flex-shrink-0">📞</span>
-                                <span className="break-all">{business.phone}</span>
-                              </div>
-                            )}
-                            {business.email && (
-                              <div className="flex items-center text-sm text-gray-600">
-                                <span className="w-4 h-4 mr-2 flex-shrink-0">✉️</span>
-                                <span className="break-all">{business.email}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+              {/* Category and Distance Filters Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {/* Business Category Filter */}
+                <div className="space-y-2">
+                  <label className="text-[#1A1A1A] block text-sm font-medium">Business Category</label>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD]"
+                  >
+                    {businessCategories.map((category) => (
+                      <option key={category.value} value={category.value}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                      <div className="mt-4 pt-4 border-t border-gray-200">
-                        <Button
-                          className="w-full bg-[#4B2AAD] hover:bg-[#A68BFA] text-white"
-                          onClick={() => {
-                            toast({
-                              title: "Business Selected",
-                              description: "You selected " + business.name,
-                            });
-                          }}
-                        >
-                          View Details
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                {/* Distance Filter */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[#1A1A1A] block text-sm font-medium">Distance Radius</label>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={getCurrentLocation}
+                      className="text-xs border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white"
+                    >
+                      <Navigation className="h-3 w-3 mr-1" />
+                      Get Location
+                    </Button>
+                  </div>
+                  <select
+                    value={selectedDistance}
+                    onChange={(e) => setSelectedDistance(e.target.value)}
+                    disabled={!userLocation}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B2AAD] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    {distanceOptions.map((distance) => (
+                      <option key={distance.value} value={distance.value}>
+                        {distance.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500">
+                    {userLocation 
+                      ? `Location detected. Select distance to filter nearby businesses.`
+                      : "Click 'Get Location' to enable distance filtering"
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Popular Categories - Show when no search is active */}
+      {!searchTerm && !selectedCategory && !selectedCountry && (
+        <Card className="bg-gradient-to-r from-[#EEF1FF] to-[#F8FAFC] border-0">
+          <CardContent className="p-4 sm:p-6">
+            <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">Popular Categories</h3>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { name: 'Restaurant', value: 'restaurant', icon: '🍽️' },
+                { name: 'Clinic', value: 'clinic', icon: '🏥' },
+                { name: 'Hotel', value: 'hotel', icon: '🏨' },
+                { name: 'Beauty Studio', value: 'beauty-studio', icon: '💄' },
+                { name: 'Garage', value: 'garage', icon: '🔧' },
+                { name: 'Pharmacy', value: 'pharmacy', icon: '💊' },
+                { name: 'Gym', value: 'gym', icon: '💪' },
+                { name: 'Café', value: 'cafe', icon: '☕' }
+              ].map((category) => (
+                <button
+                  key={category.value}
+                  onClick={() => {
+                    setSelectedCategory(category.value);
+                    if (!showAdvancedFilters) setShowAdvancedFilters(true);
+                  }}
+                  className="flex items-center gap-2 px-3 py-2 text-sm bg-white text-[#4B2AAD] rounded-full hover:bg-[#4B2AAD] hover:text-white transition-all duration-200 shadow-sm border border-[#4B2AAD] border-opacity-20"
+                >
+                  <span>{category.icon}</span>
+                  <span>{category.name}</span>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Results Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <h2 className="text-lg sm:text-xl font-semibold text-[#1A1A1A]">
+            {filteredBusinesses.length} Business{filteredBusinesses.length !== 1 ? 'es' : ''} Found
+          </h2>
+          {userLocation && selectedDistance && (
+            <div className="flex items-center text-sm text-gray-600">
+              <MapPin className="h-4 w-4 mr-1" />
+              <span>Within {selectedDistance} km of your location</span>
             </div>
           )}
         </div>
+
+        {/* Results Content */}
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#4B2AAD]"></div>
+            <span className="ml-3 text-[#1A1A1A]">Loading businesses...</span>
+          </div>
+        ) : filteredBusinesses.length === 0 ? (
+          <Card className="bg-white border-0 shadow-lg">
+            <CardContent className="p-6 sm:p-8 text-center">
+              <div className="max-w-md mx-auto">
+                <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">No businesses found</h3>
+                <p className="text-gray-600 mb-6 text-sm sm:text-base">
+                  We couldn't find any businesses matching your criteria. Try adjusting your search or explore popular categories.
+                </p>
+                
+                {/* Quick Actions */}
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearFilters}
+                      className="border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white"
+                    >
+                      Clear All Filters
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSearchTerm("");
+                        setSelectedCategory("");
+                      }}
+                      className="border-gray-300 text-gray-600 hover:bg-gray-50"
+                    >
+                      Reset Search
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium text-gray-700">Try these popular categories:</p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {[
+                        { name: 'Restaurant', value: 'restaurant', icon: '🍽️' },
+                        { name: 'Clinic', value: 'clinic', icon: '🏥' },
+                        { name: 'Hotel', value: 'hotel', icon: '🏨' },
+                        { name: 'Beauty Studio', value: 'beauty-studio', icon: '💄' },
+                        { name: 'Garage', value: 'garage', icon: '🔧' }
+                      ].map((category) => (
+                        <button
+                          key={category.value}
+                          onClick={() => {
+                            setSelectedCategory(category.value);
+                            setSearchTerm("");
+                            if (!showAdvancedFilters) setShowAdvancedFilters(true);
+                          }}
+                          className="flex items-center gap-1 px-3 py-2 text-xs sm:text-sm bg-[#EEF1FF] text-[#4B2AAD] rounded-full hover:bg-[#4B2AAD] hover:text-white transition-all duration-200"
+                        >
+                          <span>{category.icon}</span>
+                          <span>{category.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {filteredBusinesses.map((business) => {
+              const businessDistance = userLocation && business.latitude && business.longitude 
+                ? calculateDistance(userLocation.lat, userLocation.lng, business.latitude, business.longitude)
+                : null;
+
+              return (
+                <Card key={business.id} className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-start space-x-3 mb-3">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#4B2AAD] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span className="text-[#4B2AAD] font-bold text-sm sm:text-lg">
+                              {business.name.charAt(0)}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg sm:text-xl font-bold text-[#1A1A1A] truncate">
+                              {business.name}
+                            </h3>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                              <span className="px-2 py-1 bg-[#EEF1FF] text-[#4B2AAD] text-xs rounded-full w-fit">
+                                {business.category}
+                              </span>
+                              {business.rating && (
+                                <div className="flex items-center">
+                                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                                  <span className="ml-1 text-sm font-medium">{business.rating}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {business.description && (
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                            {business.description}
+                          </p>
+                        )}
+
+                        <div className="space-y-2">
+                          {business.address && (
+                            <div className="flex items-start text-sm text-gray-600">
+                              <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
+                              <span className="break-words">{business.address}</span>
+                            </div>
+                          )}
+                          {businessDistance && (
+                            <div className="flex items-center text-sm text-[#4B2AAD] font-medium">
+                              <Navigation className="w-4 h-4 mr-2 flex-shrink-0" />
+                              <span>{businessDistance.toFixed(1)} km away</span>
+                            </div>
+                          )}
+                          {business.phone && (
+                            <div className="flex items-center text-sm text-gray-600">
+                              <span className="w-4 h-4 mr-2 flex-shrink-0">📞</span>
+                              <span className="break-all">{business.phone}</span>
+                            </div>
+                          )}
+                          {business.email && (
+                            <div className="flex items-center text-sm text-gray-600">
+                              <span className="w-4 h-4 mr-2 flex-shrink-0">✉️</span>
+                              <span className="break-all">{business.email}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <Button
+                        className="w-full bg-[#4B2AAD] hover:bg-[#A68BFA] text-white"
+                        onClick={() => {
+                          toast({
+                            title: "Business Selected",
+                            description: "You selected " + business.name,
+                          });
+                        }}
+                      >
+                        View Details
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
