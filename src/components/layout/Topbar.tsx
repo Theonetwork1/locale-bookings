@@ -219,11 +219,13 @@ const Topbar = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 onClick={() => {
+                  console.log('Topbar - User role for profile navigation:', user?.role);
                   const profilePath = user?.role === 'admin'
                     ? '/admin/profile'
                     : user?.role === 'business'
                       ? '/business/profile'
                       : '/client/profile';
+                  console.log('Topbar - Navigating to:', profilePath);
                   navigate(profilePath);
                 }}
                 className="cursor-pointer"
