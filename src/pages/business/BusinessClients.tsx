@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +44,7 @@ interface Client {
 }
 
 const BusinessClients = () => {
+  const navigate = useNavigate();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -410,6 +412,10 @@ const BusinessClients = () => {
                     variant="outline" 
                     size="sm" 
                     className="flex-1 h-9 text-xs border-[#E5E7EB] hover:border-[#4B2AAD] hover:text-[#4B2AAD]"
+                    onClick={() => {
+                      // Navigate to client appointments history
+                      navigate(`/business/appointments?client=${client.id}`);
+                    }}
                   >
                     <Eye className="w-3 h-3 mr-1" />
                     <span className="hidden sm:inline">View</span>
@@ -419,6 +425,10 @@ const BusinessClients = () => {
                     variant="outline" 
                     size="sm" 
                     className="flex-1 h-9 text-xs border-[#E5E7EB] hover:border-[#4B2AAD] hover:text-[#4B2AAD]"
+                    onClick={() => {
+                      // Navigate to chat with client
+                      navigate('/business/chat');
+                    }}
                   >
                     <MessageCircle className="w-3 h-3 mr-1" />
                     <span className="hidden sm:inline">Message</span>
@@ -428,6 +438,10 @@ const BusinessClients = () => {
                     variant="outline" 
                     size="sm" 
                     className="h-9 px-2 border-[#E5E7EB] hover:border-[#4B2AAD] hover:text-[#4B2AAD]"
+                    onClick={() => {
+                      // Show more options - could open a dropdown or modal
+                      alert(`More options for ${client.name}:\n\n• Edit Client Info\n• Block/Unblock Client\n• View Full Profile\n• Export Data\n• Send Email\n• Schedule Appointment`);
+                    }}
                   >
                     <MoreVertical className="w-3 h-3" />
                   </Button>
