@@ -49,13 +49,19 @@ const BusinessProfile = () => {
     contact: false
   });
 
-  // Validation states
+  // Enhanced validation states
   const [validation, setValidation] = useState({
     business_name: { isValid: true, message: '' },
     business_category: { isValid: true, message: '' },
     phone: { isValid: true, message: '' },
-    business_address: { isValid: true, message: '' }
+    business_address: { isValid: true, message: '' },
+    business_description: { isValid: true, message: '' },
+    name: { isValid: true, message: '' }
   });
+
+  // Location autofill suggestions
+  const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const categories = [
     'Beauty & Wellness',
@@ -71,27 +77,63 @@ const BusinessProfile = () => {
     'Other'
   ];
 
-  // Real-time validation
+  // Enhanced real-time validation
   const validateField = (field: string, value: string) => {
     let isValid = true;
     let message = '';
 
     switch (field) {
       case 'business_name':
-        isValid = value.length >= 2;
-        message = isValid ? '' : 'Business name must be at least 2 characters';
+        if (!value.trim()) {
+          isValid = false;
+          message = 'Business name is required';
+        } else if (value.length < 2) {
+          isValid = false;
+          message = 'Business name must be at least 2 characters';
+        } else if (value.length > 100) {
+          isValid = false;
+          message = 'Business name must be less than 100 characters';
+        } else if (!/^[a-zA-Z0-9\s\-&'.]+$/.test(value)) {
+          isValid = false;
+          message = 'Business name contains invalid characters';
+        }
+        break;
+      case 'name':
+        if (value && value.length < 2) {
+          isValid = false;
+          message = 'Name must be at least 2 characters';
+        } else if (value && !/^[a-zA-Z\s\-'.]+$/.test(value)) {
+          isValid = false;
+          message = 'Name can only contain letters, spaces, hyphens, and apostrophes';
+        }
         break;
       case 'phone':
         if (value) {
-          const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-          isValid = phoneRegex.test(value.replace(/\D/g, ''));
-          message = isValid ? '' : 'Please enter a valid phone number';
+          const cleanPhone = value.replace(/\D/g, '');
+          if (cleanPhone.length < 10) {
+            isValid = false;
+            message = 'Phone number must be at least 10 digits';
+          } else if (cleanPhone.length > 15) {
+            isValid = false;
+            message = 'Phone number must be less than 15 digits';
+          }
         }
         break;
       case 'business_address':
         if (value) {
-          isValid = value.length >= 10;
-          message = isValid ? '' : 'Please enter a complete address';
+          if (value.length < 10) {
+            isValid = false;
+            message = 'Please enter a complete address (minimum 10 characters)';
+          } else if (value.length > 200) {
+            isValid = false;
+            message = 'Address must be less than 200 characters';
+          }
+        }
+        break;
+      case 'business_description':
+        if (value && value.length > 500) {
+          isValid = false;
+          message = 'Description must be less than 500 characters';
         }
         break;
     }
@@ -102,6 +144,35 @@ const BusinessProfile = () => {
     }));
 
     return isValid;
+  };
+
+  // Location autofill functionality
+  const handleAddressAutofill = async (partialAddress: string) => {
+    if (partialAddress.length < 3) {
+      setLocationSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      // Mock suggestions - in real app, use Google Places API
+      const mockSuggestions = [
+        `${partialAddress} Street, New York, NY`,
+        `${partialAddress} Avenue, Los Angeles, CA`,
+        `${partialAddress} Road, Chicago, IL`,
+        `${partialAddress} Boulevard, Miami, FL`
+      ];
+      setLocationSuggestions(mockSuggestions);
+      setShowSuggestions(true);
+    } catch (error) {
+      console.error('Error fetching address suggestions:', error);
+    }
+  };
+
+  const selectAddressSuggestion = (suggestion: string) => {
+    setFormData(prev => ({ ...prev, business_address: suggestion }));
+    setShowSuggestions(false);
+    validateField('business_address', suggestion);
   };
 
   const toggleSection = (section: keyof typeof openSections) => {
@@ -310,26 +381,34 @@ const BusinessProfile = () => {
                     <CollapsibleContent>
                       <CardContent className="space-y-4 sm:space-y-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                          <div>
-                            <Label htmlFor="business_name" className="flex items-center gap-2">
-                              Business Name *
-                              {validation.business_name.isValid ? 
-                                <CheckCircle className="w-4 h-4 text-green-500" /> : 
-                                <AlertCircle className="w-4 h-4 text-red-500" />
-                              }
-                            </Label>
-                            <Input
-                              id="business_name"
-                              value={formData.business_name}
-                              onChange={(e) => handleInputChange('business_name', e.target.value)}
-                              placeholder="Enter business name"
-                              required
-                              className={`h-12 ${!validation.business_name.isValid ? 'border-red-500 focus:border-red-500' : 'border-[#E5E7EB] focus:border-[#4B2AAD]'}`}
-                            />
-                            {!validation.business_name.isValid && (
-                              <p className="text-red-500 text-xs mt-1">{validation.business_name.message}</p>
-                            )}
-                          </div>
+                           <div>
+                             <Label htmlFor="business_name" className="flex items-center gap-2">
+                               Business Name *
+                               {validation.business_name.isValid ? 
+                                 <CheckCircle className="w-4 h-4 text-green-500" aria-label="Valid business name" /> : 
+                                 <AlertCircle className="w-4 h-4 text-red-500" aria-label="Invalid business name" />
+                               }
+                             </Label>
+                             <Input
+                               id="business_name"
+                               value={formData.business_name}
+                               onChange={(e) => handleInputChange('business_name', e.target.value)}
+                               placeholder="Enter business name"
+                               required
+                               className={`h-12 ${!validation.business_name.isValid ? 'border-red-500 focus:border-red-500' : 'border-[#E5E7EB] focus:border-[#4B2AAD]'}`}
+                               aria-describedby="business-name-error business-name-help"
+                               autoComplete="organization"
+                               maxLength={100}
+                             />
+                             {!validation.business_name.isValid && (
+                               <p id="business-name-error" className="text-red-500 text-xs mt-1" role="alert">
+                                 {validation.business_name.message}
+                               </p>
+                             )}
+                             <p id="business-name-help" className="text-xs text-[#64748B] mt-1">
+                               {formData.business_name.length}/100 characters
+                             </p>
+                           </div>
 
                           <div>
                             <Label htmlFor="business_category">Category *</Label>
@@ -351,20 +430,34 @@ const BusinessProfile = () => {
                           </div>
                         </div>
 
-                        <div>
-                          <Label htmlFor="business_description">Description</Label>
-                          <Textarea
-                            id="business_description"
-                            value={formData.business_description}
-                            onChange={(e) => handleInputChange('business_description', e.target.value)}
-                            placeholder="Describe your business and services"
-                            rows={3}
-                            className="resize-none"
-                          />
-                          <p className="text-xs text-[#64748B] mt-1">
-                            {formData.business_description.length}/500 characters
-                          </p>
-                        </div>
+                         <div>
+                           <Label htmlFor="business_description" className="flex items-center gap-2">
+                             Description
+                             {validation.business_description.isValid ? 
+                               <CheckCircle className="w-4 h-4 text-green-500" aria-label="Valid description" /> : 
+                               <AlertCircle className="w-4 h-4 text-red-500" aria-label="Invalid description" />
+                             }
+                           </Label>
+                           <Textarea
+                             id="business_description"
+                             value={formData.business_description}
+                             onChange={(e) => handleInputChange('business_description', e.target.value)}
+                             placeholder="Describe your business and services"
+                             rows={3}
+                             className={`resize-none ${!validation.business_description.isValid ? 'border-red-500' : 'border-[#E5E7EB] focus:border-[#4B2AAD]'}`}
+                             aria-describedby="description-help description-error"
+                             maxLength={500}
+                           />
+                           {!validation.business_description.isValid && (
+                             <p id="description-error" className="text-red-500 text-xs mt-1" role="alert">
+                               {validation.business_description.message}
+                             </p>
+                           )}
+                           <p id="description-help" className={`text-xs mt-1 ${formData.business_description.length > 450 ? 'text-orange-500' : 'text-[#64748B]'}`}>
+                             {formData.business_description.length}/500 characters
+                             {formData.business_description.length > 450 && ' (approaching limit)'}
+                           </p>
+                         </div>
                       </CardContent>
                     </CollapsibleContent>
                   </Collapsible>
@@ -392,42 +485,81 @@ const BusinessProfile = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <CardContent className="space-y-4 sm:space-y-6">
-                        <div>
-                          <Label htmlFor="business_address" className="flex items-center gap-2">
-                            Business Address
-                            {validation.business_address.isValid ? 
-                              <CheckCircle className="w-4 h-4 text-green-500" /> : 
-                              <AlertCircle className="w-4 h-4 text-red-500" />
-                            }
-                          </Label>
-                          <div className="flex flex-col sm:flex-row gap-2">
-                            <Input
-                              id="business_address"
-                              value={formData.business_address}
-                              onChange={(e) => handleInputChange('business_address', e.target.value)}
-                              placeholder="Enter complete business address"
-                              className={`flex-1 h-12 ${!validation.business_address.isValid ? 'border-red-500' : 'border-[#E5E7EB] focus:border-[#4B2AAD]'}`}
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={handleAddressGeocode}
-                              disabled={!formData.business_address || geoLoading}
-                              className="h-12 px-4"
-                            >
-                              {geoLoading ? (
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              ) : (
-                                <MapPin className="w-4 h-4 mr-2" />
-                              )}
-                              <span className="hidden sm:inline">Find GPS</span>
-                              <span className="sm:hidden">GPS</span>
-                            </Button>
-                          </div>
-                          {!validation.business_address.isValid && (
-                            <p className="text-red-500 text-xs mt-1">{validation.business_address.message}</p>
-                          )}
-                        </div>
+                         <div className="relative">
+                           <Label htmlFor="business_address" className="flex items-center gap-2">
+                             Business Address
+                             {validation.business_address.isValid ? 
+                               <CheckCircle className="w-4 h-4 text-green-500" aria-label="Valid address" /> : 
+                               <AlertCircle className="w-4 h-4 text-red-500" aria-label="Invalid address" />
+                             }
+                           </Label>
+                           <div className="flex flex-col sm:flex-row gap-2">
+                             <div className="flex-1 relative">
+                               <Input
+                                 id="business_address"
+                                 value={formData.business_address}
+                                 onChange={(e) => {
+                                   handleInputChange('business_address', e.target.value);
+                                   handleAddressAutofill(e.target.value);
+                                 }}
+                                 onFocus={() => setShowSuggestions(locationSuggestions.length > 0)}
+                                 onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                                 placeholder="Enter complete business address"
+                                 className={`h-12 ${!validation.business_address.isValid ? 'border-red-500' : 'border-[#E5E7EB] focus:border-[#4B2AAD]'}`}
+                                 aria-describedby="address-help address-error"
+                                 autoComplete="street-address"
+                               />
+                               
+                               {/* Address Suggestions Dropdown */}
+                               {showSuggestions && locationSuggestions.length > 0 && (
+                                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[#E5E7EB] rounded-md shadow-lg z-10 max-h-40 overflow-y-auto">
+                                   {locationSuggestions.map((suggestion, index) => (
+                                     <button
+                                       key={index}
+                                       type="button"
+                                       onClick={() => selectAddressSuggestion(suggestion)}
+                                       className="w-full text-left px-3 py-2 text-sm hover:bg-[#F8FAFC] hover:text-[#4B2AAD] transition-colors"
+                                     >
+                                       <MapPin className="w-3 h-3 inline mr-2" />
+                                       {suggestion}
+                                     </button>
+                                   ))}
+                                 </div>
+                               )}
+                             </div>
+                             <Button
+                               type="button"
+                               variant="outline"
+                               onClick={handleAddressGeocode}
+                               disabled={!formData.business_address || geoLoading}
+                               className="h-12 px-4"
+                               aria-label={geoLoading ? 'Finding GPS coordinates...' : 'Find GPS coordinates'}
+                             >
+                               {geoLoading ? (
+                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
+                               ) : (
+                                 <MapPin className="w-4 h-4 mr-2" aria-hidden="true" />
+                               )}
+                               <span className="hidden sm:inline">
+                                 {geoLoading ? 'Finding...' : 'Find GPS'}
+                               </span>
+                               <span className="sm:hidden">
+                                 {geoLoading ? '...' : 'GPS'}
+                               </span>
+                             </Button>
+                           </div>
+                           {!validation.business_address.isValid && (
+                             <p id="address-error" className="text-red-500 text-xs mt-1" role="alert">
+                               {validation.business_address.message}
+                             </p>
+                           )}
+                           <p id="address-help" className="text-xs text-[#64748B] mt-1">
+                             {geoLoading ? 
+                               'Searching for GPS coordinates...' : 
+                               'Enter your complete business address for accurate location mapping'
+                             }
+                           </p>
+                         </div>
 
                         <div>
                           <LocationSelector
@@ -469,52 +601,80 @@ const BusinessProfile = () => {
                     <CollapsibleContent>
                       <CardContent className="space-y-4 sm:space-y-6">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                          <div>
-                            <Label htmlFor="email">Email Address</Label>
-                            <Input
-                              id="email"
-                              type="email"
-                              value={formData.email}
-                              className="bg-gray-50 cursor-not-allowed h-12"
-                              disabled
-                            />
-                            <p className="text-xs text-[#64748B] mt-1">Email cannot be changed</p>
-                          </div>
+                           <div>
+                             <Label htmlFor="email">Email Address</Label>
+                             <Input
+                               id="email"
+                               type="email"
+                               value={formData.email}
+                               className="bg-gray-50 cursor-not-allowed h-12"
+                               disabled
+                               aria-describedby="email-help"
+                             />
+                             <p id="email-help" className="text-xs text-[#64748B] mt-1">
+                               Email cannot be changed. Contact support if you need to update your email.
+                             </p>
+                           </div>
 
-                          <div>
-                            <Label htmlFor="phone" className="flex items-center gap-2">
-                              Phone Number
-                              {formData.phone && validation.phone.isValid && (
-                                <CheckCircle className="w-4 h-4 text-green-500" />
-                              )}
-                              {formData.phone && !validation.phone.isValid && (
-                                <AlertCircle className="w-4 h-4 text-red-500" />
-                              )}
-                            </Label>
-                            <Input
-                              id="phone"
-                              type="tel"
-                              value={formData.phone}
-                              onChange={(e) => handleInputChange('phone', e.target.value)}
-                              placeholder="Enter phone number"
-                              className={`h-12 ${!validation.phone.isValid ? 'border-red-500' : 'border-[#E5E7EB] focus:border-[#4B2AAD]'}`}
-                            />
-                            {!validation.phone.isValid && (
-                              <p className="text-red-500 text-xs mt-1">{validation.phone.message}</p>
-                            )}
-                          </div>
+                           <div>
+                             <Label htmlFor="phone" className="flex items-center gap-2">
+                               Phone Number
+                               {formData.phone && validation.phone.isValid && (
+                                 <CheckCircle className="w-4 h-4 text-green-500" aria-label="Valid phone number" />
+                               )}
+                               {formData.phone && !validation.phone.isValid && (
+                                 <AlertCircle className="w-4 h-4 text-red-500" aria-label="Invalid phone number" />
+                               )}
+                             </Label>
+                             <Input
+                               id="phone"
+                               type="tel"
+                               value={formData.phone}
+                               onChange={(e) => handleInputChange('phone', e.target.value)}
+                               placeholder="+1 (555) 123-4567"
+                               className={`h-12 ${!validation.phone.isValid ? 'border-red-500' : 'border-[#E5E7EB] focus:border-[#4B2AAD]'}`}
+                               aria-describedby="phone-help phone-error"
+                               autoComplete="tel"
+                             />
+                             {!validation.phone.isValid && (
+                               <p id="phone-error" className="text-red-500 text-xs mt-1" role="alert">
+                                 {validation.phone.message}
+                               </p>
+                             )}
+                             <p id="phone-help" className="text-xs text-[#64748B] mt-1">
+                               Include country code for international numbers
+                             </p>
+                           </div>
                         </div>
 
-                        <div>
-                          <Label htmlFor="name">Owner/Manager Name</Label>
-                          <Input
-                            id="name"
-                            value={formData.name}
-                            onChange={(e) => handleInputChange('name', e.target.value)}
-                            placeholder="Enter your name"
-                            className="h-12 border-[#E5E7EB] focus:border-[#4B2AAD]"
-                          />
-                        </div>
+                         <div>
+                           <Label htmlFor="name" className="flex items-center gap-2">
+                             Owner/Manager Name
+                             {formData.name && validation.name.isValid && (
+                               <CheckCircle className="w-4 h-4 text-green-500" aria-label="Valid name" />
+                             )}
+                             {formData.name && !validation.name.isValid && (
+                               <AlertCircle className="w-4 h-4 text-red-500" aria-label="Invalid name" />
+                             )}
+                           </Label>
+                           <Input
+                             id="name"
+                             value={formData.name}
+                             onChange={(e) => handleInputChange('name', e.target.value)}
+                             placeholder="Enter your full name"
+                             className={`h-12 ${!validation.name.isValid ? 'border-red-500' : 'border-[#E5E7EB] focus:border-[#4B2AAD]'}`}
+                             aria-describedby="name-help name-error"
+                             autoComplete="name"
+                           />
+                           {!validation.name.isValid && (
+                             <p id="name-error" className="text-red-500 text-xs mt-1" role="alert">
+                               {validation.name.message}
+                             </p>
+                           )}
+                           <p id="name-help" className="text-xs text-[#64748B] mt-1">
+                             This will be displayed as the business contact person
+                           </p>
+                         </div>
                       </CardContent>
                     </CollapsibleContent>
                   </Collapsible>
@@ -555,61 +715,120 @@ const BusinessProfile = () => {
 
             {/* Enhanced Live Preview Sidebar */}
             <div className="space-y-4 sm:space-y-6">
-              {/* Live Business Preview */}
-              <Card className="border-0 shadow-lg sticky top-24">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Eye className="w-5 h-5 text-[#4B2AAD]" />
-                    Live Preview
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
-                    <Avatar className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 ring-2 ring-[#4B2AAD]/20">
-                      <AvatarImage src={formData.avatar_url} alt={formData.business_name} />
-                      <AvatarFallback className="text-xl sm:text-2xl font-bold bg-[#4B2AAD]/10 text-[#4B2AAD]">
-                        {formData.business_name?.charAt(0)?.toUpperCase() || 'B'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <h3 className="text-lg font-semibold text-[#1A1A1A]">
-                      {formData.business_name || 'Business Name'}
-                    </h3>
-                    <p className="text-sm text-[#64748B]">
-                      {formData.business_category || 'Category'}
-                    </p>
-                  </div>
+               {/* Enhanced Live Business Preview */}
+               <Card className="border-0 shadow-lg sticky top-24 transition-all duration-300">
+                 <CardHeader className="pb-3">
+                   <CardTitle className="flex items-center justify-between">
+                     <div className="flex items-center gap-2">
+                       <Eye className="w-5 h-5 text-[#4B2AAD]" />
+                       Live Preview
+                     </div>
+                     <div className="flex items-center gap-1">
+                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                       <span className="text-xs text-[#64748B]">Live</span>
+                     </div>
+                   </CardTitle>
+                 </CardHeader>
+                 <CardContent className="space-y-4">
+                   <div className="text-center p-4 bg-gradient-to-br from-[#EEF1FF] to-[#F8FAFC] rounded-lg">
+                     <Avatar className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 ring-2 ring-[#4B2AAD]/20 transition-all duration-300 hover:ring-[#4B2AAD]/40">
+                       <AvatarImage src={formData.avatar_url} alt={formData.business_name || 'Business'} />
+                       <AvatarFallback className="text-xl sm:text-2xl font-bold bg-[#4B2AAD]/10 text-[#4B2AAD] transition-all duration-300">
+                         {formData.business_name?.charAt(0)?.toUpperCase() || 'B'}
+                       </AvatarFallback>
+                     </Avatar>
+                     <h3 className="text-lg font-semibold text-[#1A1A1A] transition-all duration-300">
+                       {formData.business_name || (
+                         <span className="text-[#94A3B8] italic">Business Name</span>
+                       )}
+                     </h3>
+                     <p className="text-sm text-[#64748B] transition-all duration-300">
+                       {formData.business_category || (
+                         <span className="text-[#94A3B8] italic">Select Category</span>
+                       )}
+                     </p>
+                     {formData.business_name && formData.business_category && (
+                       <div className="mt-2 px-3 py-1 bg-[#4B2AAD]/10 text-[#4B2AAD] text-xs rounded-full inline-block">
+                         ✓ Ready to publish
+                       </div>
+                     )}
+                   </div>
 
-                  <div className="space-y-3 text-sm">
-                    <div className="flex items-center gap-3">
-                      <MapPin className="w-4 h-4 text-[#64748B] flex-shrink-0" />
-                      <span className="text-[#374151]">
-                        {formData.city && formData.state ? 
-                          `${formData.city}, ${formData.state}` : 
-                          'Location not set'
-                        }
-                      </span>
-                    </div>
-                    {formData.phone && (
-                      <div className="flex items-center gap-3">
-                        <Phone className="w-4 h-4 text-[#64748B] flex-shrink-0" />
-                        <span className="text-[#374151]">{formData.phone}</span>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-3">
-                      <Mail className="w-4 h-4 text-[#64748B] flex-shrink-0" />
-                      <span className="text-[#374151] break-all">{formData.email}</span>
-                    </div>
-                  </div>
+                   {/* Interactive Contact Information */}
+                   <div className="space-y-3 text-sm">
+                     <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#F8FAFC] transition-colors">
+                       <MapPin className="w-4 h-4 text-[#64748B] flex-shrink-0" />
+                       <span className="text-[#374151] flex-1">
+                         {formData.city && formData.state ? 
+                           `${formData.city}, ${formData.state}` : 
+                           <span className="text-[#94A3B8] italic">Location not set</span>
+                         }
+                       </span>
+                       {formData.latitude && formData.longitude && (
+                         <CheckCircle className="w-4 h-4 text-green-500" aria-label="GPS coordinates available" />
+                       )}
+                     </div>
+                     
+                     {formData.phone && (
+                       <a 
+                         href={`tel:${formData.phone}`}
+                         className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#F8FAFC] transition-colors group"
+                       >
+                         <Phone className="w-4 h-4 text-[#64748B] group-hover:text-[#4B2AAD] flex-shrink-0 transition-colors" />
+                         <span className="text-[#374151] group-hover:text-[#4B2AAD] transition-colors">{formData.phone}</span>
+                       </a>
+                     )}
+                     
+                     <a 
+                       href={`mailto:${formData.email}`}
+                       className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#F8FAFC] transition-colors group"
+                     >
+                       <Mail className="w-4 h-4 text-[#64748B] group-hover:text-[#4B2AAD] flex-shrink-0 transition-colors" />
+                       <span className="text-[#374151] group-hover:text-[#4B2AAD] break-all transition-colors">{formData.email}</span>
+                     </a>
+                   </div>
 
-                  {formData.business_description && (
-                    <div className="pt-3 border-t border-[#E5E7EB]">
-                      <p className="text-sm text-[#374151] italic">
-                        "{formData.business_description}"
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                   {formData.business_description && (
+                     <div className="pt-3 border-t border-[#E5E7EB]">
+                       <p className="text-sm text-[#374151] italic leading-relaxed">
+                         "{formData.business_description}"
+                       </p>
+                     </div>
+                   )}
+
+                   {/* Completion Progress */}
+                   <div className="pt-3 border-t border-[#E5E7EB]">
+                     <div className="flex items-center justify-between mb-2">
+                       <span className="text-xs font-medium text-[#374151]">Profile Completion</span>
+                       <span className="text-xs text-[#64748B]">
+                         {Math.round(
+                           ((formData.business_name ? 1 : 0) +
+                            (formData.business_category ? 1 : 0) +
+                            (formData.business_description ? 1 : 0) +
+                            (formData.business_address ? 1 : 0) +
+                            (formData.phone ? 1 : 0) +
+                            (formData.latitude && formData.longitude ? 1 : 0)) / 6 * 100
+                         )}%
+                       </span>
+                     </div>
+                     <div className="w-full bg-[#E5E7EB] rounded-full h-2">
+                       <div 
+                         className="bg-[#4B2AAD] h-2 rounded-full transition-all duration-500"
+                         style={{
+                           width: `${Math.round(
+                             ((formData.business_name ? 1 : 0) +
+                              (formData.business_category ? 1 : 0) +
+                              (formData.business_description ? 1 : 0) +
+                              (formData.business_address ? 1 : 0) +
+                              (formData.phone ? 1 : 0) +
+                              (formData.latitude && formData.longitude ? 1 : 0)) / 6 * 100
+                           )}%`
+                         }}
+                       />
+                     </div>
+                   </div>
+                 </CardContent>
+               </Card>
 
               {/* Interactive Map Preview */}
               {formData.latitude && formData.longitude && (
