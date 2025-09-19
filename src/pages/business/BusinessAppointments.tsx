@@ -7,6 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
+  DashboardLayout, 
+  DashboardHeader, 
+  DashboardSection, 
+  DashboardStats, 
+  DashboardContent 
+} from '@/components/layout/DashboardLayout';
+import { 
   Search,
   Calendar,
   Clock,
@@ -313,129 +320,114 @@ const BusinessAppointments = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <DashboardLayout>
       {/* Enhanced Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="px-4 sm:px-6 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] flex items-center gap-3">
-                <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-[#4B2AAD]" />
-                Appointments
-              </h1>
-              <p className="text-[#64748B] mt-1">Manage your business schedule</p>
-            </div>
-            
-            {/* View Toggle */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className={viewMode === 'list' ? 'bg-[#4B2AAD] text-white' : 'border-[#4B2AAD] text-[#4B2AAD]'}
-              >
-                <List className="w-4 h-4 mr-1" />
-                List
-              </Button>
-              <Button
-                variant={viewMode === 'calendar' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setViewMode('calendar')}
-                className={viewMode === 'calendar' ? 'bg-[#4B2AAD] text-white' : 'border-[#4B2AAD] text-[#4B2AAD]'}
-              >
-                <CalendarDays className="w-4 h-4 mr-1" />
-                Calendar
-              </Button>
-            </div>
+      <DashboardHeader
+        title="Appointments"
+        subtitle="Manage your business schedule"
+        actions={
+          <div className="flex items-center gap-2">
+            <Button
+              variant={viewMode === 'list' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+              className={viewMode === 'list' ? 'bg-[#4B2AAD] text-white' : 'border-[#4B2AAD] text-[#4B2AAD]'}
+            >
+              <List className="w-4 h-4 mr-1" />
+              List
+            </Button>
+            <Button
+              variant={viewMode === 'calendar' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('calendar')}
+              className={viewMode === 'calendar' ? 'bg-[#4B2AAD] text-white' : 'border-[#4B2AAD] text-[#4B2AAD]'}
+            >
+              <CalendarDays className="w-4 h-4 mr-1" />
+              Calendar
+            </Button>
           </div>
-        </div>
-      </header>
+        }
+      />
 
-      {/* Horizontal Scrollable Status Summary */}
-      <div className="bg-white border-b px-4 sm:px-6 py-4">
-        <div className="overflow-x-auto">
-          <div className="flex gap-4 min-w-max pb-2">
-            <div className="flex items-center gap-3 bg-[#4B2AAD]/5 px-4 py-3 rounded-lg min-w-[140px]">
-              <Calendar className="w-8 h-8 text-[#4B2AAD]" />
-              <div>
-                <div className="text-2xl font-bold text-[#4B2AAD]">{statusSummary.total}</div>
-                <div className="text-xs text-[#64748B]">Total Today</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 bg-[#F59E0B]/5 px-4 py-3 rounded-lg min-w-[140px]">
-              <Hourglass className="w-8 h-8 text-[#F59E0B]" />
-              <div>
-                <div className="text-2xl font-bold text-[#F59E0B]">{statusSummary.pending}</div>
-                <div className="text-xs text-[#64748B]">Pending</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 bg-[#10B981]/5 px-4 py-3 rounded-lg min-w-[140px]">
-              <CheckCircle className="w-8 h-8 text-[#10B981]" />
-              <div>
-                <div className="text-2xl font-bold text-[#10B981]">{statusSummary.confirmed}</div>
-                <div className="text-xs text-[#64748B]">Confirmed</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 bg-[#4B2AAD]/5 px-4 py-3 rounded-lg min-w-[140px]">
-              <Check className="w-8 h-8 text-[#4B2AAD]" />
-              <div>
-                <div className="text-2xl font-bold text-[#4B2AAD]">{statusSummary.completed}</div>
-                <div className="text-xs text-[#64748B]">Completed</div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3 bg-[#10B981]/5 px-4 py-3 rounded-lg min-w-[140px]">
-              <div className="w-8 h-8 bg-[#10B981] rounded-full flex items-center justify-center text-white font-bold">$</div>
-              <div>
-                <div className="text-2xl font-bold text-[#10B981]">${statusSummary.todayRevenue}</div>
-                <div className="text-xs text-[#64748B]">Revenue</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Status Summary */}
+      <DashboardSection variant="minimal" padding="sm">
+        <DashboardStats 
+          stats={[
+            {
+              label: "Total Today",
+              value: statusSummary.total,
+              icon: <Calendar className="w-5 h-5" />,
+              color: "bg-[#4B2AAD]/10 text-[#4B2AAD]"
+            },
+            {
+              label: "Pending",
+              value: statusSummary.pending,
+              icon: <Hourglass className="w-5 h-5" />,
+              color: "bg-[#F59E0B]/10 text-[#F59E0B]"
+            },
+            {
+              label: "Confirmed",
+              value: statusSummary.confirmed,
+              icon: <CheckCircle className="w-5 h-5" />,
+              color: "bg-[#10B981]/10 text-[#10B981]"
+            },
+            {
+              label: "Completed",
+              value: statusSummary.completed,
+              icon: <Check className="w-5 h-5" />,
+              color: "bg-[#4B2AAD]/10 text-[#4B2AAD]"
+            },
+            {
+              label: "Revenue",
+              value: `$${statusSummary.todayRevenue}`,
+              icon: <div className="w-5 h-5 bg-[#10B981] rounded-full flex items-center justify-center text-white text-xs font-bold">$</div>,
+              color: "bg-[#10B981]/10 text-[#10B981]"
+            }
+          ]}
+        />
+      </DashboardSection>
 
       {/* Content */}
-      <div className="p-4 sm:p-6">
+      <DashboardContent>
         {/* Enhanced Filters */}
-        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#64748B] w-4 h-4" />
-            <Input
-              placeholder="Search clients, services, or notes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-10 border-[#E5E7EB] focus:border-[#4B2AAD]"
-            />
+        <DashboardSection title="Filters & Search" variant="card" padding="md">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#64748B] w-4 h-4" />
+              <Input
+                placeholder="Search clients, services, or notes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-10 border-[#E5E7EB] focus:border-[#4B2AAD]"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-48 h-10 border-[#E5E7EB] focus:border-[#4B2AAD]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-48 h-10 border-[#E5E7EB] focus:border-[#4B2AAD]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
-        {/* Swipe Instructions for Mobile */}
-        <div className="mb-4 p-3 bg-[#EEF1FF] border border-[#4B2AAD]/20 rounded-lg sm:hidden">
-          <p className="text-xs text-[#4B2AAD] text-center">
-            💡 Swipe right to complete • Swipe slightly right to reschedule • Swipe left to cancel
-          </p>
-        </div>
+          {/* Swipe Instructions for Mobile */}
+          <div className="mt-3 p-3 bg-[#EEF1FF] border border-[#4B2AAD]/20 rounded-lg sm:hidden">
+            <p className="text-xs text-[#4B2AAD] text-center">
+              💡 Swipe right to complete • Swipe slightly right to reschedule • Swipe left to cancel
+            </p>
+          </div>
+        </DashboardSection>
 
         {/* Appointments List View */}
         {viewMode === 'list' && (
-          <div className="space-y-3">
-            {filteredAppointments.map((appointment) => {
+          <DashboardSection title="Appointments" variant="card" padding="sm">
+            <div className="space-y-3">
+              {filteredAppointments.map((appointment) => {
               const swipeState = swipeStates[appointment.id] || { x: 0, action: 'none' };
               
               return (
@@ -565,15 +557,16 @@ const BusinessAppointments = () => {
                 </div>
               );
             })}
-          </div>
+            </div>
+          </DashboardSection>
         )}
 
         {/* Calendar View Placeholder */}
         {viewMode === 'calendar' && (
-          <Card className="bg-white border-0 shadow-lg">
-            <CardContent className="p-8 sm:p-12 text-center">
+          <DashboardSection title="Calendar View" variant="card" padding="lg">
+            <div className="text-center">
               <CalendarDays className="w-16 h-16 text-[#4B2AAD] mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">Calendar View</h3>
+              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">Coming Soon</h3>
               <p className="text-[#64748B] mb-6">
                 Calendar view is coming soon! This will show your appointments in a visual calendar layout.
               </p>
@@ -585,14 +578,14 @@ const BusinessAppointments = () => {
                 <List className="w-4 h-4 mr-2" />
                 Back to List View
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </DashboardSection>
         )}
 
         {/* Enhanced Empty State */}
         {filteredAppointments.length === 0 && !loading && (
-          <Card className="bg-white border-0 shadow-lg">
-            <CardContent className="p-8 sm:p-12 text-center">
+          <DashboardSection title="No Appointments" variant="card" padding="lg">
+            <div className="text-center">
               <Calendar className="w-16 h-16 text-[#D1D5DB] mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">No appointments found</h3>
               <p className="text-[#64748B] mb-6">
@@ -613,11 +606,11 @@ const BusinessAppointments = () => {
                   Clear Filters
                 </Button>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </DashboardSection>
         )}
-      </div>
-    </div>
+      </DashboardContent>
+    </DashboardLayout>
   );
 };
 

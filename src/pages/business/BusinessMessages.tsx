@@ -10,6 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
+  DashboardLayout, 
+  DashboardHeader, 
+  DashboardSection, 
+  DashboardStats, 
+  DashboardContent 
+} from '@/components/layout/DashboardLayout';
+import { 
   Search,
   MessageSquare,
   Send,
@@ -315,29 +322,22 @@ const BusinessMessages = () => {
   const unreadCount = messages.filter(m => !m.read).length;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] relative">
+    <DashboardLayout>
       {/* Enhanced Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="px-4 sm:px-6 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] flex items-center gap-3">
-                <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-[#4B2AAD]" />
-                Messages
-              </h1>
-              <p className="text-[#64748B] mt-1">Communicate with your clients</p>
-            </div>
-            {unreadCount > 0 && (
-              <Badge className="bg-[#EF4444] text-white border-0 px-3 py-1 animate-pulse">
-                {unreadCount} unread
-              </Badge>
-            )}
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        title="Messages"
+        subtitle="Communicate with your clients"
+        actions={
+          unreadCount > 0 ? (
+            <Badge className="bg-[#EF4444] text-white border-0 px-3 py-1 animate-pulse">
+              {unreadCount} unread
+            </Badge>
+          ) : undefined
+        }
+      />
 
       {/* Enhanced Filter Tabs with Tooltips */}
-      <div className="bg-white border-b px-4 sm:px-6">
+      <DashboardSection variant="minimal" padding="sm">
         <Tabs value={activeFilter} onValueChange={(value: any) => setActiveFilter(value)} className="w-full">
           <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 h-12 bg-[#F8FAFC]">
             <TabsTrigger value="all" className="text-xs sm:text-sm data-[state=active]:bg-[#4B2AAD] data-[state=active]:text-white">
@@ -405,36 +405,38 @@ const BusinessMessages = () => {
             </TabsTrigger>
           </TabsList>
         </Tabs>
-      </div>
+      </DashboardSection>
 
       {/* Content */}
-      <div 
-        ref={scrollContainerRef}
-        className="p-4 sm:p-6 overflow-y-auto"
-        style={{ height: 'calc(100vh - 200px)' }}
-      >
-        {/* Search */}
-        <div className="mb-4 sm:mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#64748B] w-4 h-4" />
-            <Input
-              placeholder="Search messages, clients, or content..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-10 border-[#E5E7EB] focus:border-[#4B2AAD]"
-            />
-          </div>
-        </div>
+      <DashboardContent>
+        <div 
+          ref={scrollContainerRef}
+          className="overflow-y-auto"
+          style={{ maxHeight: 'calc(100vh - 300px)' }}
+        >
+          {/* Search */}
+          <DashboardSection title="Search & Filter" variant="card" padding="md">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#64748B] w-4 h-4" />
+              <Input
+                placeholder="Search messages, clients, or content..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-10 border-[#E5E7EB] focus:border-[#4B2AAD]"
+              />
+            </div>
 
-        {/* Swipe Instructions for Mobile */}
-        <div className="mb-4 p-3 bg-[#EEF1FF] border border-[#4B2AAD]/20 rounded-lg sm:hidden">
-          <p className="text-xs text-[#4B2AAD] text-center">
-            💡 Swipe right to mark as read • Swipe left to delete • Tap to view details
-          </p>
-        </div>
+            {/* Swipe Instructions for Mobile */}
+            <div className="mt-3 p-3 bg-[#EEF1FF] border border-[#4B2AAD]/20 rounded-lg sm:hidden">
+              <p className="text-xs text-[#4B2AAD] text-center">
+                💡 Swipe right to mark as read • Swipe left to delete • Tap to view details
+              </p>
+            </div>
+          </DashboardSection>
 
-        {/* Enhanced Messages List */}
-        <div className="space-y-2 sm:space-y-3">
+          {/* Enhanced Messages List */}
+          <DashboardSection title="Messages" variant="card" padding="sm">
+            <div className="space-y-2 sm:space-y-3">
           {filteredMessages.map((message) => {
             const swipeState = swipeStates[message.id] || { x: 0, action: 'none' };
             
@@ -586,39 +588,40 @@ const BusinessMessages = () => {
               </div>
             );
           })}
-        </div>
+            </div>
+          </DashboardSection>
 
-        {/* Enhanced Empty State */}
-        {filteredMessages.length === 0 && !loading && (
-          <Card className="bg-white border-0 shadow-lg">
-            <CardContent className="p-8 sm:p-12 text-center">
-              <MessageSquare className="w-16 h-16 text-[#D1D5DB] mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
-                {activeFilter === 'all' ? 'No messages yet' : `No ${activeFilter} messages`}
-              </h3>
-              <p className="text-[#64748B] mb-6">
-                {searchTerm 
-                  ? 'No messages match your search. Try different keywords.'
-                  : activeFilter === 'all'
-                    ? 'When clients send you messages, they will appear here.'
-                    : `No ${activeFilter} messages at the moment. Check other categories.`
-                }
-              </p>
-              {(searchTerm || activeFilter !== 'all') && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setActiveFilter('all');
-                  }}
-                  className="border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white"
-                >
-                  Clear Filters
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        )}
+          {/* Enhanced Empty State */}
+          {filteredMessages.length === 0 && !loading && (
+            <DashboardSection title="No Messages" variant="card" padding="lg">
+              <div className="text-center">
+                <MessageSquare className="w-16 h-16 text-[#D1D5DB] mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-[#1A1A1A] mb-2">
+                  {activeFilter === 'all' ? 'No messages yet' : `No ${activeFilter} messages`}
+                </h3>
+                <p className="text-[#64748B] mb-6">
+                  {searchTerm 
+                    ? 'No messages match your search. Try different keywords.'
+                    : activeFilter === 'all'
+                      ? 'When clients send you messages, they will appear here.'
+                      : `No ${activeFilter} messages at the moment. Check other categories.`
+                  }
+                </p>
+                {(searchTerm || activeFilter !== 'all') && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSearchTerm('');
+                      setActiveFilter('all');
+                    }}
+                    className="border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white"
+                  >
+                    Clear Filters
+                  </Button>
+                )}
+              </div>
+            </DashboardSection>
+          )}
 
         {/* Message Detail Modal for Mobile */}
         <Dialog open={!!selectedMessage} onOpenChange={() => setSelectedMessage(null)}>
@@ -741,19 +744,20 @@ const BusinessMessages = () => {
             )}
           </DialogContent>
         </Dialog>
-      </div>
 
-      {/* Scroll to Top Button */}
-      {showScrollTop && (
-        <Button
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white shadow-lg z-20"
-          aria-label="Scroll to top"
-        >
-          <ArrowUp className="w-5 h-5" />
-        </Button>
-      )}
-    </div>
+        {/* Scroll to Top Button */}
+        {showScrollTop && (
+          <Button
+            onClick={scrollToTop}
+            className="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white shadow-lg z-20"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="w-5 h-5" />
+          </Button>
+        )}
+        </div>
+      </DashboardContent>
+    </DashboardLayout>
   );
 };
 
