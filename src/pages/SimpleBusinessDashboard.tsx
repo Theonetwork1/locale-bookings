@@ -86,7 +86,7 @@ const SimpleBusinessDashboard = () => {
         <div className="max-w-md mx-auto space-y-4 mb-8">
           <Button
             onClick={() => navigate('/business/appointments')}
-            className="w-full h-16 bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
+            className="w-full h-16 bg-[#F59E0B] hover:bg-[#D97706] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
           >
             <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
               <Calendar className="w-5 h-5" />
@@ -106,7 +106,7 @@ const SimpleBusinessDashboard = () => {
 
           <Button
             onClick={() => navigate('/business/messages')}
-            className="w-full h-16 bg-[#F59E0B] hover:bg-[#D97706] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
+            className="w-full h-16 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
           >
             <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
               <MessageCircle className="w-5 h-5" />
@@ -116,7 +116,7 @@ const SimpleBusinessDashboard = () => {
 
           <Button
             onClick={() => navigate('/business/notifications')}
-            className="w-full h-16 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
+            className="w-full h-16 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
           >
             <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
               <Bell className="w-5 h-5" />
