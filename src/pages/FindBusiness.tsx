@@ -350,87 +350,83 @@ const FindBusiness = () => {
   });
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Enhanced Search Component with Integrated Header */}
+      <Card className="bg-white border-0 shadow-lg">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between mb-4">
             <Button 
               variant="ghost" 
-              className="text-[#1A1A1A] hover:bg-[#EEF1FF]"
+              size="sm"
+              className="text-[#1A1A1A] hover:bg-[#EEF1FF] p-2"
               onClick={() => navigate(user ? '/client-dashboard' : '/')}
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {user ? 'Back to Dashboard' : 'Back to Home'}
-            </Button>
-            <h1 className="text-2xl font-bold text-[#1A1A1A]">Find a Business</h1>
-          </div>
-          
-          {/* Enhanced User Profile Dropdown */}
-          <div className="relative">
-            <Button
-              variant="ghost"
-              className="w-12 h-12 bg-[#4B2AAD] rounded-full flex items-center justify-center hover:bg-[#A68BFA]"
-              onClick={() => setShowUserDropdown(!showUserDropdown)}
-            >
-              <span className="text-sm font-medium text-white">
-                {user?.name?.charAt(0) || 'U'}
-              </span>
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">{user ? 'Back to Dashboard' : 'Back to Home'}</span>
+              <span className="sm:hidden">Back</span>
             </Button>
             
-            {showUserDropdown && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                <div className="py-1">
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <p className="text-sm font-medium text-gray-900">{user?.name || 'User'}</p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
+            {/* User Menu - Mobile Optimized */}
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-8 h-8 bg-[#4B2AAD] rounded-full flex items-center justify-center hover:bg-[#A68BFA]"
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+              >
+                <span className="text-xs font-medium text-white">
+                  {user?.name?.charAt(0) || 'U'}
+                </span>
+              </Button>
+              
+              {showUserDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                  <div className="py-1">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900 truncate">{user?.name || 'User'}</p>
+                      <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                    </div>
+                    <button
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setShowUserDropdown(false);
+                        navigate('/client-profile');
+                      }}
+                    >
+                      <User className="h-4 w-4 mr-3" />
+                      My Profile
+                    </button>
+                    <button
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setShowUserDropdown(false);
+                        navigate('/settings');
+                      }}
+                    >
+                      <Settings className="h-4 w-4 mr-3" />
+                      Settings
+                    </button>
+                    <button
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => {
+                        setShowUserDropdown(false);
+                        handleLogout();
+                      }}
+                    >
+                      <LogOut className="h-4 w-4 mr-3" />
+                      Logout
+                    </button>
                   </div>
-                  <button
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => {
-                      setShowUserDropdown(false);
-                      navigate('/client-profile');
-                    }}
-                  >
-                    <User className="h-4 w-4 mr-3" />
-                    My Profile
-                  </button>
-                  <button
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => {
-                      setShowUserDropdown(false);
-                      navigate('/settings');
-                    }}
-                  >
-                    <Settings className="h-4 w-4 mr-3" />
-                    Settings
-                  </button>
-                  <button
-                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => {
-                      setShowUserDropdown(false);
-                      handleLogout();
-                    }}
-                  >
-                    <LogOut className="h-4 w-4 mr-3" />
-                    Logout
-                  </button>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div className="space-y-6">
-        {/* Enhanced Search Component */}
-        <Card className="bg-white border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-[#1A1A1A]">
-              <Search className="h-5 w-5 text-[#4B2AAD]" />
-              Find Businesses
-            </CardTitle>
-          </CardHeader>
+          
+          <CardTitle className="flex items-center gap-2 text-[#1A1A1A] text-xl sm:text-2xl">
+            <Search className="h-5 w-5 text-[#4B2AAD]" />
+            Find Businesses
+          </CardTitle>
+        </CardHeader>
           <CardContent className="space-y-4">
             {/* Search Bar */}
             <div className="space-y-2">
@@ -454,20 +450,27 @@ const FindBusiness = () => {
             </div>
 
             {/* Advanced Filters Toggle */}
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
               <Button
                 variant="outline"
                 onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-                className="border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white"
+                className={`border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white transition-all duration-200 ${
+                  showAdvancedFilters ? 'bg-[#4B2AAD] text-white' : ''
+                }`}
               >
                 <Filter className="h-4 w-4 mr-2" />
-                {showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters
+                <span className="hidden sm:inline">{showAdvancedFilters ? 'Hide' : 'Show'} Advanced Filters</span>
+                <span className="sm:hidden">Filters</span>
+                <ChevronDown className={`h-4 w-4 ml-2 transition-transform duration-200 ${
+                  showAdvancedFilters ? 'rotate-180' : ''
+                }`} />
               </Button>
               
               <Button
                 variant="ghost"
+                size="sm"
                 onClick={clearFilters}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 text-sm"
               >
                 Clear All
               </Button>
@@ -475,9 +478,9 @@ const FindBusiness = () => {
 
             {/* Advanced Filters */}
             {showAdvancedFilters && (
-              <div className="space-y-6 pt-4 border-t border-gray-200">
+              <div className="space-y-4 sm:space-y-6 pt-4 border-t border-gray-200 animate-in slide-in-from-top-2 duration-300">
                 {/* Location Filters Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                   {/* Country Filter */}
                   <div className="space-y-2">
                     <label className="text-[#1A1A1A] block text-sm font-medium">Country</label>
@@ -538,7 +541,7 @@ const FindBusiness = () => {
                 </div>
 
                 {/* Category and Distance Filters Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {/* Business Category Filter */}
                   <div className="space-y-2">
                     <label className="text-[#1A1A1A] block text-sm font-medium">Business Category</label>
@@ -594,10 +597,43 @@ const FindBusiness = () => {
           </CardContent>
         </Card>
 
+        {/* Popular Categories - Show when no search is active */}
+        {!searchTerm && !selectedCategory && !selectedCountry && (
+          <Card className="bg-gradient-to-r from-[#EEF1FF] to-[#F8FAFC] border-0">
+            <CardContent className="p-4 sm:p-6">
+              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-3">Popular Categories</h3>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { name: 'Restaurant', value: 'restaurant', icon: '🍽️' },
+                  { name: 'Clinic', value: 'clinic', icon: '🏥' },
+                  { name: 'Hotel', value: 'hotel', icon: '🏨' },
+                  { name: 'Beauty Studio', value: 'beauty-studio', icon: '💄' },
+                  { name: 'Garage', value: 'garage', icon: '🔧' },
+                  { name: 'Pharmacy', value: 'pharmacy', icon: '💊' },
+                  { name: 'Gym', value: 'gym', icon: '💪' },
+                  { name: 'Café', value: 'cafe', icon: '☕' }
+                ].map((category) => (
+                  <button
+                    key={category.value}
+                    onClick={() => {
+                      setSelectedCategory(category.value);
+                      if (!showAdvancedFilters) setShowAdvancedFilters(true);
+                    }}
+                    className="flex items-center gap-2 px-3 py-2 text-sm bg-white text-[#4B2AAD] rounded-full hover:bg-[#4B2AAD] hover:text-white transition-all duration-200 shadow-sm border border-[#4B2AAD] border-opacity-20"
+                  >
+                    <span>{category.icon}</span>
+                    <span>{category.name}</span>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Results Section */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-[#1A1A1A]">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-[#1A1A1A]">
               {filteredBusinesses.length} Business{filteredBusinesses.length !== 1 ? 'es' : ''} Found
             </h2>
             {userLocation && selectedDistance && (
@@ -616,52 +652,91 @@ const FindBusiness = () => {
             </div>
           ) : filteredBusinesses.length === 0 ? (
             <Card className="bg-white border-0 shadow-lg">
-              <CardContent className="p-8 text-center">
-                <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">No businesses found</h3>
-                <p className="text-gray-600 mb-4">
-                  Try adjusting your search criteria or filters.
-                </p>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-500">Popular categories in your area:</p>
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {['Restaurant', 'Clinic', 'Hotel', 'Beauty Studio', 'Garage'].map((category) => (
-                      <button
-                        key={category}
-                        onClick={() => setSelectedCategory(category.toLowerCase().replace(' ', '-'))}
-                        className="px-3 py-1 text-xs bg-[#EEF1FF] text-[#4B2AAD] rounded-full hover:bg-[#4B2AAD] hover:text-white transition-colors"
+              <CardContent className="p-6 sm:p-8 text-center">
+                <div className="max-w-md mx-auto">
+                  <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-[#1A1A1A] mb-2">No businesses found</h3>
+                  <p className="text-gray-600 mb-6 text-sm sm:text-base">
+                    We couldn't find any businesses matching your criteria. Try adjusting your search or explore popular categories.
+                  </p>
+                  
+                  {/* Quick Actions */}
+                  <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={clearFilters}
+                        className="border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white"
                       >
-                        {category}
-                      </button>
-                    ))}
+                        Clear All Filters
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSearchTerm("");
+                          setSelectedCategory("");
+                        }}
+                        className="border-gray-300 text-gray-600 hover:bg-gray-50"
+                      >
+                        Reset Search
+                      </Button>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-gray-700">Try these popular categories:</p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {[
+                          { name: 'Restaurant', value: 'restaurant', icon: '🍽️' },
+                          { name: 'Clinic', value: 'clinic', icon: '🏥' },
+                          { name: 'Hotel', value: 'hotel', icon: '🏨' },
+                          { name: 'Beauty Studio', value: 'beauty-studio', icon: '💄' },
+                          { name: 'Garage', value: 'garage', icon: '🔧' }
+                        ].map((category) => (
+                          <button
+                            key={category.value}
+                            onClick={() => {
+                              setSelectedCategory(category.value);
+                              setSearchTerm("");
+                              if (!showAdvancedFilters) setShowAdvancedFilters(true);
+                            }}
+                            className="flex items-center gap-1 px-3 py-2 text-xs sm:text-sm bg-[#EEF1FF] text-[#4B2AAD] rounded-full hover:bg-[#4B2AAD] hover:text-white transition-all duration-200"
+                          >
+                            <span>{category.icon}</span>
+                            <span>{category.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredBusinesses.map((business) => {
                 const businessDistance = userLocation && business.latitude && business.longitude 
                   ? calculateDistance(userLocation.lat, userLocation.lng, business.latitude, business.longitude)
                   : null;
 
                 return (
-                  <Card key={business.id} className="bg-white border-0 shadow-lg hover:shadow-xl transition-all">
-                    <CardContent className="p-6">
+                  <Card key={business.id} className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+                    <CardContent className="p-4 sm:p-6">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <div className="w-12 h-12 bg-[#4B2AAD]/10 rounded-lg flex items-center justify-center">
-                              <span className="text-[#4B2AAD] font-bold text-lg">
+                          <div className="flex items-start space-x-3 mb-3">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#4B2AAD] bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <span className="text-[#4B2AAD] font-bold text-sm sm:text-lg">
                                 {business.name.charAt(0)}
                               </span>
                             </div>
-                            <div>
-                              <h3 className="text-xl font-bold text-[#1A1A1A]">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-lg sm:text-xl font-bold text-[#1A1A1A] truncate">
                                 {business.name}
                               </h3>
-                              <div className="flex items-center space-x-2">
-                                <span className="px-2 py-1 bg-[#EEF1FF] text-[#4B2AAD] text-xs rounded-full">
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                <span className="px-2 py-1 bg-[#EEF1FF] text-[#4B2AAD] text-xs rounded-full w-fit">
                                   {business.category}
                                 </span>
                                 {business.rating && (
@@ -682,27 +757,27 @@ const FindBusiness = () => {
 
                           <div className="space-y-2">
                             {business.address && (
-                              <div className="flex items-center text-sm text-gray-600">
-                                <MapPin className="w-4 h-4 mr-2" />
-                                <span>{business.address}</span>
+                              <div className="flex items-start text-sm text-gray-600">
+                                <MapPin className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" />
+                                <span className="break-words">{business.address}</span>
                               </div>
                             )}
                             {businessDistance && (
                               <div className="flex items-center text-sm text-[#4B2AAD] font-medium">
-                                <Navigation className="w-4 h-4 mr-2" />
+                                <Navigation className="w-4 h-4 mr-2 flex-shrink-0" />
                                 <span>{businessDistance.toFixed(1)} km away</span>
                               </div>
                             )}
                             {business.phone && (
                               <div className="flex items-center text-sm text-gray-600">
-                                <span className="w-4 h-4 mr-2">📞</span>
-                                <span>{business.phone}</span>
+                                <span className="w-4 h-4 mr-2 flex-shrink-0">📞</span>
+                                <span className="break-all">{business.phone}</span>
                               </div>
                             )}
                             {business.email && (
                               <div className="flex items-center text-sm text-gray-600">
-                                <span className="w-4 h-4 mr-2">✉️</span>
-                                <span>{business.email}</span>
+                                <span className="w-4 h-4 mr-2 flex-shrink-0">✉️</span>
+                                <span className="break-all">{business.email}</span>
                               </div>
                             )}
                           </div>
@@ -715,7 +790,7 @@ const FindBusiness = () => {
                           onClick={() => {
                             toast({
                               title: "Business Selected",
-                              description: `You selected ${business.name}`,
+                              description: "You selected " + business.name,
                             });
                           }}
                         >
