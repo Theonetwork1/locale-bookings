@@ -12,6 +12,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import MobileNavigation from './MobileNavigation';
 
 const Topbar = () => {
   const { user, profile, signOut } = useAuth();
@@ -64,18 +65,19 @@ const Topbar = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-72">
-                <div className="p-4 border-b">
+              <SheetContent side="left" className="p-0 w-80">
+                <div className="p-4 border-b bg-gradient-to-r from-[#4B2AAD] to-[#A68BFA]">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-[#4B2AAD] rounded-md flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#4B2AAD] font-bold text-lg shadow-lg">
                       B
                     </div>
-                    <span className="font-semibold text-[#1A1A1A]">Bizli Solution</span>
+                    <div>
+                      <span className="font-bold text-white text-lg">Bizli Solution</span>
+                      <p className="text-white/80 text-xs">Mobile Dashboard</p>
+                    </div>
                   </div>
                 </div>
-                <div className="p-4">
-                  <p className="text-sm text-gray-600 mb-4">Navigation menu will be here</p>
-                </div>
+                <MobileNavigation />
               </SheetContent>
             </Sheet>
           </div>
