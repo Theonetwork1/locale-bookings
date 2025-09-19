@@ -68,8 +68,17 @@ const Topbar = () => {
               <SheetContent side="left" className="p-0 w-80">
                 <div className="p-4 border-b bg-gradient-to-r from-[#4B2AAD] to-[#A68BFA]">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-[#4B2AAD] font-bold text-lg shadow-lg">
-                      B
+                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                      <img 
+                        src="/src/assets/bizli-logo.png" 
+                        alt="Bizli Solution" 
+                        className="w-8 h-8 object-contain"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.parentElement!.innerHTML = '<span class="text-[#4B2AAD] font-bold text-lg">BS</span>';
+                        }}
+                      />
                     </div>
                     <div>
                       <span className="font-bold text-white text-lg">Bizli Solution</span>
@@ -84,29 +93,39 @@ const Topbar = () => {
 
           {/* Logo */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#4B2AAD] rounded-md flex items-center justify-center text-white font-bold">
-              B
+            <div className="w-8 h-8 bg-[#4B2AAD] rounded-md flex items-center justify-center p-1">
+              <img 
+                src="/src/assets/bizli-logo.png" 
+                alt="Bizli Solution" 
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.parentElement!.innerHTML = '<span class="text-white font-bold text-sm">BS</span>';
+                }}
+              />
             </div>
             <span className="font-semibold text-[#1A1A1A] hidden sm:inline">Bizli Solution</span>
           </div>
         </div>
 
         {/* Right Section - Language, Notifications, User Menu */}
-        <div className="flex items-center gap-3">
-          {/* Language Switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-              >
-                <Globe className="h-4 w-4 mr-2" />
-                <span className="hidden sm:inline">{getLanguageFlag(language)} {getLanguageLabel(language)}</span>
-                <span className="sm:hidden">{getLanguageFlag(language)}</span>
-                <ChevronDown className="h-3 w-3 ml-1" />
-              </Button>
-            </DropdownMenuTrigger>
+        <div className="flex items-center gap-2">
+          {/* Language Switcher - Hidden on mobile, shown on tablet+ */}
+          <div className="hidden md:block">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                >
+                  <Globe className="h-4 w-4 mr-2" />
+                  <span className="hidden lg:inline">{getLanguageFlag(language)} {getLanguageLabel(language)}</span>
+                  <span className="lg:hidden">{getLanguageFlag(language)}</span>
+                  <ChevronDown className="h-3 w-3 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem 
                 onClick={() => setLanguage('en')}
@@ -140,10 +159,11 @@ const Topbar = () => {
                 Kreyòl Ayisyen
                 {language === 'ht' && <span className="ml-auto text-[#4B2AAD]">✓</span>}
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-          {/* Notifications */}
+          {/* Notifications - Compact on mobile */}
           <Button
             variant="ghost"
             size="icon"
@@ -155,28 +175,28 @@ const Topbar = () => {
                   : '/client/notifications';
               navigate(notifPath);
             }}
-            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 relative"
+            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 relative h-9 w-9"
             title="Notifications"
           >
-            <Bell className="h-5 w-5" />
+            <Bell className="h-4 w-4" />
             {notificationCount > 0 && (
-              <span className="absolute -right-1 -top-1 h-5 min-w-5 rounded-full bg-[#F97316] text-[10px] leading-5 text-white px-1 text-center font-medium">
+              <span className="absolute -right-1 -top-1 h-4 min-w-4 rounded-full bg-[#F97316] text-[9px] leading-4 text-white px-1 text-center font-medium">
                 {notificationCount > 9 ? '9+' : notificationCount}
               </span>
             )}
           </Button>
 
-          {/* User Menu */}
+          {/* User Menu - Compact on mobile */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100"
+                className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100"
               >
                 <div className="w-8 h-8 bg-[#4B2AAD] rounded-full flex items-center justify-center text-white text-sm font-medium">
                   {profile?.full_name?.charAt(0) || user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                 </div>
-                <div className="hidden sm:block text-left">
+                <div className="hidden md:block text-left">
                   <p className="text-sm font-medium text-[#1A1A1A]">
                     {profile?.full_name || user?.name || 'User'}
                   </p>
@@ -184,7 +204,7 @@ const Topbar = () => {
                     {user?.email}
                   </p>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-600" />
+                <ChevronDown className="h-4 w-4 text-gray-600 hidden sm:block" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">

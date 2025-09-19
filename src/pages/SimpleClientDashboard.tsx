@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut, Calendar, MessageCircle, Bell, User } from "lucide-react";
+import { LogOut, Calendar, MessageCircle, Bell, User, Clock, CheckCircle, AlertCircle, Star } from "lucide-react";
 
 const SimpleClientDashboard = () => {
   const { user, signOut } = useAuth();
@@ -30,56 +30,36 @@ const SimpleClientDashboard = () => {
       }}>
         {/* Header */}
         <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center',
           marginBottom: '30px',
           paddingBottom: '20px',
           borderBottom: '1px solid #e5e7eb'
         }}>
-          <div>
-            <h1 style={{ 
-              fontSize: '2rem', 
-              fontWeight: 'bold', 
-              color: '#1f2937',
-              margin: '0 0 8px 0'
-            }}>
-              Client Dashboard
-            </h1>
-            <p style={{ 
-              color: '#6b7280', 
-              margin: '0',
-              fontSize: '1rem'
-            }}>
-              Manage your appointments and bookings
-            </p>
-          </div>
-          <Button 
-            onClick={handleLogout}
-            style={{
-              backgroundColor: '#dc2626',
-              color: 'white',
-              border: 'none',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}
-          >
-            <LogOut size={16} />
-            Logout
-          </Button>
+          <h1 style={{ 
+            fontSize: '2rem', 
+            fontWeight: 'bold', 
+            color: '#1f2937',
+            margin: '0 0 8px 0'
+          }}>
+            Client Dashboard
+          </h1>
+          <p style={{ 
+            color: '#6b7280', 
+            margin: '0',
+            fontSize: '1rem'
+          }}>
+            Manage your appointments and bookings
+          </p>
         </div>
 
         {/* Quick Actions */}
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', 
+          gap: '16px',
           marginBottom: '30px'
-        }}>
+        }}
+        className="sm:grid-cols-2 lg:grid-cols-4"
+        >
           <button 
             onClick={() => navigate('/find-business')}
             style={{ 
@@ -186,53 +166,100 @@ const SimpleClientDashboard = () => {
             gap: '12px'
           }}>
             {[
-              { type: 'Appointment', business: 'Beauty Salon Pro', date: 'Today, 2:00 PM', status: 'Confirmed' },
-              { type: 'Message', business: 'Tech Repair Hub', date: 'Yesterday', status: 'New Reply' },
-              { type: 'Appointment', business: 'Fitness Center', date: 'Tomorrow, 10:00 AM', status: 'Pending' },
-              { type: 'Review', business: 'Restaurant Deluxe', date: '2 days ago', status: 'Completed' }
-            ].map((activity, index) => (
-              <div key={index} style={{ 
-                backgroundColor: 'white', 
-                padding: '16px', 
-                borderRadius: '6px',
-                border: '1px solid #e5e7eb',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <div>
-                  <h4 style={{ 
-                    fontSize: '1rem', 
-                    fontWeight: '600', 
-                    color: '#1f2937',
-                    margin: '0 0 4px 0'
-                  }}>
-                    {activity.type} - {activity.business}
-                  </h4>
-                  <p style={{ 
-                    color: '#6b7280', 
-                    margin: '0',
-                    fontSize: '0.875rem'
-                  }}>
-                    {activity.date}
-                  </p>
-                </div>
-                <span style={{ 
-                  padding: '4px 12px',
+              { type: 'Appointment', business: 'Beauty Salon Pro', date: 'Today, 2:00 PM', status: 'Confirmed', category: 'Beauty & Wellness', icon: Calendar },
+              { type: 'Message', business: 'Tech Repair Hub', date: 'Yesterday', status: 'New Reply', category: 'Technology', icon: MessageCircle },
+              { type: 'Appointment', business: 'Fitness Center', date: 'Tomorrow, 10:00 AM', status: 'Pending', category: 'Health & Fitness', icon: Clock },
+              { type: 'Review', business: 'Restaurant Deluxe', date: '2 days ago', status: 'Completed', category: 'Food & Dining', icon: Star }
+            ].map((activity, index) => {
+              const IconComponent = activity.icon;
+              return (
+                <div key={index} style={{ 
+                  backgroundColor: 'white', 
+                  padding: '16px', 
                   borderRadius: '12px',
-                  fontSize: '0.75rem',
-                  fontWeight: '500',
-                  backgroundColor: activity.status === 'Confirmed' ? '#dcfce7' : 
-                                  activity.status === 'New Reply' ? '#dbeafe' : 
-                                  activity.status === 'Pending' ? '#fef3c7' : '#f3f4f6',
-                  color: activity.status === 'Confirmed' ? '#166534' : 
-                         activity.status === 'New Reply' ? '#1e40af' : 
-                         activity.status === 'Pending' ? '#92400e' : '#374151'
-                }}>
-                  {activity.status}
-                </span>
-              </div>
-            ))}
+                  border: '1px solid #e5e7eb',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.2s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                >
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '12px',
+                    backgroundColor: activity.status === 'Confirmed' ? '#dcfce7' : 
+                                    activity.status === 'New Reply' ? '#dbeafe' : 
+                                    activity.status === 'Pending' ? '#fef3c7' : '#f3f4f6',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    <IconComponent 
+                      size={24} 
+                      color={activity.status === 'Confirmed' ? '#166534' : 
+                             activity.status === 'New Reply' ? '#1e40af' : 
+                             activity.status === 'Pending' ? '#92400e' : '#374151'} 
+                    />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <h4 style={{ 
+                        fontSize: '1rem', 
+                        fontWeight: '600', 
+                        color: '#1f2937',
+                        margin: '0'
+                      }}>
+                        {activity.business}
+                      </h4>
+                      <span style={{
+                        padding: '2px 8px',
+                        borderRadius: '8px',
+                        fontSize: '0.7rem',
+                        fontWeight: '500',
+                        backgroundColor: '#f3f4f6',
+                        color: '#6b7280'
+                      }}>
+                        {activity.category}
+                      </span>
+                    </div>
+                    <p style={{ 
+                      color: '#6b7280', 
+                      margin: '0',
+                      fontSize: '0.875rem'
+                    }}>
+                      {activity.type} • {activity.date}
+                    </p>
+                  </div>
+                  <span style={{ 
+                    padding: '6px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    backgroundColor: activity.status === 'Confirmed' ? '#dcfce7' : 
+                                    activity.status === 'New Reply' ? '#dbeafe' : 
+                                    activity.status === 'Pending' ? '#fef3c7' : '#f3f4f6',
+                    color: activity.status === 'Confirmed' ? '#166534' : 
+                           activity.status === 'New Reply' ? '#1e40af' : 
+                           activity.status === 'Pending' ? '#92400e' : '#374151',
+                    flexShrink: 0
+                  }}>
+                    {activity.status}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
