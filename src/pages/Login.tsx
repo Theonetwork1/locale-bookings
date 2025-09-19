@@ -49,56 +49,62 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#4B2AAD] via-[#A68BFA] to-[#8B5CF6] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4 relative">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#EEF1FF] to-[#F8FAFC] opacity-50"></div>
+      <div className="absolute inset-0" style={{
+        backgroundImage: `radial-gradient(circle at 25% 25%, rgba(75, 42, 173, 0.05) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(166, 139, 250, 0.05) 0%, transparent 50%)`
+      }}></div>
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Logo Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-[#1A1A1A] rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-2xl">BS</span>
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-20 h-20 bg-[#4B2AAD] rounded-2xl flex items-center justify-center shadow-xl">
+              <span className="text-white font-bold text-3xl">BS</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Bizli Solution</h1>
-          <p className="text-white/90 text-lg">Professional Business Management</p>
+          <h1 className="text-4xl font-bold text-[#1A1A1A] mb-3">Bizli Solution</h1>
+          <p className="text-[#64748B] text-lg font-medium">Professional Business Management</p>
         </div>
 
-        <Card className="bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
+        <Card className="bg-white border-0 shadow-xl ring-1 ring-gray-200/50">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-bold text-[#1A1A1A]">{t.welcomeBack || 'Welcome Back'}</CardTitle>
-            <p className="text-gray-600 text-base">{t.signInToAccount || 'Sign in to your account'}</p>
+            <CardTitle className="text-3xl font-bold text-[#1A1A1A] mb-2">{t.welcomeBack || 'Welcome Back'}</CardTitle>
+            <p className="text-[#64748B] text-base font-medium">{t.signInToAccount || 'Sign in to your account'}</p>
           </CardHeader>
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-3">
-                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">{t.email || 'Email Address'}</Label>
+                <Label htmlFor="email" className="text-sm font-semibold text-[#374151]">{t.email || 'Email Address'}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t.enterEmail || 'Enter your email'}
-                  className="h-12 text-base border-2 border-gray-200 focus:border-[#4B2AAD] focus:ring-2 focus:ring-[#4B2AAD]/20"
+                  className="h-12 text-base border-2 border-[#E5E7EB] focus:border-[#4B2AAD] focus:ring-2 focus:ring-[#4B2AAD]/10 bg-white"
                   required
                 />
               </div>
               
               <div className="space-y-3">
-                <Label htmlFor="password" className="text-sm font-semibold text-gray-700">{t.password || 'Password'}</Label>
+                <Label htmlFor="password" className="text-sm font-semibold text-[#374151]">{t.password || 'Password'}</Label>
                 <Input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="h-12 text-base border-2 border-gray-200 focus:border-[#4B2AAD] focus:ring-2 focus:ring-[#4B2AAD]/20"
+                  className="h-12 text-base border-2 border-[#E5E7EB] focus:border-[#4B2AAD] focus:ring-2 focus:ring-[#4B2AAD]/10 bg-white"
                   required
                 />
               </div>
               
               <div className="space-y-3">
-                <Label htmlFor="role" className="text-sm font-semibold text-gray-700">Account Type</Label>
+                <Label htmlFor="role" className="text-sm font-semibold text-[#374151]">Account Type</Label>
                 <Select value={role} onValueChange={(value: UserRole) => setRole(value)}>
-                  <SelectTrigger className="h-12 text-base border-2 border-gray-200 focus:border-[#4B2AAD]">
+                  <SelectTrigger className="h-12 text-base border-2 border-[#E5E7EB] focus:border-[#4B2AAD] bg-white">
                     <SelectValue placeholder="Select account type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -132,7 +138,7 @@ const Login = () => {
 
               <Button 
                 type="submit" 
-                className="w-full h-12 bg-[#4B2AAD] hover:bg-[#A68BFA] text-white font-semibold text-base transition-all duration-200 hover:scale-[1.02] shadow-lg hover:shadow-xl"
+                className="w-full h-12 bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white font-semibold text-base transition-all duration-200 shadow-lg hover:shadow-xl"
                 disabled={loading}
               >
                 {loading ? (
@@ -147,16 +153,16 @@ const Login = () => {
             </form>
             
             <div className="mt-8 text-center space-y-4">
-              <div className="p-4 bg-[#EEF1FF] border border-[#4B2AAD] rounded-lg">
-                <p className="text-[#1A1A1A] text-sm font-medium">
+              <div className="p-4 bg-[#EEF1FF] border-2 border-[#4B2AAD]/20 rounded-xl">
+                <p className="text-[#374151] text-sm font-medium">
                   🎯 Demo Mode: Use any email/password combination
                 </p>
               </div>
               
-              <div className="flex items-center justify-center space-x-2">
-                <div className="h-px bg-gray-300 flex-1"></div>
-                <span className="text-gray-500 text-sm">New to Bizli Solution?</span>
-                <div className="h-px bg-gray-300 flex-1"></div>
+              <div className="flex items-center justify-center space-x-3">
+                <div className="h-px bg-[#E5E7EB] flex-1"></div>
+                <span className="text-[#64748B] text-sm font-medium">New to Bizli Solution?</span>
+                <div className="h-px bg-[#E5E7EB] flex-1"></div>
               </div>
               
               <Button
