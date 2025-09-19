@@ -42,8 +42,6 @@ const MobileNavigation = ({ onItemClick }: MobileNavigationProps) => {
   const getSidebarItems = (): MobileNavItem[] => {
     if (!user) return [];
 
-    console.log('MobileNavigation - User role:', user?.role);
-    
     switch (user?.role) {
       case 'admin':
         return [
