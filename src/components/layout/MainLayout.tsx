@@ -18,7 +18,12 @@ const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 export const useSidebar = () => {
   const context = useContext(SidebarContext);
   if (!context) {
-    throw new Error('useSidebar must be used within MainLayout');
+    // Return safe defaults instead of throwing error
+    return {
+      isCollapsed: false,
+      setIsCollapsed: () => {},
+      toggleSidebar: () => {}
+    };
   }
   return context;
 };
