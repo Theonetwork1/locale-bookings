@@ -32,6 +32,7 @@ import AdminAppointments from "./pages/admin/AdminAppointments";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 
 // Business pages
 import BusinessAppointments from "./pages/business/BusinessAppointments";
@@ -129,7 +130,7 @@ const App = () => (
                     path="/admin/analytics" 
                     element={
                       <ProtectedRoute requiredRole="admin">
-                        <Dashboard />
+                        <AdminAnalytics />
                       </ProtectedRoute>
                     } 
                   />
