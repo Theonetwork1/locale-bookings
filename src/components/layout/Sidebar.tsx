@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,9 +14,12 @@ import {
   User,
   Menu,
   X,
-  Building2
+  Building2,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSidebar } from './MainLayout';
 
 interface SidebarItem {
   icon: any;
@@ -30,7 +32,7 @@ const Sidebar = () => {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
   const getSidebarItems = (): SidebarItem[] => {
     if (!user) return [];
@@ -95,10 +97,10 @@ const Sidebar = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={toggleSidebar}
             className="p-2 hover:bg-gray-100"
           >
-            {isCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
+            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </Button>
         </div>
         
