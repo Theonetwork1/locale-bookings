@@ -76,163 +76,85 @@ export function DashboardStats() {
           </div>
         </div>
 
-        {/* Advanced Filters */}
-        <Card className="p-4">
-          <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-foreground">Country:</span>
-                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="All" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Countries</SelectItem>
-                    <SelectItem value="haiti">Haiti</SelectItem>
-                    <SelectItem value="usa">USA</SelectItem>
-                    <SelectItem value="canada">Canada</SelectItem>
-                    <SelectItem value="france">France</SelectItem>
-                    <SelectItem value="brazil">Brazil</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-foreground">Category:</span>
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-36">
-                    <SelectValue placeholder="All" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
-                    {businessCategories.map((category) => (
-                      <SelectItem key={category} value={category.toLowerCase()}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-foreground">Plan:</span>
-                <Select value={selectedPlan} onValueChange={setSelectedPlan}>
-                  <SelectTrigger className="w-28">
-                    <SelectValue placeholder="All" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Plans</SelectItem>
-                    {subscriptionPlans.map((plan) => (
-                      <SelectItem key={plan} value={plan.toLowerCase()}>
-                        {plan}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-foreground">Status:</span>
-                <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-                  <SelectTrigger className="w-28">
-                    <SelectValue placeholder="All" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">All Status</SelectItem>
-                    {businessStatuses.map((status) => (
-                      <SelectItem key={status} value={status.toLowerCase()}>
-                        {status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-foreground">Date Range:</span>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-48 justify-start text-left font-normal">
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {dateRange.from ? (
-                        dateRange.to ? (
-                          <>
-                            {format(dateRange.from, "LLL dd, y")} -{" "}
-                            {format(dateRange.to, "LLL dd, y")}
-                          </>
-                        ) : (
-                          format(dateRange.from, "LLL dd, y")
-                        )
-                      ) : (
-                        <span>Pick a date range</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      initialFocus
-                      mode="range"
-                      defaultMonth={dateRange.from}
-                      selected={dateRange}
-                      onSelect={(range) => setDateRange(range || {from: undefined, to: undefined})}
-                      numberOfMonths={2}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-            
+        {/* Simplified Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input 
-                  placeholder="Search businesses, emails, phones..." 
-                  className="pl-10 w-64"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Button size="sm">
-                <Plus className="h-4 w-4 mr-2" />
-                Invite Business
-              </Button>
+              <span className="text-sm font-medium text-foreground">Filter by Date:</span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-48 justify-start text-left font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange.from ? (
+                      dateRange.to ? (
+                        <>
+                          {format(dateRange.from, "LLL dd, y")} -{" "}
+                          {format(dateRange.to, "LLL dd, y")}
+                        </>
+                      ) : (
+                        format(dateRange.from, "LLL dd, y")
+                      )
+                    ) : (
+                      <span>Pick a date range</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    initialFocus
+                    mode="range"
+                    defaultMonth={dateRange.from}
+                    selected={dateRange}
+                    onSelect={(range) => setDateRange(range || {from: undefined, to: undefined})}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-foreground">Select Tags:</span>
+              <Select value={selectedTags.join(',')} onValueChange={(value) => setSelectedTags(value ? value.split(',') : [])}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="All Tags" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All Tags</SelectItem>
+                  {availableTags.map((tag) => (
+                    <SelectItem key={tag} value={tag}>
+                      {tag}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
-
-          {/* Tags Filter */}
-          <div className="mt-4 flex items-center gap-2">
-            <span className="text-sm font-medium text-foreground">Tags:</span>
-            <div className="flex flex-wrap gap-2">
-              {availableTags.map((tag) => (
-                <Button
-                  key={tag}
-                  variant={selectedTags.includes(tag) ? "default" : "outline"}
-                  size="sm"
-                  className="h-7 text-xs"
-                  onClick={() => {
-                    setSelectedTags(prev => 
-                      prev.includes(tag) 
-                        ? prev.filter(t => t !== tag)
-                        : [...prev, tag]
-                    );
-                  }}
-                >
-                  <Tag className="h-3 w-3 mr-1" />
-                  {tag}
-                </Button>
-              ))}
+          
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search businesses..." 
+                className="pl-10 w-64 border-[#E5E7EB] focus:border-[#4B2AAD]"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+            <Button className="bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white">
+              <Plus className="h-4 w-4 mr-2" />
+              Invite Business
+            </Button>
           </div>
-        </Card>
+        </div>
 
-        {/* Enhanced Quick Stats Cards */}
+        {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Tooltip>
             <TooltipTrigger asChild>
               <Card className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Businesses</CardTitle>
-                  <Users className="h-4 w-4 text-blue-600" />
+                  <Users className="h-4 w-4 text-[#4B2AAD]" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-foreground">148</div>
@@ -252,20 +174,20 @@ export function DashboardStats() {
             <TooltipTrigger asChild>
               <Card className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
-                  <CalendarIcon className="h-4 w-4 text-purple-600" />
+                  <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
+                  <RefreshCw className="h-4 w-4 text-[#10B981]" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-foreground">2,847</div>
+                  <div className="text-2xl font-bold text-foreground">134</div>
                   <p className="text-xs text-green-600 flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +24% from last month
+                    +12% from last month
                   </p>
                 </CardContent>
               </Card>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Total appointments booked across all businesses</p>
+              <p>Businesses with active subscription plans</p>
             </TooltipContent>
           </Tooltip>
 
@@ -273,20 +195,20 @@ export function DashboardStats() {
             <TooltipTrigger asChild>
               <Card className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Avg Response Time</CardTitle>
-                  <Clock className="h-4 w-4 text-orange-600" />
+                  <CardTitle className="text-sm font-medium">Upcoming Renewals</CardTitle>
+                  <CalendarIcon className="h-4 w-4 text-[#F59E0B]" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-foreground">2.3h</div>
-                  <p className="text-xs text-green-600 flex items-center">
-                    <TrendingUp className="h-3 w-3 mr-1" />
-                    -15% faster
+                  <div className="text-2xl font-bold text-foreground">23</div>
+                  <p className="text-xs text-red-600 flex items-center">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    Next 30 days
                   </p>
                 </CardContent>
               </Card>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Average response time to customer inquiries</p>
+              <p>Subscriptions expiring in the next 30 days</p>
             </TooltipContent>
           </Tooltip>
 
@@ -294,66 +216,24 @@ export function DashboardStats() {
             <TooltipTrigger asChild>
               <Card className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Renewal Rate</CardTitle>
-                  <RefreshCw className="h-4 w-4 text-green-600" />
+                  <CardTitle className="text-sm font-medium">Revenue (This Month)</CardTitle>
+                  <DollarSign className="h-4 w-4 text-[#8B5CF6]" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-foreground">87%</div>
+                  <div className="text-2xl font-bold text-foreground">$12,847</div>
                   <p className="text-xs text-green-600 flex items-center">
                     <TrendingUp className="h-3 w-3 mr-1" />
-                    +5% from last quarter
+                    +28% from last month
                   </p>
                 </CardContent>
               </Card>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Percentage of businesses that renew their subscriptions</p>
+              <p>Total revenue generated this month</p>
             </TooltipContent>
           </Tooltip>
         </div>
 
-        {/* Most Used Business Categories */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-purple-600" />
-              Most Used Business Categories
-            </CardTitle>
-            <CardDescription>
-              Top business categories by number of registered businesses
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {[
-                { category: "Restaurant", count: 45, percentage: 30.4, color: "bg-red-500" },
-                { category: "Beauty Salon", count: 32, percentage: 21.6, color: "bg-pink-500" },
-                { category: "Auto Repair", count: 28, percentage: 18.9, color: "bg-blue-500" },
-                { category: "Hotel", count: 18, percentage: 12.2, color: "bg-green-500" },
-                { category: "Clinic", count: 15, percentage: 10.1, color: "bg-purple-500" },
-                { category: "Others", count: 10, percentage: 6.8, color: "bg-gray-500" }
-              ].map((item) => (
-                <div key={item.category} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
-                    <span className="text-sm font-medium">{item.category}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-24 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className={`h-2 rounded-full ${item.color}`}
-                        style={{ width: `${item.percentage}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-sm text-muted-foreground w-12 text-right">
-                      {item.count} ({item.percentage}%)
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </TooltipProvider>
   );

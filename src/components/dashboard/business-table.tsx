@@ -230,69 +230,47 @@ export function BusinessTable() {
 
   return (
     <div className="rounded-lg border bg-card">
-      <div className="p-6 border-b bg-card-header">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">Business Management</h2>
-            <p className="text-sm text-muted-foreground">Manage registered businesses and their subscriptions</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              148 Total Businesses
-            </Badge>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="sm" variant="outline">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setExportFormat('csv')}>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Export as CSV
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setExportFormat('pdf')}>
-                  <FileText className="h-4 w-4 mr-2" />
-                  Export as PDF
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+      {/* Desktop Table View */}
+      <div className="hidden lg:block">
+        <div className="p-6 border-b bg-card-header">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">Business Management</h2>
+              <p className="text-sm text-muted-foreground">Manage registered businesses and their subscriptions</p>
+            </div>
           </div>
         </div>
-      </div>
-      
-      <Table>
-        <TableHeader>
-          <TableRow className="border-b bg-muted/20">
-            <TableHead className="font-semibold">Business</TableHead>
-            <TableHead className="font-semibold">Plan & Status</TableHead>
-            <TableHead className="font-semibold">Contact</TableHead>
-            <TableHead className="font-semibold">Location</TableHead>
-            <TableHead className="font-semibold">Performance</TableHead>
-            <TableHead className="font-semibold">Tags</TableHead>
-            <TableHead className="font-semibold">Alerts</TableHead>
-            <TableHead className="font-semibold">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {mockBusinesses.map((business) => (
-            <TableRow key={business.id} className="border-b hover:bg-muted/30 transition-colors">
-              <TableCell>
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                    <span className="text-sm font-medium text-white">
-                      {business.avatar}
-                    </span>
+        
+        <Table>
+          <TableHeader>
+            <TableRow className="border-b bg-muted/20">
+              <TableHead className="font-semibold">Business Name</TableHead>
+              <TableHead className="font-semibold">Subscription Plan</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold">Last Login</TableHead>
+              <TableHead className="font-semibold">Email</TableHead>
+              <TableHead className="font-semibold">Phone</TableHead>
+              <TableHead className="font-semibold">Revenue</TableHead>
+              <TableHead className="font-semibold">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {mockBusinesses.map((business) => (
+              <TableRow key={business.id} className="border-b hover:bg-muted/30 transition-colors">
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-[#4B2AAD]/10 flex items-center justify-center">
+                      <span className="text-sm font-medium text-[#4B2AAD]">
+                        {business.avatar}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-medium text-foreground">{business.name}</div>
+                      <div className="text-sm text-muted-foreground">{business.category}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium text-foreground">{business.name}</div>
-                    <div className="text-sm text-muted-foreground">{business.category}</div>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="space-y-1">
+                </TableCell>
+                <TableCell>
                   <Badge variant="outline" className={`text-xs ${
                     business.software === 'Annual' ? 'bg-green-100 border-green-200 text-green-800' :
                     business.software === 'Monthly' ? 'bg-blue-100 border-blue-200 text-blue-800' :
@@ -300,109 +278,178 @@ export function BusinessTable() {
                   }`}>
                     {business.software}
                   </Badge>
+                </TableCell>
+                <TableCell>
                   <div className="flex items-center gap-1">
                     {getStatusIcon(business.status)}
-                    <span className="text-xs font-medium capitalize">{business.status}</span>
+                    <span className="text-sm font-medium capitalize">{business.status}</span>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1 text-sm">
-                    <Mail className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">{business.email}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm">
-                    <Phone className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">{business.phone}</span>
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1 text-sm">
-                  <MapPin className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-muted-foreground">{business.country}</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="space-y-1">
-                  <div className="text-sm font-medium">${business.balance}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {business.totalAppointments} appointments
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {business.responseTime} avg response
-                  </div>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {business.tags.map((tag) => (
-                    <Badge 
-                      key={tag} 
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm text-muted-foreground">{business.lastSync}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm text-muted-foreground">{business.email}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm text-muted-foreground">{business.phone}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm font-medium">${business.balance}</span>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <Button 
                       variant="outline" 
-                      className={`text-xs ${getTagColor(tag)}`}
+                      size="sm" 
+                      className="h-8 px-3 border-[#F59E0B] text-[#F59E0B] hover:bg-[#F59E0B] hover:text-white transition-colors"
                     >
-                      <Tag className="h-2 w-2 mr-1" />
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </TableCell>
-              <TableCell>
-                {business.hasAlerts ? (
-                  <div className="flex items-center gap-1">
-                    {getAlertIcon(business.alertType)}
-                    <span className="text-xs text-red-600 font-medium">
-                      {business.alertType === 'missing_info' ? 'Missing Info' :
-                       business.alertType === 'complaints' ? 'Complaints' :
-                       business.alertType === 'suspicious_activity' ? 'Suspicious' : 'Alert'}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span className="text-xs text-green-600">OK</span>
-                  </div>
-                )}
-              </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
-                      <Eye className="h-4 w-4 mr-2" />
-                      View Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Bell className="h-4 w-4 mr-2" />
-                      Send Notification
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-orange-600">
-                      <Pause className="h-4 w-4 mr-2" />
+                      <Pause className="w-3 h-3 mr-1" />
                       Suspend
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="text-green-600">
-                      <RefreshCw className="h-4 w-4 mr-2" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-8 px-3 border-[#10B981] text-[#10B981] hover:bg-[#10B981] hover:text-white transition-colors"
+                    >
+                      <RefreshCw className="w-3 h-3 mr-1" />
                       Renew
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <FileText className="h-4 w-4 mr-2" />
-                      Add Admin Note
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Bell className="h-4 w-4 mr-2" />
+                          Send Notification
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <FileText className="h-4 w-4 mr-2" />
+                          Add Admin Note
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="lg:hidden">
+        <div className="p-4 border-b bg-card-header">
+          <h2 className="text-lg font-semibold text-foreground">Business Management</h2>
+          <p className="text-sm text-muted-foreground">Manage registered businesses</p>
+        </div>
+        
+        <div className="space-y-4 p-4">
+          {mockBusinesses.map((business) => (
+            <div key={business.id} className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow rounded-lg border border-gray-200">
+              <div className="p-4">
+                <div className="space-y-4">
+                  {/* Business Header */}
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 rounded-full bg-[#4B2AAD]/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-[#4B2AAD] font-semibold text-sm">
+                        {business.avatar}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-[#1A1A1A] text-lg mb-1">{business.name}</h3>
+                      <p className="text-[#64748B] text-sm mb-2">{business.category}</p>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className={`text-xs ${
+                          business.software === 'Annual' ? 'bg-green-100 border-green-200 text-green-800' :
+                          business.software === 'Monthly' ? 'bg-blue-100 border-blue-200 text-blue-800' :
+                          'bg-yellow-100 border-yellow-200 text-yellow-800'
+                        }`}>
+                          {business.software}
+                        </Badge>
+                        <div className="flex items-center gap-1">
+                          {getStatusIcon(business.status)}
+                          <span className="text-xs font-medium capitalize">{business.status}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Business Details */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#F1F5F9]">
+                    <div>
+                      <label className="text-xs font-medium text-[#64748B] uppercase tracking-wide">Email</label>
+                      <p className="text-sm text-[#1A1A1A] mt-1 break-all">{business.email}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-[#64748B] uppercase tracking-wide">Phone</label>
+                      <p className="text-sm text-[#1A1A1A] mt-1">{business.phone}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-[#64748B] uppercase tracking-wide">Last Login</label>
+                      <p className="text-sm text-[#1A1A1A] mt-1">{business.lastSync}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-[#64748B] uppercase tracking-wide">Revenue</label>
+                      <p className="text-sm font-medium text-[#1A1A1A] mt-1">${business.balance}</p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="flex-1 h-9 border-[#F59E0B] text-[#F59E0B] hover:bg-[#F59E0B] hover:text-white transition-colors"
+                    >
+                      <Pause className="w-3 h-3 mr-1" />
+                      Suspend
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="flex-1 h-9 border-[#10B981] text-[#10B981] hover:bg-[#10B981] hover:text-white transition-colors"
+                    >
+                      <RefreshCw className="w-3 h-3 mr-1" />
+                      Renew
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-9 w-9 p-0 border-[#64748B] text-[#64748B] hover:border-[#4B2AAD] hover:text-[#4B2AAD]">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Bell className="h-4 w-4 mr-2" />
+                          Send Notification
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <FileText className="h-4 w-4 mr-2" />
+                          Add Admin Note
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              </div>
+            </div>
           ))}
-        </TableBody>
-      </Table>
+        </div>
+      </div>
     </div>
   );
 }
