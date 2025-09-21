@@ -5,13 +5,24 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu } from "lucide-react";
-import { useSidebar } from "@/components/layout/MainLayout";
 
 const Dashboard = () => {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const t = useTranslations();
-  const { toggleSidebar } = useSidebar();
+
+  // Safe sidebar toggle - won't crash if context is unavailable
+  let toggleSidebar = () => {};
+  try {
+    const { useSidebar } = require("@/components/layout/MainLayout");
+    const sidebarContext = useSidebar();
+    if (sidebarContext) {
+      toggleSidebar = sidebarContext.toggleSidebar;
+    }
+  } catch (error) {
+    // Sidebar context not available - continue without it
+    console.log('Sidebar context not available');
+  }
 
   const handleLogout = async () => {
     await signOut();

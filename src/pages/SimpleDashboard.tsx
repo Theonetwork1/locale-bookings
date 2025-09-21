@@ -84,68 +84,6 @@ const SimpleDashboard = () => {
           />
         </DashboardSection>
 
-        {/* Main Admin Actions - Vertical Stack */}
-        <div className="max-w-md mx-auto space-y-4 mb-8">
-          <Button
-            onClick={() => navigate('/admin/businesses')}
-            className="w-full h-16 bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Building2 className="w-5 h-5" />
-            </div>
-            <span>Manage Businesses</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/admin/users')}
-            className="w-full h-16 bg-[#10B981] hover:bg-[#059669] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5" />
-            </div>
-            <span>User Management</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/admin/appointments')}
-            className="w-full h-16 bg-[#F59E0B] hover:bg-[#D97706] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5" />
-            </div>
-            <span>Appointments</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/admin/messages')}
-            className="w-full h-16 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <MessageSquare className="w-5 h-5" />
-            </div>
-            <span>Support Messages</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/admin/notifications')}
-            className="w-full h-16 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Bell className="w-5 h-5" />
-            </div>
-            <span>Notifications</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/admin/settings')}
-            className="w-full h-16 bg-[#64748B] hover:bg-[#475569] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Settings className="w-5 h-5" />
-            </div>
-            <span>Platform Settings</span>
-          </Button>
-        </div>
 
         {/* Recent Businesses */}
         <DashboardSection title="Recent Businesses" variant="card" padding="md">
