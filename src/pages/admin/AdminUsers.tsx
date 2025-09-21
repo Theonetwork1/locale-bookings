@@ -44,6 +44,8 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [showInvite, setShowInvite] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
 
   const [inviteForm, setInviteForm] = useState({
     name: '',
@@ -272,16 +274,12 @@ const AdminUsers = () => {
                           </div>
                         </td>
                         <td className="py-4 px-6">
-                          <Select value={m.role} onValueChange={(v: TeamMember['role']) => updateRole(m.id, v)}>
-                            <SelectTrigger className="w-40 border-[#E5E7EB] focus:border-[#4B2AAD]"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="owner">Owner</SelectItem>
-                              <SelectItem value="developer">Developer</SelectItem>
-                              <SelectItem value="support">Support</SelectItem>
-                              <SelectItem value="moderator">Moderator</SelectItem>
-                              <SelectItem value="analyst">Analyst</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          <Input 
+                            value={m.role} 
+                            onChange={(e) => updateRole(m.id, e.target.value as TeamMember['role'])}
+                            className="w-40 border-[#E5E7EB] focus:border-[#4B2AAD]"
+                            placeholder="Enter role..."
+                          />
                         </td>
                         <td className="py-4 px-6">
                           <div className="flex flex-wrap gap-1 items-center max-w-80">
@@ -412,18 +410,12 @@ const AdminUsers = () => {
                   {/* Role Section */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-[#374151]">Role</label>
-                    <Select value={m.role} onValueChange={(v: TeamMember['role']) => updateRole(m.id, v)}>
-                      <SelectTrigger className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="owner">Owner</SelectItem>
-                        <SelectItem value="developer">Developer</SelectItem>
-                        <SelectItem value="support">Support</SelectItem>
-                        <SelectItem value="moderator">Moderator</SelectItem>
-                        <SelectItem value="analyst">Analyst</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input 
+                      value={m.role} 
+                      onChange={(e) => updateRole(m.id, e.target.value as TeamMember['role'])}
+                      className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]"
+                      placeholder="Enter custom role..."
+                    />
                   </div>
 
                   {/* Permissions Section with Badge Layout */}
@@ -522,6 +514,10 @@ const AdminUsers = () => {
                     <Button 
                       variant="outline" 
                       className="flex-1 h-11 border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white font-medium transition-colors"
+                      onClick={() => {
+                        setEditingMember(m);
+                        setShowEditModal(true);
+                      }}
                     >
                       <Edit className="w-4 h-4 mr-2" />
                       Edit Member
@@ -547,6 +543,56 @@ const AdminUsers = () => {
             <h3 className="text-lg font-semibold text-foreground mb-2">No team members found</h3>
             <p className="text-muted-foreground">Try adjusting your search criteria</p>
           </div>
+        )}
+
+        {/* Edit Member Modal */}
+        {editingMember && (
+          <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Team Member</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-name">Full Name</Label>
+                  <Input 
+                    id="edit-name" 
+                    value={editingMember.name} 
+                    onChange={(e) => setEditingMember({...editingMember, name: e.target.value})} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-email">Email</Label>
+                  <Input 
+                    id="edit-email" 
+                    type="email" 
+                    value={editingMember.email} 
+                    onChange={(e) => setEditingMember({...editingMember, email: e.target.value})} 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-role">Role</Label>
+                  <Input 
+                    id="edit-role" 
+                    value={editingMember.role} 
+                    onChange={(e) => setEditingMember({...editingMember, role: e.target.value as TeamMember['role']})} 
+                    placeholder="Enter custom role..."
+                  />
+                </div>
+                <Button 
+                  onClick={() => {
+                    // Update the member in the list
+                    setMembers(prev => prev.map(m => m.id === editingMember.id ? editingMember : m));
+                    setShowEditModal(false);
+                    setEditingMember(null);
+                  }} 
+                  className="w-full bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white"
+                >
+                  Save Changes
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     </div>

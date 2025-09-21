@@ -16,8 +16,14 @@ import {
   MapPin,
   Phone,
   Mail,
-  Star
+  Star,
+  Pause,
+  XCircle,
+  AlertTriangle,
+  MoreHorizontal
 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { supabase, Business } from '@/lib/supabase';
 
 const AdminBusinesses = () => {
@@ -102,10 +108,43 @@ const AdminBusinesses = () => {
   };
 
   const handleDeleteBusiness = async (businessId: string) => {
-    try {
-      setBusinesses(businesses.filter(b => b.id !== businessId));
-    } catch (error) {
-      console.error('Error deleting business:', error);
+    if (window.confirm('Are you sure you want to permanently delete this business? This action cannot be undone.')) {
+      try {
+        setBusinesses(businesses.filter(b => b.id !== businessId));
+        console.log('Business permanently deleted:', businessId);
+      } catch (error) {
+        console.error('Error deleting business:', error);
+      }
+    }
+  };
+
+  const handleSuspendBusiness = async (businessId: string) => {
+    if (window.confirm('Are you sure you want to suspend this business? They will temporarily lose access to the platform.')) {
+      try {
+        setBusinesses(businesses.map(b => 
+          b.id === businessId 
+            ? { ...b, status: 'suspended' as any }
+            : b
+        ));
+        console.log('Business suspended:', businessId);
+      } catch (error) {
+        console.error('Error suspending business:', error);
+      }
+    }
+  };
+
+  const handleCancelSubscription = async (businessId: string) => {
+    if (window.confirm('Are you sure you want to cancel this business subscription? This will end their paid plan immediately.')) {
+      try {
+        setBusinesses(businesses.map(b => 
+          b.id === businessId 
+            ? { ...b, subscription_status: 'cancelled' as any, status: 'pending' as any }
+            : b
+        ));
+        console.log('Subscription cancelled for business:', businessId);
+      } catch (error) {
+        console.error('Error cancelling subscription:', error);
+      }
     }
   };
 
@@ -246,14 +285,42 @@ const AdminBusinesses = () => {
                       <Badge variant="secondary" className="mt-1">{business.category}</Badge>
                     </div>
                   </div>
-                  <div className="flex space-x-1">
-                    <Button variant="ghost" size="sm" onClick={() => setEditingBusiness(business)}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleDeleteBusiness(business.id)}>
-                      <Trash2 className="w-4 h-4 text-destructive" />
-                    </Button>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setEditingBusiness(business)}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit Business
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        className="text-orange-600"
+                        onClick={() => handleSuspendBusiness(business.id)}
+                      >
+                        <Pause className="h-4 w-4 mr-2" />
+                        Suspend Business
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-red-600"
+                        onClick={() => handleCancelSubscription(business.id)}
+                      >
+                        <XCircle className="h-4 w-4 mr-2" />
+                        Cancel Subscription
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        className="text-red-600"
+                        onClick={() => handleDeleteBusiness(business.id)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete Permanently
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">
