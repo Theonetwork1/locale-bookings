@@ -153,6 +153,8 @@ const TeamManagement: React.FC = () => {
   const [showAuditLogs, setShowAuditLogs] = useState(false);
   const [showLoginHistory, setShowLoginHistory] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
 
   // Load data from API in production
   useEffect(() => {
@@ -422,22 +424,13 @@ const TeamManagement: React.FC = () => {
 
                           {/* Role */}
                           <TableCell>
-                            <Select 
+                            <Input 
                               value={member.role} 
-                              onValueChange={(value) => handleRoleChange(member.id, value)}
+                              onChange={(e) => handleRoleChange(member.id, e.target.value)}
                               disabled={!canEditPermissions(member)}
-                            >
-                              <SelectTrigger className="w-full h-8 text-xs">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {roles.map(role => (
-                                  <SelectItem key={role.id} value={role.name}>
-                                    {role.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                              className="w-full h-8 text-xs border-[#E5E7EB] focus:border-[#4B2AAD]"
+                              placeholder="Enter role..."
+                            />
                           </TableCell>
 
                           {/* Status */}
@@ -490,8 +483,8 @@ const TeamManagement: React.FC = () => {
                                 size="sm" 
                                 className="h-8 px-3 border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white transition-colors"
                                 onClick={() => {
-                                  // Handle edit functionality
-                                  console.log('Edit member:', member.id);
+                                  setEditingMember(member);
+                                  setShowEditModal(true);
                                 }}
                               >
                                 <Edit className="w-3 h-3 mr-1" />
@@ -577,22 +570,13 @@ const TeamManagement: React.FC = () => {
                     {/* Role Section */}
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-[#374151]">Role</Label>
-                      <Select 
+                      <Input 
                         value={member.role} 
-                        onValueChange={(value) => handleRoleChange(member.id, value)}
+                        onChange={(e) => handleRoleChange(member.id, e.target.value)}
                         disabled={!canEditPermissions(member)}
-                      >
-                        <SelectTrigger className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {roles.map(role => (
-                            <SelectItem key={role.id} value={role.name}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]"
+                        placeholder="Enter custom role..."
+                      />
                     </div>
 
                     {/* Permissions Section with Badge Layout */}
@@ -651,8 +635,8 @@ const TeamManagement: React.FC = () => {
                         variant="outline" 
                         className="w-full h-11 border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white font-medium transition-colors"
                         onClick={() => {
-                          // Handle edit functionality
-                          console.log('Edit member:', member.id);
+                          setEditingMember(member);
+                          setShowEditModal(true);
                         }}
                       >
                         <Edit className="w-4 h-4 mr-2" />
@@ -719,6 +703,56 @@ const TeamManagement: React.FC = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Member Modal */}
+      {editingMember && (
+        <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Team Member</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-name">Full Name</Label>
+                <Input 
+                  id="edit-name" 
+                  value={editingMember.name} 
+                  onChange={(e) => setEditingMember({...editingMember, name: e.target.value})} 
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-email">Email</Label>
+                <Input 
+                  id="edit-email" 
+                  type="email" 
+                  value={editingMember.email} 
+                  onChange={(e) => setEditingMember({...editingMember, email: e.target.value})} 
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-role">Role</Label>
+                <Input 
+                  id="edit-role" 
+                  value={editingMember.role} 
+                  onChange={(e) => setEditingMember({...editingMember, role: e.target.value})} 
+                  placeholder="Enter custom role..."
+                />
+              </div>
+              <Button 
+                onClick={() => {
+                  // Update the member in the list
+                  setTeamMembers(prev => prev.map(m => m.id === editingMember.id ? editingMember : m));
+                  setShowEditModal(false);
+                  setEditingMember(null);
+                }} 
+                className="w-full bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white"
+              >
+                Save Changes
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
