@@ -171,15 +171,14 @@ const AdminUsers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="space-y-6">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-[#1A1A1A]">Team Members & Permissions</h1>
-            <p className="text-gray-600">Manage internal collaborators and permissions</p>
-          </div>
-          <Dialog open={showInvite} onOpenChange={setShowInvite}>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1A1A1A]">Team Members & Permissions</h1>
+          <p className="text-gray-600">Manage internal collaborators and permissions</p>
+        </div>
+        <Dialog open={showInvite} onOpenChange={setShowInvite}>
             <DialogTrigger asChild>
               <Button className="bg-[#4B2AAD] hover:bg-[#A68BFA] text-white">
                 <Plus className="w-4 h-4 mr-2" />
@@ -216,11 +215,10 @@ const AdminUsers = () => {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
-      </header>
+      </div>
 
       {/* Content */}
-      <div className="p-6 space-y-6">
+      <div className="space-y-6">
         {/* Filters */}
         <div className="mb-2 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
