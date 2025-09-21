@@ -374,16 +374,14 @@ const TeamManagement: React.FC = () => {
                         </TableHead>
                         <TableHead className="w-32 min-w-32">Role</TableHead>
                         <TableHead className="w-24 min-w-24">Status</TableHead>
-                        {PERMISSIONS.map(permission => (
-                          <TableHead key={permission.id} className="w-20 min-w-20 text-center">
-                            <div className="flex flex-col items-center gap-1">
-                              <span className="text-xs font-medium">{permission.name}</span>
-                              <span className="text-xs text-gray-500">{permission.category}</span>
-                            </div>
-                          </TableHead>
-                        ))}
+                        <TableHead className="w-80 min-w-80">
+                          <div className="flex items-center gap-2">
+                            <Shield className="w-4 h-4" />
+                            Permissions
+                          </div>
+                        </TableHead>
                         <TableHead className="w-16 min-w-16">2FA</TableHead>
-                        <TableHead className="w-20 min-w-20">Actions</TableHead>
+                        <TableHead className="w-32 min-w-32">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -447,17 +445,28 @@ const TeamManagement: React.FC = () => {
                             {getStatusBadge(member.status)}
                           </TableCell>
 
-                          {/* Permission Columns */}
-                          {PERMISSIONS.map(permission => (
-                            <TableCell key={permission.id} className="text-center">
-                              <Checkbox
-                                checked={member.permissions.includes(permission.id)}
-                                onCheckedChange={() => handlePermissionToggle(member.id, permission.id)}
-                                disabled={!canEditPermissions(member)}
-                                className="data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
-                              />
-                            </TableCell>
-                          ))}
+                          {/* Permissions Column - Single Column with Badges */}
+                          <TableCell className="w-80 min-w-80">
+                            <div className="flex flex-wrap gap-1 max-w-80">
+                              {PERMISSIONS.map(permission => (
+                                <Badge 
+                                  key={permission.id}
+                                  variant={member.permissions.includes(permission.id) ? "default" : "secondary"}
+                                  className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                                    member.permissions.includes(permission.id)
+                                      ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                                      : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                                  } ${!canEditPermissions(member) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                  onClick={() => canEditPermissions(member) && handlePermissionToggle(member.id, permission.id)}
+                                >
+                                  {member.permissions.includes(permission.id) && (
+                                    <CheckCircle className="w-2.5 h-2.5 mr-1" />
+                                  )}
+                                  {permission.name}
+                                </Badge>
+                              ))}
+                            </div>
+                          </TableCell>
 
                           {/* 2FA Status */}
                           <TableCell className="text-center">
@@ -475,44 +484,54 @@ const TeamManagement: React.FC = () => {
 
                           {/* Actions */}
                           <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                  <MoreHorizontal className="w-4 h-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => {
-                                  setSelectedMember(member);
-                                  setShowAuditLogs(true);
-                                }}>
-                                  <Eye className="w-4 h-4 mr-2" />
-                                  View Activity
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => {
-                                  setSelectedMember(member);
-                                  setShowLoginHistory(true);
-                                }}>
-                                  <Activity className="w-4 h-4 mr-2" />
-                                  Login History
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Edit className="w-4 h-4 mr-2" />
-                                  Edit Profile
-                                </DropdownMenuItem>
-                                {member.status === 'active' ? (
-                                  <DropdownMenuItem onClick={() => handleStatusToggle(member.id, 'suspended')}>
-                                    <AlertTriangle className="w-4 h-4 mr-2" />
-                                    Suspend
+                            <div className="flex items-center gap-1">
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-8 px-3 border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white transition-colors"
+                                onClick={() => {
+                                  // Handle edit functionality
+                                  console.log('Edit member:', member.id);
+                                }}
+                              >
+                                <Edit className="w-3 h-3 mr-1" />
+                                Edit
+                              </Button>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-[#64748B] hover:text-[#4B2AAD]">
+                                    <MoreHorizontal className="w-4 h-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => {
+                                    setSelectedMember(member);
+                                    setShowAuditLogs(true);
+                                  }}>
+                                    <Eye className="w-4 h-4 mr-2" />
+                                    View Activity
                                   </DropdownMenuItem>
-                                ) : (
-                                  <DropdownMenuItem onClick={() => handleStatusToggle(member.id, 'active')}>
-                                    <CheckCircle className="w-4 h-4 mr-2" />
-                                    Activate
+                                  <DropdownMenuItem onClick={() => {
+                                    setSelectedMember(member);
+                                    setShowLoginHistory(true);
+                                  }}>
+                                    <Activity className="w-4 h-4 mr-2" />
+                                    Login History
                                   </DropdownMenuItem>
-                                )}
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                                  {member.status === 'active' ? (
+                                    <DropdownMenuItem onClick={() => handleStatusToggle(member.id, 'suspended')}>
+                                      <AlertTriangle className="w-4 h-4 mr-2" />
+                                      Suspend
+                                    </DropdownMenuItem>
+                                  ) : (
+                                    <DropdownMenuItem onClick={() => handleStatusToggle(member.id, 'active')}>
+                                      <CheckCircle className="w-4 h-4 mr-2" />
+                                      Activate
+                                    </DropdownMenuItem>
+                                  )}
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -523,145 +542,123 @@ const TeamManagement: React.FC = () => {
             </Card>
           </div>
 
-          {/* Mobile Card View */}
+          {/* Mobile Card View - Enhanced Responsive Design */}
           <div className="lg:hidden space-y-4">
             {filteredMembers.map(member => (
-              <Card key={member.id}>
-                <CardContent className="p-4">
-                  <div className="space-y-4">
-                    {/* Member Header */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                          {member.avatar ? (
-                            <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full" />
-                          ) : (
-                            <span className="text-purple-600 font-medium">
-                              {member.name.split(' ').map(n => n[0]).join('')}
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-gray-900">{member.name}</h3>
-                          <p className="text-sm text-gray-600">{member.email}</p>
-                        </div>
+              <Card key={member.id} className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-5">
+                  <div className="space-y-5">
+                    {/* Member Header with Avatar and Basic Info */}
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 rounded-full bg-[#4B2AAD]/10 flex items-center justify-center flex-shrink-0">
+                        {member.avatar ? (
+                          <img src={member.avatar} alt={member.name} className="w-12 h-12 rounded-full object-cover" />
+                        ) : (
+                          <span className="text-[#4B2AAD] font-semibold text-sm">
+                            {member.name.split(' ').map(n => n[0]).join('')}
+                          </span>
+                        )}
                       </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => {
-                            setSelectedMember(member);
-                            setShowAuditLogs(true);
-                          }}>
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Activity
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => {
-                            setSelectedMember(member);
-                            setShowLoginHistory(true);
-                          }}>
-                            <Activity className="w-4 h-4 mr-2" />
-                            Login History
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit Profile
-                          </DropdownMenuItem>
-                          {member.status === 'active' ? (
-                            <DropdownMenuItem onClick={() => handleStatusToggle(member.id, 'suspended')}>
-                              <AlertTriangle className="w-4 h-4 mr-2" />
-                              Suspend
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem onClick={() => handleStatusToggle(member.id, 'active')}>
-                              <CheckCircle className="w-4 h-4 mr-2" />
-                              Activate
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-
-                    {/* Role and Status */}
-                    <div className="flex items-center gap-4">
-                      <div className="flex-1">
-                        <Label className="text-xs text-gray-500">Role</Label>
-                        <Select 
-                          value={member.role} 
-                          onValueChange={(value) => handleRoleChange(member.id, value)}
-                          disabled={!canEditPermissions(member)}
-                        >
-                          <SelectTrigger className="w-full h-8 text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {roles.map(role => (
-                              <SelectItem key={role.id} value={role.name}>
-                                {role.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label className="text-xs text-gray-500">Status</Label>
-                        <div className="mt-1">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-[#1A1A1A] text-lg mb-1">{member.name}</h3>
+                        <p className="text-[#64748B] text-sm mb-2 break-all">{member.email}</p>
+                        <div className="flex items-center gap-2">
                           {getStatusBadge(member.status)}
-                        </div>
-                      </div>
-                      <div>
-                        <Label className="text-xs text-gray-500">2FA</Label>
-                        <div className="mt-1">
-                          {member.twoFactorEnabled ? (
-                            <Badge variant="outline" className="text-xs text-green-600 border-green-200">
+                          {member.twoFactorEnabled && (
+                            <Badge variant="outline" className="text-xs text-green-600 border-green-200 bg-green-50">
                               <Key className="w-3 h-3 mr-1" />
-                              On
-                            </Badge>
-                          ) : (
-                            <Badge variant="outline" className="text-xs text-gray-500 border-gray-200">
-                              Off
+                              2FA
                             </Badge>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    {/* Permissions Grid */}
-                    <div>
-                      <Label className="text-xs text-gray-500 mb-2 block">Permissions</Label>
-                      <div className="grid grid-cols-2 gap-2">
+                    {/* Role Section */}
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-[#374151]">Role</Label>
+                      <Select 
+                        value={member.role} 
+                        onValueChange={(value) => handleRoleChange(member.id, value)}
+                        disabled={!canEditPermissions(member)}
+                      >
+                        <SelectTrigger className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {roles.map(role => (
+                            <SelectItem key={role.id} value={role.name}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Permissions Section with Badge Layout */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium text-[#374151]">Permissions</Label>
+                      <div className="flex flex-wrap gap-2">
                         {PERMISSIONS.map(permission => (
-                          <div key={permission.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={member.permissions.includes(permission.id)}
-                              onCheckedChange={() => handlePermissionToggle(member.id, permission.id)}
-                              disabled={!canEditPermissions(member)}
-                              className="data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
-                            />
-                            <Label className="text-xs text-gray-700 flex-1">
+                          <div key={permission.id} className="flex items-center">
+                            <Badge 
+                              variant={member.permissions.includes(permission.id) ? "default" : "secondary"}
+                              className={`text-xs px-3 py-1 cursor-pointer transition-colors ${
+                                member.permissions.includes(permission.id)
+                                  ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                                  : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                              } ${!canEditPermissions(member) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              onClick={() => canEditPermissions(member) && handlePermissionToggle(member.id, permission.id)}
+                            >
+                              {member.permissions.includes(permission.id) && (
+                                <CheckCircle className="w-3 h-3 mr-1" />
+                              )}
                               {permission.name}
-                            </Label>
+                            </Badge>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    {/* Additional Info */}
-                    <div className="flex items-center gap-4 text-xs text-gray-500 pt-2 border-t">
-                      {member.region && (
-                        <span className="flex items-center">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {member.region}
-                        </span>
-                      )}
-                      <span className="flex items-center">
-                        <Clock className="w-3 h-3 mr-1" />
-                        Last login: {new Date(member.lastLogin).toLocaleDateString()}
-                      </span>
+                    {/* Date Information */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#F1F5F9]">
+                      <div>
+                        <Label className="text-xs font-medium text-[#64748B] uppercase tracking-wide">Created Date</Label>
+                        <p className="text-sm text-[#1A1A1A] mt-1 flex items-center">
+                          <Calendar className="w-4 h-4 mr-2 text-[#4B2AAD]" />
+                          {new Date(member.joinedDate).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-xs font-medium text-[#64748B] uppercase tracking-wide">Last Login</Label>
+                        <p className="text-sm text-[#1A1A1A] mt-1 flex items-center">
+                          <Clock className="w-4 h-4 mr-2 text-[#4B2AAD]" />
+                          {new Date(member.lastLogin).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Full Edit Button */}
+                    <div className="pt-2">
+                      <Button 
+                        variant="outline" 
+                        className="w-full h-11 border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white font-medium transition-colors"
+                        onClick={() => {
+                          // Handle edit functionality
+                          console.log('Edit member:', member.id);
+                        }}
+                      >
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit Team Member
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
