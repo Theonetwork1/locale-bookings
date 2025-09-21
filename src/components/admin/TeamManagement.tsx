@@ -424,13 +424,22 @@ const TeamManagement: React.FC = () => {
 
                           {/* Role */}
                           <TableCell>
-                            <Input 
+                            <Select 
                               value={member.role} 
-                              onChange={(e) => handleRoleChange(member.id, e.target.value)}
+                              onValueChange={(value) => handleRoleChange(member.id, value)}
                               disabled={!canEditPermissions(member)}
-                              className="w-full h-8 text-xs border-[#E5E7EB] focus:border-[#4B2AAD]"
-                              placeholder="Enter role..."
-                            />
+                            >
+                              <SelectTrigger className="w-full h-8 text-xs">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {roles.map(role => (
+                                  <SelectItem key={role.id} value={role.name}>
+                                    {role.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </TableCell>
 
                           {/* Status */}
@@ -570,13 +579,22 @@ const TeamManagement: React.FC = () => {
                     {/* Role Section */}
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-[#374151]">Role</Label>
-                      <Input 
+                      <Select 
                         value={member.role} 
-                        onChange={(e) => handleRoleChange(member.id, e.target.value)}
+                        onValueChange={(value) => handleRoleChange(member.id, value)}
                         disabled={!canEditPermissions(member)}
-                        className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]"
-                        placeholder="Enter custom role..."
-                      />
+                      >
+                        <SelectTrigger className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {roles.map(role => (
+                            <SelectItem key={role.id} value={role.name}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     {/* Permissions Section with Badge Layout */}

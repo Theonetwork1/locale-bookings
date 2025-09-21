@@ -274,12 +274,16 @@ const AdminUsers = () => {
                           </div>
                         </td>
                         <td className="py-4 px-6">
-                          <Input 
-                            value={m.role} 
-                            onChange={(e) => updateRole(m.id, e.target.value as TeamMember['role'])}
-                            className="w-40 border-[#E5E7EB] focus:border-[#4B2AAD]"
-                            placeholder="Enter role..."
-                          />
+                          <Select value={m.role} onValueChange={(v: TeamMember['role']) => updateRole(m.id, v)}>
+                            <SelectTrigger className="w-40 border-[#E5E7EB] focus:border-[#4B2AAD]"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="owner">Owner</SelectItem>
+                              <SelectItem value="developer">Developer</SelectItem>
+                              <SelectItem value="support">Support</SelectItem>
+                              <SelectItem value="moderator">Moderator</SelectItem>
+                              <SelectItem value="analyst">Analyst</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </td>
                         <td className="py-4 px-6">
                           <div className="flex flex-wrap gap-1 items-center max-w-80">
@@ -414,12 +418,18 @@ const AdminUsers = () => {
                   {/* Role Section */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-[#374151]">Role</label>
-                    <Input 
-                      value={m.role} 
-                      onChange={(e) => updateRole(m.id, e.target.value as TeamMember['role'])}
-                      className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]"
-                      placeholder="Enter custom role..."
-                    />
+                    <Select value={m.role} onValueChange={(v: TeamMember['role']) => updateRole(m.id, v)}>
+                      <SelectTrigger className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="owner">Owner</SelectItem>
+                        <SelectItem value="developer">Developer</SelectItem>
+                        <SelectItem value="support">Support</SelectItem>
+                        <SelectItem value="moderator">Moderator</SelectItem>
+                        <SelectItem value="analyst">Analyst</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {/* Permissions Section with Badge Layout */}
