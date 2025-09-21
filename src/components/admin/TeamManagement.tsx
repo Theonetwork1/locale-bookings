@@ -447,20 +447,20 @@ const TeamManagement: React.FC = () => {
 
                           {/* Permissions Column - Single Column with Badges */}
                           <TableCell className="w-80 min-w-80">
-                            <div className="flex flex-wrap gap-1 max-w-80">
+                            <div className="flex flex-wrap gap-x-2 gap-y-1.5 p-2 max-w-80">
                               {PERMISSIONS.map(permission => (
                                 <Badge 
                                   key={permission.id}
                                   variant={member.permissions.includes(permission.id) ? "default" : "secondary"}
-                                  className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                                  className={`text-xs px-3 py-1.5 cursor-pointer transition-colors font-medium ${
                                     member.permissions.includes(permission.id)
-                                      ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
-                                      : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                                      ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white shadow-sm'
+                                      : 'bg-[#F8FAFC] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB] hover:border-[#CBD5E1]'
                                   } ${!canEditPermissions(member) ? 'opacity-50 cursor-not-allowed' : ''}`}
                                   onClick={() => canEditPermissions(member) && handlePermissionToggle(member.id, permission.id)}
                                 >
                                   {member.permissions.includes(permission.id) && (
-                                    <CheckCircle className="w-2.5 h-2.5 mr-1" />
+                                    <CheckCircle className="w-3 h-3 mr-1.5" />
                                   )}
                                   {permission.name}
                                 </Badge>
@@ -596,26 +596,25 @@ const TeamManagement: React.FC = () => {
                     </div>
 
                     {/* Permissions Section with Badge Layout */}
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <Label className="text-sm font-medium text-[#374151]">Permissions</Label>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 sm:flex sm:flex-wrap sm:gap-x-2 sm:gap-y-2">
                         {PERMISSIONS.map(permission => (
-                          <div key={permission.id} className="flex items-center">
-                            <Badge 
-                              variant={member.permissions.includes(permission.id) ? "default" : "secondary"}
-                              className={`text-xs px-3 py-1 cursor-pointer transition-colors ${
-                                member.permissions.includes(permission.id)
-                                  ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
-                                  : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
-                              } ${!canEditPermissions(member) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                              onClick={() => canEditPermissions(member) && handlePermissionToggle(member.id, permission.id)}
-                            >
-                              {member.permissions.includes(permission.id) && (
-                                <CheckCircle className="w-3 h-3 mr-1" />
-                              )}
-                              {permission.name}
-                            </Badge>
-                          </div>
+                          <Badge 
+                            key={permission.id}
+                            variant={member.permissions.includes(permission.id) ? "default" : "secondary"}
+                            className={`text-xs px-3 py-2 cursor-pointer transition-colors font-medium justify-center sm:justify-start ${
+                              member.permissions.includes(permission.id)
+                                ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white shadow-sm'
+                                : 'bg-[#F8FAFC] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB] hover:border-[#CBD5E1]'
+                            } ${!canEditPermissions(member) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            onClick={() => canEditPermissions(member) && handlePermissionToggle(member.id, permission.id)}
+                          >
+                            {member.permissions.includes(permission.id) && (
+                              <CheckCircle className="w-3 h-3 mr-1.5" />
+                            )}
+                            <span className="truncate">{permission.name}</span>
+                          </Badge>
                         ))}
                       </div>
                     </div>
