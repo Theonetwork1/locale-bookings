@@ -240,87 +240,308 @@ const AdminUsers = () => {
           </Select>
         </div>
 
-        {/* Team Table */}
-        <Card className="shadow-lg border-0">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full table-fixed">
-                <thead className="border-b bg-muted/50">
-                  <tr>
-                    <th className="text-left py-4 px-6 text-muted-foreground font-medium">Member</th>
-                    <th className="text-left py-4 px-6 text-muted-foreground font-medium">Role</th>
-                    <th className="text-left py-4 px-6 text-muted-foreground font-medium">Permissions</th>
-                    <th className="text-left py-4 px-6 text-muted-foreground font-medium">Created</th>
-                    <th className="text-left py-4 px-6 text-muted-foreground font-medium">Last Login</th>
-                    <th className="text-left py-4 px-6 text-muted-foreground font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="[&>tr>td]:align-top [&>tr>td]:break-words">
-                  {filtered.map((m) => (
-                    <tr key={m.id} className="border-b hover:bg-muted/30 transition-colors">
-                      <td className="py-4 px-6">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium text-muted-foreground">{m.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <p className="font-medium text-[#1A1A1A]">{m.name}</p>
-                            <div className="flex items-center space-x-1 text-sm text-muted-foreground">
-                              <Mail className="w-3 h-3" />
-                              <span>{m.email}</span>
+        {/* Desktop Table View */}
+        <div className="hidden lg:block">
+          <Card className="shadow-lg border-0">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full table-fixed">
+                  <thead className="border-b bg-muted/50">
+                    <tr>
+                      <th className="text-left py-4 px-6 text-muted-foreground font-medium">Member</th>
+                      <th className="text-left py-4 px-6 text-muted-foreground font-medium">Role</th>
+                      <th className="text-left py-4 px-6 text-muted-foreground font-medium">Permissions</th>
+                      <th className="text-left py-4 px-6 text-muted-foreground font-medium">Created</th>
+                      <th className="text-left py-4 px-6 text-muted-foreground font-medium">Last Login</th>
+                      <th className="text-left py-4 px-6 text-muted-foreground font-medium">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="[&>tr>td]:align-top [&>tr>td]:break-words">
+                    {filtered.map((m) => (
+                      <tr key={m.id} className="border-b hover:bg-muted/30 transition-colors">
+                        <td className="py-4 px-6">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-[#4B2AAD]/10 rounded-full flex items-center justify-center">
+                              <span className="text-sm font-medium text-[#4B2AAD]">{m.name.charAt(0)}</span>
+                            </div>
+                            <div>
+                              <p className="font-medium text-[#1A1A1A]">{m.name}</p>
+                              <div className="flex items-center space-x-1 text-sm text-muted-foreground">
+                                <Mail className="w-3 h-3" />
+                                <span>{m.email}</span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <Select value={m.role} onValueChange={(v: TeamMember['role']) => updateRole(m.id, v)}>
-                          <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="owner">Owner</SelectItem>
-                            <SelectItem value="developer">Developer</SelectItem>
-                            <SelectItem value="support">Support</SelectItem>
-                            <SelectItem value="moderator">Moderator</SelectItem>
-                            <SelectItem value="analyst">Analyst</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="flex flex-wrap gap-2 items-center">
-                          <Button variant={m.permissions.read ? 'default' : 'outline'} size="sm" onClick={() => togglePermission(m.id, 'read')}>
-                            <Lock className="w-4 h-4 mr-1" /> Read
-                          </Button>
-                          <Button variant={m.permissions.write ? 'default' : 'outline'} size="sm" onClick={() => togglePermission(m.id, 'write')}>
-                            <Lock className="w-4 h-4 mr-1" /> Write
-                          </Button>
-                          <Button variant={m.permissions.adminTools ? 'default' : 'outline'} size="sm" onClick={() => togglePermission(m.id, 'adminTools')}>
-                            <Shield className="w-4 h-4 mr-1" /> Admin Tools
-                          </Button>
-                          <Button variant={m.permissions.manageBusinesses ? 'default' : 'outline'} size="sm" onClick={() => togglePermission(m.id, 'manageBusinesses')}>
-                            <Building2 className="w-4 h-4 mr-1" /> Businesses
-                          </Button>
-                          <Button variant={m.permissions.manageUsers ? 'default' : 'outline'} size="sm" onClick={() => togglePermission(m.id, 'manageUsers')}>
-                            <User className="w-4 h-4 mr-1" /> Users
-                          </Button>
-                          <Button variant={m.permissions.viewPayments ? 'default' : 'outline'} size="sm" onClick={() => togglePermission(m.id, 'viewPayments')}>
-                            <Calendar className="w-4 h-4 mr-1" /> Payments
-                          </Button>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 text-muted-foreground">{m.createdAt}</td>
-                      <td className="py-4 px-6 text-muted-foreground">{m.lastLogin ?? 'Never'}</td>
-                      <td className="py-4 px-6">
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm"><Edit className="w-4 h-4" /></Button>
-                          <Button variant="ghost" size="sm" onClick={() => removeMember(m.id)}><Trash2 className="w-4 h-4 text-destructive" /></Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                        </td>
+                        <td className="py-4 px-6">
+                          <Select value={m.role} onValueChange={(v: TeamMember['role']) => updateRole(m.id, v)}>
+                            <SelectTrigger className="w-40 border-[#E5E7EB] focus:border-[#4B2AAD]"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="owner">Owner</SelectItem>
+                              <SelectItem value="developer">Developer</SelectItem>
+                              <SelectItem value="support">Support</SelectItem>
+                              <SelectItem value="moderator">Moderator</SelectItem>
+                              <SelectItem value="analyst">Analyst</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex flex-wrap gap-1 items-center max-w-80">
+                            <Badge 
+                              variant={m.permissions.read ? "default" : "secondary"}
+                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                                m.permissions.read
+                                  ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                                  : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                              }`}
+                              onClick={() => togglePermission(m.id, 'read')}
+                            >
+                              Read
+                            </Badge>
+                            <Badge 
+                              variant={m.permissions.write ? "default" : "secondary"}
+                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                                m.permissions.write
+                                  ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                                  : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                              }`}
+                              onClick={() => togglePermission(m.id, 'write')}
+                            >
+                              Write
+                            </Badge>
+                            <Badge 
+                              variant={m.permissions.adminTools ? "default" : "secondary"}
+                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                                m.permissions.adminTools
+                                  ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                                  : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                              }`}
+                              onClick={() => togglePermission(m.id, 'adminTools')}
+                            >
+                              Admin Tools
+                            </Badge>
+                            <Badge 
+                              variant={m.permissions.manageBusinesses ? "default" : "secondary"}
+                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                                m.permissions.manageBusinesses
+                                  ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                                  : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                              }`}
+                              onClick={() => togglePermission(m.id, 'manageBusinesses')}
+                            >
+                              Businesses
+                            </Badge>
+                            <Badge 
+                              variant={m.permissions.manageUsers ? "default" : "secondary"}
+                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                                m.permissions.manageUsers
+                                  ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                                  : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                              }`}
+                              onClick={() => togglePermission(m.id, 'manageUsers')}
+                            >
+                              Users
+                            </Badge>
+                            <Badge 
+                              variant={m.permissions.viewPayments ? "default" : "secondary"}
+                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                                m.permissions.viewPayments
+                                  ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                                  : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                              }`}
+                              onClick={() => togglePermission(m.id, 'viewPayments')}
+                            >
+                              Payments
+                            </Badge>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6 text-muted-foreground">{m.createdAt}</td>
+                        <td className="py-4 px-6 text-muted-foreground">{m.lastLogin ?? 'Never'}</td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-1">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-8 px-3 border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white transition-colors"
+                            >
+                              <Edit className="w-3 h-3 mr-1" />
+                              Edit
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50" 
+                              onClick={() => removeMember(m.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="lg:hidden space-y-4">
+          {filtered.map((m) => (
+            <Card key={m.id} className="bg-white border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-5">
+                <div className="space-y-5">
+                  {/* Member Header with Avatar and Basic Info */}
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 rounded-full bg-[#4B2AAD]/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-[#4B2AAD] font-semibold text-sm">
+                        {m.name.charAt(0)}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-[#1A1A1A] text-lg mb-1">{m.name}</h3>
+                      <p className="text-[#64748B] text-sm mb-2 break-all">{m.email}</p>
+                      <Badge 
+                        variant="secondary" 
+                        className="bg-[#EEF1FF] text-[#4B2AAD] border border-[#4B2AAD]/20"
+                      >
+                        {m.role.charAt(0).toUpperCase() + m.role.slice(1)}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Role Section */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-[#374151]">Role</label>
+                    <Select value={m.role} onValueChange={(v: TeamMember['role']) => updateRole(m.id, v)}>
+                      <SelectTrigger className="w-full h-10 border-[#E5E7EB] focus:border-[#4B2AAD]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="owner">Owner</SelectItem>
+                        <SelectItem value="developer">Developer</SelectItem>
+                        <SelectItem value="support">Support</SelectItem>
+                        <SelectItem value="moderator">Moderator</SelectItem>
+                        <SelectItem value="analyst">Analyst</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Permissions Section with Badge Layout */}
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium text-[#374151]">Permissions</label>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge 
+                        variant={m.permissions.read ? "default" : "secondary"}
+                        className={`text-xs px-3 py-1 cursor-pointer transition-colors ${
+                          m.permissions.read
+                            ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                            : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                        }`}
+                        onClick={() => togglePermission(m.id, 'read')}
+                      >
+                        Read
+                      </Badge>
+                      <Badge 
+                        variant={m.permissions.write ? "default" : "secondary"}
+                        className={`text-xs px-3 py-1 cursor-pointer transition-colors ${
+                          m.permissions.write
+                            ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                            : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                        }`}
+                        onClick={() => togglePermission(m.id, 'write')}
+                      >
+                        Write
+                      </Badge>
+                      <Badge 
+                        variant={m.permissions.adminTools ? "default" : "secondary"}
+                        className={`text-xs px-3 py-1 cursor-pointer transition-colors ${
+                          m.permissions.adminTools
+                            ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                            : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                        }`}
+                        onClick={() => togglePermission(m.id, 'adminTools')}
+                      >
+                        Admin Tools
+                      </Badge>
+                      <Badge 
+                        variant={m.permissions.manageBusinesses ? "default" : "secondary"}
+                        className={`text-xs px-3 py-1 cursor-pointer transition-colors ${
+                          m.permissions.manageBusinesses
+                            ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                            : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                        }`}
+                        onClick={() => togglePermission(m.id, 'manageBusinesses')}
+                      >
+                        Businesses
+                      </Badge>
+                      <Badge 
+                        variant={m.permissions.manageUsers ? "default" : "secondary"}
+                        className={`text-xs px-3 py-1 cursor-pointer transition-colors ${
+                          m.permissions.manageUsers
+                            ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                            : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                        }`}
+                        onClick={() => togglePermission(m.id, 'manageUsers')}
+                      >
+                        Users
+                      </Badge>
+                      <Badge 
+                        variant={m.permissions.viewPayments ? "default" : "secondary"}
+                        className={`text-xs px-3 py-1 cursor-pointer transition-colors ${
+                          m.permissions.viewPayments
+                            ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
+                            : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
+                        }`}
+                        onClick={() => togglePermission(m.id, 'viewPayments')}
+                      >
+                        Payments
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Date Information */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#F1F5F9]">
+                    <div>
+                      <label className="text-xs font-medium text-[#64748B] uppercase tracking-wide">Created Date</label>
+                      <p className="text-sm text-[#1A1A1A] mt-1 flex items-center">
+                        <Calendar className="w-4 h-4 mr-2 text-[#4B2AAD]" />
+                        {m.createdAt}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-[#64748B] uppercase tracking-wide">Last Login</label>
+                      <p className="text-sm text-[#1A1A1A] mt-1 flex items-center">
+                        <User className="w-4 h-4 mr-2 text-[#4B2AAD]" />
+                        {m.lastLogin ?? 'Never'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 pt-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1 h-11 border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white font-medium transition-colors"
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit Member
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      className="h-11 w-11 border-red-200 text-red-500 hover:bg-red-50 hover:border-red-300"
+                      onClick={() => removeMember(m.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
         {filtered.length === 0 && (
           <div className="text-center py-12">
