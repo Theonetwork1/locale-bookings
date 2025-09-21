@@ -359,6 +359,10 @@ const AdminUsers = () => {
                               variant="outline" 
                               size="sm" 
                               className="h-8 px-3 border-[#4B2AAD] text-[#4B2AAD] hover:bg-[#4B2AAD] hover:text-white transition-colors"
+                              onClick={() => {
+                                setEditingMember(m);
+                                setShowEditModal(true);
+                              }}
                             >
                               <Edit className="w-3 h-3 mr-1" />
                               Edit
