@@ -42,12 +42,12 @@ const Sidebar = () => {
       case 'admin':
         return [
           { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-          { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
           { icon: Building2, label: 'Businesses', path: '/admin/businesses' },
           { icon: Users, label: 'Team Members', path: '/admin/users' },
-          { icon: Calendar, label: 'Appointments', path: '/admin/appointments' },
+          { icon: Calendar, label: 'Subscriptions', path: '/admin/appointments' },
           { icon: MessageSquare, label: 'Support Messages', path: '/admin/messages' },
           { icon: Bell, label: 'Notifications', path: '/admin/notifications', badge: '3' },
+          { icon: BarChart3, label: 'Analytics', path: '/admin/analytics' },
           { icon: Settings, label: 'Settings', path: '/admin/settings' }
         ];
       

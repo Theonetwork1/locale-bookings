@@ -15,7 +15,6 @@ import BusinessSubscriptionSetup from "./pages/BusinessSubscriptionSetup";
 import Dashboard from "./pages/Dashboard";
 import SimpleDashboard from "./pages/SimpleDashboard";
 import ClientDashboard from "./pages/ClientDashboard";
-import BusinessDashboard from "./pages/BusinessDashboard";
 import SimpleClientDashboard from "./pages/SimpleClientDashboard";
 import SimpleBusinessDashboard from "./pages/SimpleBusinessDashboard";
 import AdminTeamManagement from "./pages/admin/AdminTeamManagement";
@@ -44,6 +43,7 @@ import BusinessChat from "./pages/business/BusinessChat";
 import BusinessProfile from "./pages/business/BusinessProfile";
 import BusinessSettings from "./pages/business/BusinessSettings";
 import BusinessOnboarding from "./pages/business/BusinessOnboarding";
+import BusinessServices from "./pages/business/BusinessServices";
 
 // Client pages
 import ClientAppointments from "./pages/client/ClientAppointments";
@@ -144,6 +144,7 @@ const App = () => (
                   <Route path="/business/chat" element={<BusinessChat />} />
                   <Route path="/business/profile" element={<BusinessProfile />} />
                   <Route path="/business/settings" element={<BusinessSettings />} />
+                  <Route path="/business/services" element={<BusinessServices />} />
                   
                   {/* Client Routes */}
                   <Route path="/client/appointments" element={<ClientAppointments />} />

@@ -175,10 +175,10 @@ const AdminUsers = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#1A1A1A]">Team Members & Permissions</h1>
-          <p className="text-gray-600">Manage internal collaborators and permissions</p>
+          <p className="text-gray-600 mb-4 sm:mb-0">Manage internal collaborators<br className="sm:hidden" /> and permissions</p>
         </div>
         <Dialog open={showInvite} onOpenChange={setShowInvite}>
             <DialogTrigger asChild>
@@ -285,11 +285,11 @@ const AdminUsers = () => {
                             </SelectContent>
                           </Select>
                         </td>
-                        <td className="py-4 px-6">
-                          <div className="flex flex-wrap gap-1 items-center max-w-80">
+                        <td className="py-4 px-3">
+                          <div className="grid grid-cols-3 gap-x-2 gap-y-2">
                             <Badge 
                               variant={m.permissions.read ? "default" : "secondary"}
-                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                              className={`text-xs px-3 py-1.5 cursor-pointer transition-colors whitespace-nowrap inline-flex w-fit ${
                                 m.permissions.read
                                   ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
                                   : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
@@ -300,7 +300,7 @@ const AdminUsers = () => {
                             </Badge>
                             <Badge 
                               variant={m.permissions.write ? "default" : "secondary"}
-                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                              className={`text-xs px-3 py-1.5 cursor-pointer transition-colors whitespace-nowrap inline-flex w-fit ${
                                 m.permissions.write
                                   ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
                                   : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
@@ -311,7 +311,7 @@ const AdminUsers = () => {
                             </Badge>
                             <Badge 
                               variant={m.permissions.adminTools ? "default" : "secondary"}
-                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                              className={`text-xs px-3 py-1.5 cursor-pointer transition-colors whitespace-nowrap inline-flex w-fit ${
                                 m.permissions.adminTools
                                   ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
                                   : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
@@ -322,7 +322,7 @@ const AdminUsers = () => {
                             </Badge>
                             <Badge 
                               variant={m.permissions.manageBusinesses ? "default" : "secondary"}
-                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                              className={`text-xs px-3 py-1.5 cursor-pointer transition-colors whitespace-nowrap inline-flex w-fit ${
                                 m.permissions.manageBusinesses
                                   ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
                                   : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
@@ -333,7 +333,7 @@ const AdminUsers = () => {
                             </Badge>
                             <Badge 
                               variant={m.permissions.manageUsers ? "default" : "secondary"}
-                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                              className={`text-xs px-3 py-1.5 cursor-pointer transition-colors whitespace-nowrap inline-flex w-fit ${
                                 m.permissions.manageUsers
                                   ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
                                   : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
@@ -344,7 +344,7 @@ const AdminUsers = () => {
                             </Badge>
                             <Badge 
                               variant={m.permissions.viewPayments ? "default" : "secondary"}
-                              className={`text-xs px-2 py-1 cursor-pointer transition-colors ${
+                              className={`text-xs px-3 py-1.5 cursor-pointer transition-colors whitespace-nowrap inline-flex w-fit ${
                                 m.permissions.viewPayments
                                   ? 'bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white'
                                   : 'bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#64748B] border border-[#E5E7EB]'
@@ -355,7 +355,7 @@ const AdminUsers = () => {
                             </Badge>
                           </div>
                         </td>
-                        <td className="py-4 px-6 text-muted-foreground">{m.createdAt}</td>
+                        <td className="py-4 pl-12 pr-8 text-muted-foreground">{m.createdAt}</td>
                         <td className="py-4 px-6 text-muted-foreground">{m.lastLogin ?? 'Never'}</td>
                         <td className="py-4 px-6">
                           <div className="flex items-center gap-1">

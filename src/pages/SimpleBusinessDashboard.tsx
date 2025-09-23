@@ -2,15 +2,8 @@ import React from 'react';
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { LogOut, Calendar, Users, MessageCircle, Settings, Plus, Bell, User, Globe, BarChart3, Clock, CheckCircle, Star } from "lucide-react";
-import { 
-  DashboardLayout, 
-  DashboardHeader, 
-  DashboardContent, 
-  DashboardSection,
-  DashboardStats
-} from '@/components/layout/DashboardLayout';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LogOut, Calendar, Users, MessageCircle, Settings, Plus, Bell, User, Globe, BarChart3, Clock, CheckCircle, Star, TrendingUp, DollarSign, Building2 } from "lucide-react";
 
 const SimpleBusinessDashboard = () => {
   const { user, signOut } = useAuth();
@@ -22,197 +15,216 @@ const SimpleBusinessDashboard = () => {
   };
 
   return (
-    <DashboardLayout>
-      <DashboardHeader
-        title="Business Dashboard"
-        subtitle="Manage your business and appointments"
-        actions={
+    <div className="space-y-6">
+      {/* Business Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Business Dashboard</h1>
+          <p className="text-gray-600">Manage your business and appointments</p>
+        </div>
+        <div className="flex items-center space-x-4">
           <Button 
+            variant="outline" 
             onClick={handleLogout}
-            variant="outline"
-            size="sm"
-            className="border-red-600 text-red-600 hover:bg-red-50"
+            className="text-red-600 border-red-600 hover:bg-red-50"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout
           </Button>
-        }
-      />
-
-      <DashboardContent>
-
-        {/* Business Stats */}
-        <DashboardSection variant="minimal" padding="sm">
-          <DashboardStats 
-            stats={[
-              {
-                label: "Today's Appointments",
-                value: 24,
-                icon: <Calendar className="w-5 h-5" />,
-                color: "bg-[#4B2AAD]/10 text-[#4B2AAD]",
-                trend: { value: "+12%", isPositive: true }
-              },
-              {
-                label: "Total Clients",
-                value: 156,
-                icon: <Users className="w-5 h-5" />,
-                color: "bg-[#10B981]/10 text-[#10B981]",
-                trend: { value: "+8", isPositive: true }
-              },
-              {
-                label: "Services Offered",
-                value: 8,
-                icon: <Settings className="w-5 h-5" />,
-                color: "bg-[#F59E0B]/10 text-[#F59E0B]"
-              },
-              {
-                label: "Average Rating",
-                value: "4.8",
-                icon: <Star className="w-5 h-5" />,
-                color: "bg-[#F59E0B]/10 text-[#F59E0B]"
-              },
-              {
-                label: "Monthly Revenue",
-                value: "$12,450",
-                icon: <BarChart3 className="w-5 h-5" />,
-                color: "bg-[#10B981]/10 text-[#10B981]",
-                trend: { value: "+15%", isPositive: true }
-              }
-            ]}
-          />
-        </DashboardSection>
-
-        {/* Main Actions - Vertical Stack */}
-        <div className="max-w-md mx-auto space-y-4 mb-8">
-          <Button
-            onClick={() => navigate('/business/appointments')}
-            className="w-full h-16 bg-[#F59E0B] hover:bg-[#D97706] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Calendar className="w-5 h-5" />
-            </div>
-            <span>Appointments</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/business/clients')}
-            className="w-full h-16 bg-[#10B981] hover:bg-[#059669] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5" />
-            </div>
-            <span>Clients</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/business/messages')}
-            className="w-full h-16 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <MessageCircle className="w-5 h-5" />
-            </div>
-            <span>Messages</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/business/notifications')}
-            className="w-full h-16 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <Bell className="w-5 h-5" />
-            </div>
-            <span>Notifications</span>
-          </Button>
-
-          <Button
-            onClick={() => navigate('/business/profile')}
-            className="w-full h-16 bg-[#64748B] hover:bg-[#475569] text-white rounded-xl text-lg font-semibold flex items-center justify-start px-6 gap-4 shadow-lg"
-          >
-            <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-              <User className="w-5 h-5" />
-            </div>
-            <span>Business Profile</span>
-          </Button>
         </div>
+      </div>
 
-        {/* Today's Schedule */}
-        <DashboardSection title="Today's Schedule" variant="card" padding="md">
-          <div className="space-y-3">
-            {[
-              { time: '9:00 AM', client: 'Sarah Johnson', service: 'Haircut', status: 'Confirmed', duration: '45min' },
-              { time: '10:30 AM', client: 'Mike Chen', service: 'Consultation', status: 'Pending', duration: '30min' },
-              { time: '2:00 PM', client: 'Emma Davis', service: 'Styling', status: 'Confirmed', duration: '60min' },
-              { time: '4:00 PM', client: 'John Smith', service: 'Beard Trim', status: 'Confirmed', duration: '30min' }
-            ].map((appointment, index) => {
-              const getBorderColor = (status: string) => {
-                switch (status) {
-                  case 'Confirmed': return 'border-l-[#10B981] bg-[#10B981]/5';
-                  case 'Pending': return 'border-l-[#F59E0B] bg-[#F59E0B]/5';
-                  default: return 'border-l-[#64748B] bg-[#64748B]/5';
-                }
-              };
-              
-              const getStatusColor = (status: string) => {
-                switch (status) {
-                  case 'Confirmed': return 'bg-[#10B981] text-white';
-                  case 'Pending': return 'bg-[#F59E0B] text-white';
-                  default: return 'bg-[#64748B] text-white';
-                }
-              };
+      {/* Primary Actions */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Button 
+          onClick={() => navigate('/business/services')}
+          className="w-full sm:w-auto bg-[#4B2AAD] hover:bg-[#3B1F8B] text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 shadow-lg"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Service
+        </Button>
+      </div>
 
-              return (
-                <Card key={index} className={`bg-white border-0 border-l-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer ${getBorderColor(appointment.status)}`}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-[#4B2AAD]/10 flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-5 h-5 text-[#4B2AAD]" />
+      {/* Business Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
+            <Calendar className="h-4 w-4 text-[#4B2AAD]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">24</div>
+            <p className="text-xs text-green-600 flex items-center">
+              <TrendingUp className="h-3 w-3 mr-1" />
+              +12% from yesterday
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
+            <Users className="h-4 w-4 text-[#10B981]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">156</div>
+            <p className="text-xs text-green-600 flex items-center">
+              <TrendingUp className="h-3 w-3 mr-1" />
+              +8 new clients
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-[#F59E0B]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">$12,450</div>
+            <p className="text-xs text-green-600 flex items-center">
+              <TrendingUp className="h-3 w-3 mr-1" />
+              +15% from last month
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
+            <Star className="h-4 w-4 text-[#8B5CF6]" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">4.8</div>
+            <p className="text-xs text-gray-600">
+              Customer satisfaction
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Access Shortcuts */}
+      <div>
+        <h2 className="text-xl font-semibold text-[#1A1A1A] mb-4">Quick Access</h2>
+        <div className="space-y-4">
+          {/* First row - 2 buttons */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card 
+              className="cursor-pointer hover:shadow-lg transition-all duration-200"
+              onClick={() => navigate('/business/appointments')}
+            >
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-[#4B2AAD]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Calendar className="w-6 h-6 text-[#4B2AAD]" />
+                </div>
+                <h3 className="font-semibold text-[#1A1A1A] mb-1">Appointments</h3>
+                <p className="text-sm text-[#64748B]">Manage your schedule</p>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className="cursor-pointer hover:shadow-lg transition-all duration-200"
+              onClick={() => navigate('/business/clients')}
+            >
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-[#10B981]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Users className="w-6 h-6 text-[#10B981]" />
+                </div>
+                <h3 className="font-semibold text-[#1A1A1A] mb-1">Clients</h3>
+                <p className="text-sm text-[#64748B]">Manage your clients</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Second row - 2 buttons */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card 
+              className="cursor-pointer hover:shadow-lg transition-all duration-200"
+              onClick={() => navigate('/business/messages')}
+            >
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-[#8B5CF6]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <MessageCircle className="w-6 h-6 text-[#8B5CF6]" />
+                </div>
+                <h3 className="font-semibold text-[#1A1A1A] mb-1">Messages</h3>
+                <p className="text-sm text-[#64748B]">Chat with clients</p>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className="cursor-pointer hover:shadow-lg transition-all duration-200"
+              onClick={() => navigate('/business/profile')}
+            >
+              <CardContent className="p-6 text-center">
+                <div className="w-12 h-12 bg-[#F59E0B]/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Settings className="w-6 h-6 text-[#F59E0B]" />
+                </div>
+                <h3 className="font-semibold text-[#1A1A1A] mb-1">Business Profile</h3>
+                <p className="text-sm text-[#64748B]">Update your information</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Today's Schedule */}
+      <div>
+        <h2 className="text-xl font-semibold text-[#1A1A1A] mb-4">Today's Schedule</h2>
+        <div className="space-y-3">
+          {[
+            { time: '09:00 AM', client: 'Sarah Johnson', service: 'Hair Cut & Style', status: 'Confirmed' },
+            { time: '10:30 AM', client: 'Mike Chen', service: 'Beard Trim', status: 'Pending' },
+            { time: '02:00 PM', client: 'Emma Davis', service: 'Color Treatment', status: 'Confirmed' },
+            { time: '03:30 PM', client: 'David Wilson', service: 'Hair Wash', status: 'Completed' }
+          ].map((appointment, index) => {
+            const getStatusColor = (status: string) => {
+              switch (status) {
+                case 'Confirmed': return 'bg-[#10B981]/10 text-[#10B981]';
+                case 'Pending': return 'bg-[#F59E0B]/10 text-[#F59E0B]';
+                case 'Completed': return 'bg-[#8B5CF6]/10 text-[#8B5CF6]';
+                default: return 'bg-[#64748B]/10 text-[#64748B]';
+              }
+            };
+
+            const getBorderColor = (status: string) => {
+              switch (status) {
+                case 'Confirmed': return 'border-l-[#10B981] bg-[#10B981]/5';
+                case 'Pending': return 'border-l-[#F59E0B] bg-[#F59E0B]/5';
+                case 'Completed': return 'border-l-[#8B5CF6] bg-[#8B5CF6]/5';
+                default: return 'border-l-[#64748B] bg-[#64748B]/5';
+              }
+            };
+
+            return (
+              <Card key={index} className={`bg-white border-0 border-l-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer ${getBorderColor(appointment.status)}`}>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-[#4B2AAD]/10 flex items-center justify-center flex-shrink-0">
+                      <Clock className="w-5 h-5 text-[#4B2AAD]" />
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <h4 className="font-semibold text-[#1A1A1A] text-sm sm:text-base truncate">
+                          {appointment.time} - {appointment.client}
+                        </h4>
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(appointment.status)}`}>
+                          {appointment.status}
+                        </span>
                       </div>
                       
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <h4 className="font-semibold text-[#1A1A1A] text-sm sm:text-base">
-                            {appointment.time} - {appointment.client}
-                          </h4>
-                          <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(appointment.status)}`}>
-                            {appointment.status}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-xs text-[#64748B]">
-                          <span>{appointment.service}</span>
-                          <span>•</span>
-                          <span>{appointment.duration}</span>
-                        </div>
+                      <div className="flex items-center gap-2 text-xs text-[#64748B]">
+                        <span>{appointment.service}</span>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </DashboardSection>
-
-        {/* Business Account Info */}
-        <DashboardSection title="Business Account" variant="card" padding="md">
-          <div className="flex items-center gap-4 p-4 bg-[#F8FAFC] rounded-lg border border-[#E5E7EB]">
-            <div className="w-12 h-12 bg-[#4B2AAD] rounded-full flex items-center justify-center text-white font-bold text-lg">
-              {user?.name?.charAt(0) || user?.email?.charAt(0) || 'B'}
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-[#1A1A1A] mb-1">
-                Business Account
-              </h3>
-              <p className="text-sm text-[#64748B]">
-                {user?.email || 'Unknown'}
-              </p>
-              <span className="inline-block mt-1 px-2 py-1 bg-[#4B2AAD]/10 text-[#4B2AAD] text-xs rounded-full font-medium">
-                {user?.role || 'Business'}
-              </span>
-            </div>
-          </div>
-        </DashboardSection>
-      </DashboardContent>
-    </DashboardLayout>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 };
 

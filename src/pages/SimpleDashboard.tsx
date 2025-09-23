@@ -118,17 +118,17 @@ const SimpleDashboard = () => {
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-lg bg-[#4B2AAD]/10 flex items-center justify-center flex-shrink-0">
                         <Building2 className="w-5 h-5 text-[#4B2AAD]" />
-                      </div>
-                      
+        </div>
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2 mb-1">
                           <h4 className="font-semibold text-[#1A1A1A] text-sm sm:text-base truncate">
-                            {business.name}
-                          </h4>
+                    {business.name}
+                  </h4>
                           <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(business.status)}`}>
-                            {business.status}
-                          </span>
-                        </div>
+                  {business.status}
+                </span>
+              </div>
                         
                         <div className="flex items-center gap-2 text-xs text-[#64748B]">
                           <span className="px-2 py-1 bg-[#F3F4F6] text-[#64748B] rounded-full">
@@ -137,8 +137,8 @@ const SimpleDashboard = () => {
                           <span>•</span>
                           <span>{business.email}</span>
                         </div>
-                      </div>
-                    </div>
+          </div>
+        </div>
                   </CardContent>
                 </Card>
               );
@@ -155,15 +155,15 @@ const SimpleDashboard = () => {
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-[#1A1A1A] mb-1">
                 Platform Administrator
-              </h3>
+          </h3>
               <p className="text-sm text-[#64748B]">
                 {user?.email || 'Unknown'}
               </p>
               <span className="inline-block mt-1 px-2 py-1 bg-[#4B2AAD]/10 text-[#4B2AAD] text-xs rounded-full font-medium">
                 {user?.role || 'Admin'} • Full Access
               </span>
-            </div>
-          </div>
+        </div>
+      </div>
         </DashboardSection>
       </DashboardContent>
     </DashboardLayout>

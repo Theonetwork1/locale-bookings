@@ -363,6 +363,93 @@ const AdminBusinesses = () => {
           </div>
         )}
       </div>
+
+      {/* Edit Business Modal */}
+      {editingBusiness && (
+        <Dialog open={!!editingBusiness} onOpenChange={() => setEditingBusiness(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Business</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-business-name">Business Name</Label>
+                <Input
+                  id="edit-business-name"
+                  value={editingBusiness.name}
+                  onChange={(e) => setEditingBusiness({...editingBusiness, name: e.target.value})}
+                  placeholder="Enter business name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-business-description">Description</Label>
+                <Textarea
+                  id="edit-business-description"
+                  value={editingBusiness.description}
+                  onChange={(e) => setEditingBusiness({...editingBusiness, description: e.target.value})}
+                  placeholder="Enter business description"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-business-address">Address</Label>
+                <Input
+                  id="edit-business-address"
+                  value={editingBusiness.address}
+                  onChange={(e) => setEditingBusiness({...editingBusiness, address: e.target.value})}
+                  placeholder="Enter business address"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-business-phone">Phone</Label>
+                  <Input
+                    id="edit-business-phone"
+                    value={editingBusiness.phone}
+                    onChange={(e) => setEditingBusiness({...editingBusiness, phone: e.target.value})}
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-business-email">Email</Label>
+                  <Input
+                    id="edit-business-email"
+                    type="email"
+                    value={editingBusiness.email}
+                    onChange={(e) => setEditingBusiness({...editingBusiness, email: e.target.value})}
+                    placeholder="business@email.com"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="edit-business-category">Category</Label>
+                <Select value={editingBusiness.category} onValueChange={(value) => setEditingBusiness({...editingBusiness, category: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Beauty">Beauty</SelectItem>
+                    <SelectItem value="Technology">Technology</SelectItem>
+                    <SelectItem value="Healthcare">Healthcare</SelectItem>
+                    <SelectItem value="Food">Food & Dining</SelectItem>
+                    <SelectItem value="Fitness">Fitness</SelectItem>
+                    <SelectItem value="Education">Education</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button 
+                onClick={() => {
+                  // Update the business in the list
+                  setBusinesses(prev => prev.map(b => b.id === editingBusiness.id ? editingBusiness : b));
+                  setEditingBusiness(null);
+                }} 
+                className="w-full bg-[#4B2AAD] hover:bg-[#A68BFA] text-white"
+              >
+                Save Changes
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
