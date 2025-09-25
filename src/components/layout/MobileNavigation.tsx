@@ -46,7 +46,7 @@ const MobileNavigation = ({ onItemClick }: MobileNavigationProps) => {
     switch (user?.role) {
       case 'admin':
         return [
-          { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+          { icon: LayoutDashboard, label: 'Dashboard', path: '/admin-dashboard' },
           { icon: Building2, label: 'Businesses', path: '/admin/businesses' },
           { icon: Users, label: 'Team Members', path: '/admin/users' },
           { icon: Calendar, label: 'Subscriptions', path: '/admin/appointments' },

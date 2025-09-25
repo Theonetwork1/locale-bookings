@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslations } from '@/hooks/useTranslations';
 
-type UserRole = 'client' | 'business' | 'admin';
+type UserRole = 'client' | 'business';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -29,18 +29,7 @@ const Login = () => {
     try {
       await login(email, password, role);
       
-      // Navigate based on role - the login function will handle business setup check
-      switch (role) {
-        case 'admin':
-          navigate('/dashboard');
-          break;
-        case 'business':
-          navigate('/business-dashboard');
-          break;
-        case 'client':
-          navigate('/client-dashboard');
-          break;
-      }
+      // Navigation will be handled by AuthContext based on actual user role from Supabase
     } catch (err) {
       setError(t.loginFailed || 'Login failed. Please try again.');
     } finally {
@@ -118,12 +107,6 @@ const Login = () => {
                       <div className="flex items-center">
                         <div className="w-3 h-3 bg-[#A68BFA] rounded-full mr-3"></div>
                         Business - Manage Services
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="admin" className="text-base py-3">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-[#1A1A1A] rounded-full mr-3"></div>
-                        Administrator - Platform Management
                       </div>
                     </SelectItem>
                   </SelectContent>
