@@ -29,7 +29,15 @@ const Login = () => {
     try {
       await login(email, password, role);
       
-      // Navigation will be handled by AuthContext based on actual user role from Supabase
+      // Navigate based on selected role
+      switch (role) {
+        case 'client':
+          navigate('/client-dashboard');
+          break;
+        case 'business':
+          navigate('/business-dashboard');
+          break;
+      }
     } catch (err) {
       setError(t.loginFailed || 'Login failed. Please try again.');
     } finally {
@@ -106,7 +114,7 @@ const Login = () => {
                     <SelectItem value="business" className="text-base py-3">
                       <div className="flex items-center">
                         <div className="w-3 h-3 bg-[#A68BFA] rounded-full mr-3"></div>
-                        Business - Manage Services
+                        Business - Manage Services & Clients
                       </div>
                     </SelectItem>
                   </SelectContent>
