@@ -2,10 +2,11 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
+import { RoleValidator } from './RoleValidator';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'client' | 'business';
+  requiredRole?: 'client' | 'business' | 'admin';
   redirectTo?: string;
 }
 
@@ -42,5 +43,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     }
   }
 
-  return <>{children}</>;
+  // Use RoleValidator for additional security checks
+  return (
+    <RoleValidator requiredRole={requiredRole}>
+      {children}
+    </RoleValidator>
+  );
 };

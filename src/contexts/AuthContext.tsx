@@ -3,6 +3,17 @@ import { supabase, getUserProfileByEmail, verifyPassword } from '@/lib/supabase'
 
 export type UserRole = 'business' | 'client';
 
+// Admin access control - only specific emails can access admin functions
+const ADMIN_EMAILS = [
+  'admin@bizli.com',
+  'administrator@bizli.com'
+  // Add more admin emails as needed
+];
+
+export const isAdminUser = (email: string): boolean => {
+  return ADMIN_EMAILS.includes(email.toLowerCase());
+};
+
 export interface User {
   id: string;
   email: string;
@@ -30,7 +41,6 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string, role: UserRole) => Promise<void>;
   logout: () => Promise<void>;
-  switchRole: (role: UserRole) => void;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, userData: { 
     full_name: string; 
@@ -134,6 +144,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           throw new Error(`This account is registered as ${userProfile.role}, not ${role}`);
         }
         
+        // Special admin access control
+        if (userProfile.role === 'admin') {
+          if (!isAdminUser(email)) {
+            throw new Error('Access denied. Admin privileges not granted for this account.');
+          }
+        }
+        
         // For existing business users, check if they have business data
         // If they have business data in their profile, they should be considered as setup complete
         let isBusinessSetup = userProfile.is_business_setup;
@@ -174,18 +191,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('user', JSON.stringify(user));
         
       } catch (dbError) {
-        // Fallback to demo mode if user not found in database
-        console.log('User not found in database, using demo mode');
-        const mockUser: User = {
-          id: 'mock-user-id',
-          email,
-          name: email.split('@')[0],
-          role,
-          avatar_url: undefined
-        };
-        
-        setUser(mockUser);
-        localStorage.setItem('user', JSON.stringify(mockUser));
+        // No demo mode - require valid credentials
+        throw new Error('Invalid credentials. Please check your email and password.');
       }
       
     } catch (error) {
@@ -211,13 +218,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const switchRole = (role: UserRole) => {
-    if (user) {
-      const updatedUser = { ...user, role };
-      setUser(updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-    }
-  };
 
   // Compatibility methods for new auth system
   const signIn = async (email: string, password: string) => {
@@ -304,7 +304,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     login,
     logout,
-    switchRole,
     signIn,
     signUp,
     signOut: logout, // Alias pour logout

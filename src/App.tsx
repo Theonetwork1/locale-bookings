@@ -22,6 +22,7 @@ import FindBusiness from "./pages/FindBusiness";
 import MyDepartments from "./pages/MyDepartments";
 import BookAppointment from "./pages/BookAppointment";
 import NotFound from "./pages/NotFound";
+import Unauthorized from "./pages/Unauthorized";
 import { ThemeProvider } from "next-themes";
 
 // Admin pages
@@ -85,7 +86,11 @@ const App = () => (
                   />
                   <Route 
                     path="/admin-dashboard" 
-                    element={<Dashboard />}
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <Dashboard />
+                      </ProtectedRoute>
+                    } 
                   />
                   <Route 
                     path="/client-dashboard" 
@@ -106,6 +111,7 @@ const App = () => (
                   <Route path="/find-business" element={<FindBusiness />} />
                   <Route path="/my-departments" element={<MyDepartments />} />
                   <Route path="/book-appointment/:businessId" element={<BookAppointment />} />
+                  <Route path="/unauthorized" element={<Unauthorized />} />
                   
                   {/* Admin Routes */}
                   <Route path="/admin/businesses" element={<AdminBusinesses />} />
@@ -116,11 +122,19 @@ const App = () => (
                   <Route path="/admin/settings" element={<AdminSettings />} />
                   <Route 
                     path="/admin/team-management" 
-                    element={<AdminTeamManagement />}
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <AdminTeamManagement />
+                      </ProtectedRoute>
+                    } 
                   />
                   <Route 
                     path="/admin/analytics" 
-                    element={<AdminAnalytics />}
+                    element={
+                      <ProtectedRoute requiredRole="admin">
+                        <AdminAnalytics />
+                      </ProtectedRoute>
+                    } 
                   />
                   
                   {/* Business Routes */}
