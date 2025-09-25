@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslations } from '@/hooks/useTranslations';
 
-type UserRole = 'client' | 'business';
+type UserRole = 'client' | 'business' | 'admin';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -36,6 +36,9 @@ const Login = () => {
           break;
         case 'business':
           navigate('/business-dashboard');
+          break;
+        case 'admin':
+          navigate('/admin-dashboard');
           break;
       }
     } catch (err) {
@@ -115,6 +118,12 @@ const Login = () => {
                       <div className="flex items-center">
                         <div className="w-3 h-3 bg-[#A68BFA] rounded-full mr-3"></div>
                         Business - Manage Services & Clients
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="admin" className="text-base py-3">
+                      <div className="flex items-center">
+                        <div className="w-3 h-3 bg-[#F97316] rounded-full mr-3"></div>
+                        Administrator - Platform Management
                       </div>
                     </SelectItem>
                   </SelectContent>

@@ -30,7 +30,7 @@ const Auth = () => {
   const [loginForm, setLoginForm] = useState({
     email: '',
     password: '',
-    role: 'client' as 'client' | 'business'
+    role: 'client' as 'client' | 'business' | 'admin'
   });
 
   const [signupForm, setSignupForm] = useState({
@@ -38,7 +38,7 @@ const Auth = () => {
     password: '',
     confirmPassword: '',
     fullName: '',
-    role: 'client' as 'client' | 'business'
+    role: 'client' as 'client' | 'business' | 'admin'
   });
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -54,6 +54,9 @@ const Auth = () => {
       });
       // Rediriger selon le rôle
       switch (loginForm.role) {
+        case 'admin':
+          navigate('/admin-dashboard');
+          break;
         case 'business':
           navigate('/business-dashboard');
           break;
@@ -181,7 +184,7 @@ const Auth = () => {
                     <Label htmlFor="role">Account Type</Label>
                     <Select 
                       value={loginForm.role} 
-                      onValueChange={(value: 'client' | 'business') => 
+                      onValueChange={(value: 'client' | 'business' | 'admin') => 
                         setLoginForm(prev => ({ ...prev, role: value }))
                       }
                     >
@@ -191,6 +194,7 @@ const Auth = () => {
                       <SelectContent>
                         <SelectItem value="client">Client - Browse & Book Services</SelectItem>
                         <SelectItem value="business">Business - Manage Services & Clients</SelectItem>
+                        <SelectItem value="admin">Administrator - Platform Management</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
