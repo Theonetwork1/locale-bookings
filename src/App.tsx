@@ -85,11 +85,7 @@ const App = () => (
                   />
                   <Route 
                     path="/admin-dashboard" 
-                    element={
-                      <ProtectedRoute requiredRole="admin">
-                        <Dashboard />
-                      </ProtectedRoute>
-                    } 
+                    element={<Dashboard />}
                   />
                   <Route 
                     path="/client-dashboard" 
@@ -120,19 +116,11 @@ const App = () => (
                   <Route path="/admin/settings" element={<AdminSettings />} />
                   <Route 
                     path="/admin/team-management" 
-                    element={
-                      <ProtectedRoute requiredRole="admin">
-                        <AdminTeamManagement />
-                      </ProtectedRoute>
-                    } 
+                    element={<AdminTeamManagement />}
                   />
                   <Route 
                     path="/admin/analytics" 
-                    element={
-                      <ProtectedRoute requiredRole="admin">
-                        <AdminAnalytics />
-                      </ProtectedRoute>
-                    } 
+                    element={<AdminAnalytics />}
                   />
                   
                   {/* Business Routes */}

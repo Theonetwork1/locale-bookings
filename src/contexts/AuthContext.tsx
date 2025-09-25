@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase, getUserProfileByEmail, verifyPassword } from '@/lib/supabase';
 
-export type UserRole = 'admin' | 'business' | 'client';
+export type UserRole = 'business' | 'client';
 
 export interface User {
   id: string;
@@ -173,21 +173,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(user);
         localStorage.setItem('user', JSON.stringify(user));
         
-        // Auto-redirect based on actual role from Supabase
-        setTimeout(() => {
-          switch (user.role) {
-            case 'admin':
-              window.location.href = '/admin-dashboard';
-              break;
-            case 'business':
-              window.location.href = '/business-dashboard';
-              break;
-            case 'client':
-              window.location.href = '/client-dashboard';
-              break;
-          }
-        }, 100);
-        
       } catch (dbError) {
         // Fallback to demo mode if user not found in database
         console.log('User not found in database, using demo mode');
@@ -201,18 +186,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         setUser(mockUser);
         localStorage.setItem('user', JSON.stringify(mockUser));
-        
-        // Auto-redirect based on role for demo mode
-        setTimeout(() => {
-          switch (role) {
-            case 'business':
-              window.location.href = '/business-dashboard';
-              break;
-            case 'client':
-              window.location.href = '/client-dashboard';
-              break;
-          }
-        }, 100);
       }
       
     } catch (error) {

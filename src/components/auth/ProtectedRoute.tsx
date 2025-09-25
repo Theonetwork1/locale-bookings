@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'client' | 'business' | 'admin';
+  requiredRole?: 'client' | 'business';
   redirectTo?: string;
 }
 
@@ -34,8 +34,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (requiredRole && user?.role !== requiredRole) {
     // Redirect based on user role
     switch (user?.role) {
-      case 'admin':
-        return <Navigate to="/admin-dashboard" replace />;
       case 'business':
         return <Navigate to="/business-dashboard" replace />;
       case 'client':
