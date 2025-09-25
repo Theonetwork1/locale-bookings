@@ -163,31 +163,34 @@ const Topbar = () => {
             </DropdownMenu>
           </div>
 
-          {/* Notifications - Compact on mobile */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              const notifPath = user?.role === 'admin'
-                ? '/admin/notifications'
-                : user?.role === 'business'
-                  ? '/business/notifications'
-                  : '/client/notifications';
-              navigate(notifPath);
-            }}
-            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 relative h-9 w-9"
-            title="Notifications"
-          >
-            <Bell className="h-4 w-4" />
-            {notificationCount > 0 && (
-              <span className="absolute -right-1 -top-1 h-4 min-w-4 rounded-full bg-[#F97316] text-[9px] leading-4 text-white px-1 text-center font-medium">
-                {notificationCount > 9 ? '9+' : notificationCount}
-              </span>
-            )}
-          </Button>
+          {/* Notifications - Only show if user is logged in */}
+          {user && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                const notifPath = user?.role === 'admin'
+                  ? '/admin/notifications'
+                  : user?.role === 'business'
+                    ? '/business/notifications'
+                    : '/client/notifications';
+                navigate(notifPath);
+              }}
+              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 relative h-9 w-9"
+              title="Notifications"
+            >
+              <Bell className="h-4 w-4" />
+              {notificationCount > 0 && (
+                <span className="absolute -right-1 -top-1 h-4 min-w-4 rounded-full bg-[#F97316] text-[9px] leading-4 text-white px-1 text-center font-medium">
+                  {notificationCount > 9 ? '9+' : notificationCount}
+                </span>
+              )}
+            </Button>
+          )}
 
-          {/* User Menu - Compact on mobile */}
-          <DropdownMenu>
+          {/* User Menu - Only show if user is logged in */}
+          {user && (
+            <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
@@ -255,6 +258,7 @@ const Topbar = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          )}
         </div>
       </div>
     </div>

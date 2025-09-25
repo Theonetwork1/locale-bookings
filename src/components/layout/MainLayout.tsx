@@ -35,7 +35,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   // Hide layout on landing, auth, onboarding, and legal pages
-  const hideLayoutPaths = ['/', '/login', '/register', '/business-subscription-setup', '/business-onboarding', '/test', '/legal', '/terms-of-service', '/privacy-policy'];
+  const hideLayoutPaths = ['/', '/login', '/register', '/auth', '/business-subscription-setup', '/business-onboarding', '/test', '/legal', '/terms-of-service', '/privacy-policy'];
   if (hideLayoutPaths.includes(location.pathname)) {
     return <>{children}</>;
   }
