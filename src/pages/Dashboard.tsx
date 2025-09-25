@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { 
-  LogOut, 
   Users, 
   Calendar, 
   DollarSign, 
@@ -20,10 +19,6 @@ const Dashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/login');
-  };
 
   return (
     <div className="space-y-6">
@@ -32,16 +27,6 @@ const Dashboard = () => {
           <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Admin Dashboard</h1>
           <p className="text-gray-600">Manage the entire platform</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="outline" 
-              onClick={handleLogout}
-              className="text-red-600 border-red-600 hover:bg-red-50"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-            Logout
-            </Button>
           </div>
         </div>
         

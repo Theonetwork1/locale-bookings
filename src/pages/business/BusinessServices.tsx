@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { LogOut, Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 
 const BusinessServices = () => {
   const { user, signOut } = useAuth();
@@ -42,10 +42,6 @@ const BusinessServices = () => {
     price: ''
   });
 
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/login');
-  };
 
   const handleAddService = () => {
     if (serviceForm.name && serviceForm.price) {
@@ -146,14 +142,6 @@ const BusinessServices = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <Button 
-            variant="outline" 
-            onClick={handleLogout}
-            className="text-red-600 border-red-600 hover:bg-red-50"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
         </div>
       </div>
 

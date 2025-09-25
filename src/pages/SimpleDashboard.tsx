@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { LogOut, Users, Shield, Activity, Settings, Building2, MessageSquare, Calendar, Bell, BarChart3, TrendingUp, UserCheck, Clock } from "lucide-react";
+import { Users, Shield, Activity, Settings, Building2, MessageSquare, Calendar, Bell, BarChart3, TrendingUp, UserCheck, Clock } from "lucide-react";
 import { 
   DashboardLayout, 
   DashboardHeader, 
@@ -16,27 +16,12 @@ const SimpleDashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/login');
-  };
 
   return (
     <DashboardLayout>
       <DashboardHeader
         title="Admin Dashboard"
         subtitle="Manage the entire platform"
-        actions={
-          <Button 
-            onClick={handleLogout}
-            variant="outline"
-            size="sm"
-            className="border-red-600 text-red-600 hover:bg-red-50"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
-        }
       />
 
       <DashboardContent>

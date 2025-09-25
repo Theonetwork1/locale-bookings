@@ -3,16 +3,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogOut, Calendar, MessageCircle, Bell, User, Clock, CheckCircle, AlertCircle, Star, Search, MapPin, TrendingUp, Building2 } from "lucide-react";
+import { Calendar, MessageCircle, Bell, User, Clock, CheckCircle, AlertCircle, Star, Search, MapPin, TrendingUp, Building2 } from "lucide-react";
 
 const SimpleClientDashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/login');
-  };
 
   return (
     <div className="space-y-6">
@@ -21,16 +17,6 @@ const SimpleClientDashboard = () => {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Client Dashboard</h1>
           <p className="text-gray-600">Manage your appointments and bookings</p>
-        </div>
-        <div className="flex items-center space-x-4">
-          <Button 
-            variant="outline" 
-            onClick={handleLogout}
-            className="text-red-600 border-red-600 hover:bg-red-50"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
         </div>
       </div>
 
