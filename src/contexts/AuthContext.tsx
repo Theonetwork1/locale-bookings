@@ -158,6 +158,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       
+      // Check if we're in development mode (no Supabase configured)
+      const isDevelopmentMode = import.meta.env.VITE_DEVELOPMENT_MODE === 'true' || 
+                               !import.meta.env.VITE_SUPABASE_URL || 
+                               import.meta.env.VITE_SUPABASE_URL === 'https://your-project.supabase.co';
+      
+      if (isDevelopmentMode) {
+        // Development mode - allow login with any credentials
+        console.log('Development mode: Allowing login without database connection');
+        
+        const user: User = {
+          id: `dev-${Date.now()}`,
+          email: email,
+          name: email.split('@')[0],
+          role: role,
+          avatar_url: undefined,
+          is_business_setup: role === 'business' ? false : undefined,
+          isBusinessProfileComplete: false
+        };
+        
+        setUser(user);
+        localStorage.setItem('user', JSON.stringify(user));
+        return user;
+      }
+      
+      // Production mode - use Supabase
       // Get user profile from database
       const userProfile = await getUserProfileByEmail(email);
       
@@ -272,6 +297,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     business_description?: string;
   }) => {
     try {
+      // Check if we're in development mode
+      const isDevelopmentMode = import.meta.env.VITE_DEVELOPMENT_MODE === 'true' || 
+                               !import.meta.env.VITE_SUPABASE_URL || 
+                               import.meta.env.VITE_SUPABASE_URL === 'https://your-project.supabase.co';
+      
+      if (isDevelopmentMode) {
+        // Development mode - just return success
+        console.log('Development mode: Signup successful without database connection');
+        return { error: null };
+      }
+      
+      // Production mode - use Supabase
       // Create user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
