@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslations } from '@/hooks/useTranslations';
 
-type UserRole = 'client' | 'business' | 'admin';
+type UserRole = 'client' | 'business';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -27,10 +27,10 @@ const Login = () => {
     setError('');
 
     try {
-      await login(email, password, role);
+      const user = await login(email, password, role);
       
-      // Navigate based on selected role
-      switch (role) {
+      // Navigate based on user's actual role from database
+      switch (user.role) {
         case 'client':
           navigate('/client-dashboard');
           break;
@@ -120,12 +120,6 @@ const Login = () => {
                         Business - Manage Services & Clients
                       </div>
                     </SelectItem>
-                    <SelectItem value="admin" className="text-base py-3">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-[#F97316] rounded-full mr-3"></div>
-                        Administrator - Platform Management
-                      </div>
-                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -153,11 +147,6 @@ const Login = () => {
             </form>
             
             <div className="mt-8 text-center space-y-4">
-              <div className="p-4 bg-[#EEF1FF] border-2 border-[#4B2AAD]/20 rounded-xl">
-                <p className="text-[#374151] text-sm font-medium">
-                  🎯 Demo Mode: Use any email/password combination
-                </p>
-              </div>
               
               <div className="flex items-center justify-center space-x-3">
                 <div className="h-px bg-[#E5E7EB] flex-1"></div>
