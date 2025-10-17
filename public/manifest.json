@@ -12,13 +12,13 @@
   "categories": ["business", "productivity", "lifestyle"],
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "bizli_favicon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "bizli_favicon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -46,7 +46,7 @@
       "url": "/find-business",
       "icons": [
         {
-          "src": "icon-192.png",
+          "src": "bizli_favicon.png",
           "sizes": "192x192"
         }
       ]
@@ -58,7 +58,7 @@
       "url": "/client-appointments",
       "icons": [
         {
-          "src": "icon-192.png",
+          "src": "bizli_favicon.png",
           "sizes": "192x192"
         }
       ]

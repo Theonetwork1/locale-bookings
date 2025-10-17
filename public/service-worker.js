@@ -7,9 +7,7 @@ const STATIC_FILES = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/favicon.ico',
-  '/icon-192.png',
-  '/icon-512.png',
+  '/bizli_favicon.png',
   // Add other static assets that should be cached
 ];
 
@@ -177,8 +175,8 @@ self.addEventListener('push', (event) => {
     const data = event.data.json();
     const options = {
       body: data.body,
-      icon: '/icon-192.png',
-      badge: '/icon-192.png',
+      icon: '/bizli_favicon.png',
+      badge: '/bizli_favicon.png',
       vibrate: [100, 50, 100],
       data: {
         dateOfArrival: Date.now(),
@@ -188,12 +186,12 @@ self.addEventListener('push', (event) => {
         {
           action: 'explore',
           title: 'View',
-          icon: '/icon-192.png'
+          icon: '/bizli_favicon.png'
         },
         {
           action: 'close',
           title: 'Close',
-          icon: '/icon-192.png'
+          icon: '/bizli_favicon.png'
         }
       ]
     };
