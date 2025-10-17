@@ -70,7 +70,7 @@ const Topbar = () => {
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
                       <img 
-                        src="/src/assets/bizli-logo.png" 
+                        src="/bizli logo'.jpg" 
                         alt="Bizli Solution" 
                         className="w-8 h-8 object-contain"
                         onError={(e) => {
@@ -95,7 +95,7 @@ const Topbar = () => {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-[#4B2AAD] rounded-md flex items-center justify-center p-1">
               <img 
-                src="/src/assets/bizli-logo.png" 
+                src="/bizli logo'.jpg" 
                 alt="Bizli Solution" 
                 className="w-full h-full object-contain"
                 onError={(e) => {
