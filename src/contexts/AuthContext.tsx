@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             .eq('id', session.user.id)
             .single();
           if (userProfile) {
-            const actualRole = isAdminUser(session.user.email || '') ? 'admin' : userProfile.role;
+            const actualRole = isAdminUser(session.user.email || '') ? 'admin' : ((userProfile as any).role as UserRole || 'client');
             const user: User = {
               id: userProfile.id,
               email: userProfile.email,
@@ -135,7 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               .eq('id', session.user.id)
               .single();
             if (userProfile) {
-              const actualRole = isAdminUser(session.user.email || '') ? 'admin' : userProfile.role;
+              const actualRole = isAdminUser(session.user.email || '') ? 'admin' : ((userProfile as any).role as UserRole || 'client');
               const user: User = {
                 id: userProfile.id,
                 email: userProfile.email,
@@ -198,7 +198,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       // Determine actual user role (admin is determined by email, not database)
-      const actualRole = isAdminUser(email) ? 'admin' : userProfile.role;
+      const actualRole = isAdminUser(email) ? 'admin' : ((userProfile as any).role as UserRole || 'client');
       
       // Check if role matches (only for client and business)
       if (actualRole !== role && actualRole !== 'admin') {
@@ -351,7 +351,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq('id', user.id)
         .single();
       if (userProfile) {
-        const actualRole = isAdminUser(user.email) ? 'admin' : userProfile.role;
+        const actualRole = isAdminUser(user.email) ? 'admin' : ((userProfile as any).role as UserRole || 'client');
         const updatedUser: User = {
           id: userProfile.id,
           email: userProfile.email,
