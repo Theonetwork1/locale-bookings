@@ -14,7 +14,239 @@ export type Database = {
   }
   public: {
     Tables: {
-      appointments: {
+      businesses: {
+        Row: {
+          category: Database["public"]["Enums"]["business_category"]
+          created_at: string
+          description: string | null
+          email: string
+          id: string
+          logo_url: string | null
+          name: string
+          owner_id: string
+          phone: string | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["business_category"]
+          created_at?: string
+          description?: string | null
+          email?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id: string
+          phone?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["business_category"]
+          created_at?: string
+          description?: string | null
+          email?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "public.profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          department: string | null
+          email: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          department?: string | null
+          email?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          department?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      public_business_settings: {
+        Row: {
+          accept_payments: boolean | null
+          auto_confirm_bookings: boolean | null
+          booking_advance_days: number | null
+          business_id: string
+          cancellation_policy: string | null
+          chat_enbled: boolean | null
+          created_at: string
+          custom_url: string
+          id: string
+          language: string | null
+          notification_preferences: Json | null
+          theme_color: string | null
+          updated_at: string
+        }
+        Insert: {
+          accept_payments?: boolean | null
+          auto_confirm_bookings?: boolean | null
+          booking_advance_days?: number | null
+          business_id: string
+          cancellation_policy?: string | null
+          chat_enbled?: boolean | null
+          created_at?: string
+          custom_url: string
+          id?: string
+          language?: string | null
+          notification_preferences?: Json | null
+          theme_color?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accept_payments?: boolean | null
+          auto_confirm_bookings?: boolean | null
+          booking_advance_days?: number | null
+          business_id?: string
+          cancellation_policy?: string | null
+          chat_enbled?: boolean | null
+          created_at?: string
+          custom_url?: string
+          id?: string
+          language?: string | null
+          notification_preferences?: Json | null
+          theme_color?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_business_settings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      public_reviews: {
+        Row: {
+          business_id: string
+          client_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          submitted_at: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          client_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          submitted_at?: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          client_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          submitted_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_reviews_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_reviews_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "public.profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      "public.analytics_events": {
+        Row: {
+          business_id: string | null
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public.analytics_events_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public.analytics_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public.profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      "public.appointments": {
         Row: {
           appointment_date: string
           appointment_time: string
@@ -35,7 +267,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
-          service_id: string
+          service_id?: string
           status?: Database["public"]["Enums"]["appointment_status"] | null
           updated_at?: string
         }
@@ -53,150 +285,133 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "appointments_business_id_fkey"
+            foreignKeyName: "public.appointments_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "appointments_client_id_fkey"
+            foreignKeyName: "public.appointments_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public.profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "appointments_service_id_fkey"
+            foreignKeyName: "public.appointments_service_id_fkey"
             columns: ["service_id"]
             isOneToOne: false
-            referencedRelation: "services"
+            referencedRelation: "public.services"
             referencedColumns: ["id"]
           },
         ]
       }
-      business_settings: {
+      "public.audit_logs": {
         Row: {
-          accept_payments: boolean | null
-          auto_confirm_bookings: boolean | null
-          booking_advance_days: number | null
-          business_id: string
-          cancellation_policy: string | null
-          chat_enabled: boolean | null
+          action: string
           created_at: string
-          custom_url: string | null
           id: string
-          language: string | null
-          notification_preferences: Json | null
-          theme_color: string | null
-          updated_at: string
+          ip_address: string | null
+          new_valeus: Json | null
+          old_value: Json | null
+          ressource_id: string
+          ressource_type: string
+          user_agent: string | null
+          user_id: string | null
         }
         Insert: {
-          accept_payments?: boolean | null
-          auto_confirm_bookings?: boolean | null
-          booking_advance_days?: number | null
-          business_id: string
-          cancellation_policy?: string | null
-          chat_enabled?: boolean | null
+          action: string
           created_at?: string
-          custom_url?: string | null
           id?: string
-          language?: string | null
-          notification_preferences?: Json | null
-          theme_color?: string | null
-          updated_at?: string
+          ip_address?: string | null
+          new_valeus?: Json | null
+          old_value?: Json | null
+          ressource_id: string
+          ressource_type: string
+          user_agent?: string | null
+          user_id?: string | null
         }
         Update: {
-          accept_payments?: boolean | null
-          auto_confirm_bookings?: boolean | null
-          booking_advance_days?: number | null
-          business_id?: string
-          cancellation_policy?: string | null
-          chat_enabled?: boolean | null
+          action?: string
           created_at?: string
-          custom_url?: string | null
           id?: string
-          language?: string | null
-          notification_preferences?: Json | null
-          theme_color?: string | null
-          updated_at?: string
+          ip_address?: string | null
+          new_valeus?: Json | null
+          old_value?: Json | null
+          ressource_id?: string
+          ressource_type?: string
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "business_settings_business_id_fkey"
+            foreignKeyName: "public.audit_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public.profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      "public.locations": {
+        Row: {
+          business_id: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          full_address: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          state: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          business_id?: string | null
+          city?: string | null
+          country?: string | null
+          created_at: string
+          full_address?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          state?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          business_id?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          full_address?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          state?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public.locations_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      businesses: {
-        Row: {
-          address: string | null
-          brand_color: string | null
-          category: Database["public"]["Enums"]["business_category"]
-          created_at: string
-          description: string | null
-          email: string
-          id: string
-          is_active: boolean | null
-          is_approved: boolean | null
-          logo_url: string | null
-          name: string
-          opening_hours: Json | null
-          owner_id: string
-          phone: string | null
-          status: string | null
-          updated_at: string
-        }
-        Insert: {
-          address?: string | null
-          brand_color?: string | null
-          category?: Database["public"]["Enums"]["business_category"]
-          created_at?: string
-          description?: string | null
-          email: string
-          id?: string
-          is_active?: boolean | null
-          is_approved?: boolean | null
-          logo_url?: string | null
-          name: string
-          opening_hours?: Json | null
-          owner_id: string
-          phone?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Update: {
-          address?: string | null
-          brand_color?: string | null
-          category?: Database["public"]["Enums"]["business_category"]
-          created_at?: string
-          description?: string | null
-          email?: string
-          id?: string
-          is_active?: boolean | null
-          is_approved?: boolean | null
-          logo_url?: string | null
-          name?: string
-          opening_hours?: Json | null
-          owner_id?: string
-          phone?: string | null
-          status?: string | null
-          updated_at?: string
-        }
-        Relationships: [
           {
-            foreignKeyName: "businesses_owner_id_fkey"
-            columns: ["owner_id"]
+            foreignKeyName: "public.locations_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public.profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      messages: {
+      "public.messages": {
         Row: {
           content: string
           created_at: string
@@ -204,16 +419,14 @@ export type Database = {
           receiver_id: string
           sender_id: string
           sent_at: string
-          updated_at: string | null
         }
         Insert: {
           content: string
-          created_at?: string
+          created_at: string
           id?: string
           receiver_id: string
           sender_id: string
-          sent_at?: string
-          updated_at?: string | null
+          sent_at: string
         }
         Update: {
           content?: string
@@ -222,26 +435,25 @@ export type Database = {
           receiver_id?: string
           sender_id?: string
           sent_at?: string
-          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "messages_receiver_id_fkey"
+            foreignKeyName: "public.messages_receiver_id_fkey"
             columns: ["receiver_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public.profiles"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "messages_sender_id_fkey"
+            foreignKeyName: "public.messages_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public.profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      notifications: {
+      "public.notifications": {
         Row: {
           business_id: string | null
           content: string
@@ -274,142 +486,135 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "notifications_business_id_fkey"
+            foreignKeyName: "public.notifications_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "notifications_user_id_fkey"
+            foreignKeyName: "public.notifications_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public.profiles"
             referencedColumns: ["id"]
           },
         ]
       }
-      profiles: {
+      "public.profiles": {
         Row: {
           avatar_url: string | null
-          created_at: string
+          created_at: string | null
           department: string | null
           email: string
           full_name: string | null
           id: string
           phone: string | null
-          role: Database["public"]["Enums"]["user_role"]
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           avatar_url?: string | null
-          created_at?: string
-          department?: string | null
-          email: string
-          full_name?: string | null
-          id: string
-          phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
+          created_at?: string | null
           department?: string | null
           email?: string
           full_name?: string | null
           id?: string
           phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      reviews: {
-        Row: {
-          business_id: string
-          client_id: string
-          comment: string | null
-          created_at: string
-          id: string
-          rating: number
-          submitted_at: string
-          updated_at: string | null
-        }
-        Insert: {
-          business_id: string
-          client_id: string
-          comment?: string | null
-          created_at?: string
-          id?: string
-          rating: number
-          submitted_at?: string
           updated_at?: string | null
         }
         Update: {
-          business_id?: string
-          client_id?: string
-          comment?: string | null
-          created_at?: string
+          avatar_url?: string | null
+          created_at?: string | null
+          department?: string | null
+          email?: string
+          full_name?: string | null
           id?: string
-          rating?: number
-          submitted_at?: string
+          phone?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      "public.services": {
+        Row: {
+          business_id: string | null
+          created_at: string
+          description: string
+          duration_minute: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          price: number | null
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          description: string
+          duration_minute?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          price?: number | null
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          description?: string
+          duration_minute?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          price?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "reviews_business_id_fkey"
+            foreignKeyName: "public.services_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "reviews_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
         ]
       }
-      services: {
+      "public.subscriptions": {
         Row: {
           business_id: string
           created_at: string
-          description: string | null
-          duration_minutes: number | null
+          current_period_end: string | null
+          current_period_start: string | null
           id: string
-          is_active: boolean | null
-          name: string
-          price: number | null
+          plan: string
+          status: string
+          stripe_subscription_id: string | null
+          trial_end: string | null
           updated_at: string
         }
         Insert: {
           business_id: string
           created_at?: string
-          description?: string | null
-          duration_minutes?: number | null
+          current_period_end?: string | null
+          current_period_start?: string | null
           id?: string
-          is_active?: boolean | null
-          name: string
-          price?: number | null
+          plan?: string
+          status?: string
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
           updated_at?: string
         }
         Update: {
           business_id?: string
           created_at?: string
-          description?: string | null
-          duration_minutes?: number | null
+          current_period_end?: string | null
+          current_period_start?: string | null
           id?: string
-          is_active?: boolean | null
-          name?: string
-          price?: number | null
+          plan?: string
+          status?: string
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "services_business_id_fkey"
+            foreignKeyName: "public.subscriptions_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
@@ -417,7 +622,128 @@ export type Database = {
           },
         ]
       }
-      transactions: {
+      "public.support": {
+        Row: {
+          assigned_to: string
+          business_id: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          priority: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to: string
+          business_id?: string | null
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          priority?: string
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string
+          business_id?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          priority?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public.support_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "public.profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public.support_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public.support_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public.profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      "public.team": {
+        Row: {
+          created_at: string
+          department: string | null
+          id: string
+          invited_at: string | null
+          invited_by: string | null
+          is_active: boolean | null
+          joined_at: string
+          permissions: string[] | null
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          is_active?: boolean | null
+          joined_at?: string
+          permissions?: string[] | null
+          role: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          is_active?: boolean | null
+          joined_at?: string
+          permissions?: string[] | null
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public.team_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "public.profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public.team_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public.profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      "public.transactions": {
         Row: {
           amount: number
           appointment_id: string | null
@@ -456,24 +782,24 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "transactions_appointment_id_fkey"
+            foreignKeyName: "public.transactions_appointment_id_fkey"
             columns: ["appointment_id"]
             isOneToOne: false
-            referencedRelation: "appointments"
+            referencedRelation: "public.appointments"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "transactions_business_id_fkey"
+            foreignKeyName: "public.transactions_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "transactions_client_id_fkey"
+            foreignKeyName: "public.transactions_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public.profiles"
             referencedColumns: ["id"]
           },
         ]

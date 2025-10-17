@@ -90,7 +90,7 @@ export const isProtectedRoute = (path: string): boolean => {
 export const getRequiredRoles = (path: string): string[] => {
   for (const [route, roles] of Object.entries(PROTECTED_ROUTES)) {
     if (path.startsWith(route)) {
-      return roles;
+      return [...roles];
     }
   }
   return [];

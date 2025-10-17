@@ -34,8 +34,10 @@ interface AppTranslations {
   creatingAccount: string;
   enterEmail: string;
   enterPassword: string;
+  password: string;
   enterFullName: string;
   selectAccountType: string;
+  accountType: string;
   clientAccount: string;
   businessAccount: string;
   createPassword: string;
@@ -56,6 +58,11 @@ interface AppTranslations {
   adminDashboard: string;
   managePlatform: string;
   back: string;
+  location: string;
+  missingInformation: string;
+  pleaseFillAllFields: string;
+  enterPhoneNumber: string;
+  paymentSetupOptional: string;
   
   // Settings
   profileInformation: string;
@@ -264,8 +271,10 @@ const translations: Record<string, AppTranslations> = {
     creatingAccount: 'Creating account...',
     enterEmail: 'Enter your email',
     enterPassword: 'Enter your password',
+    password: 'Password',
     enterFullName: 'Enter your full name',
     selectAccountType: 'Select account type',
+    accountType: 'Account Type',
     clientAccount: 'Client - Browse & Book Services',
     businessAccount: 'Business - Manage Services & Clients',
     createPassword: 'Create a password (min 6 characters)',
@@ -286,6 +295,11 @@ const translations: Record<string, AppTranslations> = {
     adminDashboard: 'Admin Dashboard',
     managePlatform: 'Manage the entire platform',
     back: 'Back',
+    location: 'Location',
+    missingInformation: 'Missing Information',
+    pleaseFillAllFields: 'Please fill in all required fields',
+    enterPhoneNumber: 'Enter your phone number',
+    paymentSetupOptional: 'Payment setup is optional and can be configured later',
     
     // Settings
     profileInformation: 'Profile Information',
@@ -491,8 +505,10 @@ const translations: Record<string, AppTranslations> = {
     creatingAccount: 'Création du compte...',
     enterEmail: 'Entrez votre email',
     enterPassword: 'Entrez votre mot de passe',
+    password: 'Mot de passe',
     enterFullName: 'Entrez votre nom complet',
     selectAccountType: 'Sélectionnez le type de compte',
+    accountType: 'Type de compte',
     clientAccount: 'Client - Parcourir et réserver des services',
     businessAccount: 'Entreprise - Gérer les services et clients',
     createPassword: 'Créez un mot de passe (min 6 caractères)',
@@ -513,6 +529,11 @@ const translations: Record<string, AppTranslations> = {
     adminDashboard: 'Tableau de Bord Admin',
     managePlatform: 'Gérer toute la plateforme',
     back: 'Retour',
+    location: 'Localisation',
+    missingInformation: 'Informations manquantes',
+    pleaseFillAllFields: 'Veuillez remplir tous les champs requis',
+    enterPhoneNumber: 'Entrez votre numéro de téléphone',
+    paymentSetupOptional: 'La configuration du paiement est optionnelle et peut être configurée plus tard',
     
     // Settings
     profileInformation: 'Informations du profil',

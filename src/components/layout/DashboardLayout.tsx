@@ -235,7 +235,7 @@ export const DashboardQuickActions: React.FC<{
       {actions.map((action, index) => (
         <Button
           key={index}
-          variant={action.variant || 'outline'}
+          variant={action.variant === 'primary' ? 'default' : action.variant || 'outline'}
           onClick={action.onClick}
           disabled={action.disabled}
           className={cn(
