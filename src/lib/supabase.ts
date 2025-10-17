@@ -221,9 +221,9 @@ export interface UserProfile {
   role: 'client' | 'business' | 'admin'
   avatar_url?: string
   // GÉOLOCALISATION UTILISATEUR COMPLÈTE
-  country: string
-  state: string
-  city: string
+  country?: string
+  state?: string
+  city?: string
   latitude?: number
   longitude?: number
   full_address?: string
@@ -239,6 +239,8 @@ export interface UserProfile {
   business_description?: string
   is_active: boolean
   email_verified: boolean
+  is_business_setup?: boolean
+  isBusinessProfileComplete?: boolean
   created_at: string
   updated_at: string
 }

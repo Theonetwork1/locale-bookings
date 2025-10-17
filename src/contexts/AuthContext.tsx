@@ -18,6 +18,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  full_name?: string;
   role: UserRole;
   phone?: string;
   avatar_url?: string;
@@ -25,6 +26,9 @@ export interface User {
   business_address?: string;
   business_category?: string;
   business_description?: string;
+  address?: string;
+  description?: string;
+  bio?: string;
   // GÉOLOCALISATION AJOUTÉE
   country?: string;
   state?: string;
