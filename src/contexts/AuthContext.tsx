@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase, getUserProfileByEmail, verifyPassword } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 export type UserRole = 'business' | 'client' | 'admin';
 
@@ -86,21 +86,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
           // Get user profile from database
-          const userProfile = await getUserProfileByEmail(session.user.email || '');
+          const { data: userProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
           if (userProfile) {
+            const actualRole = isAdminUser(session.user.email || '') ? 'admin' : userProfile.role;
             const user: User = {
               id: userProfile.id,
               email: userProfile.email,
-              name: userProfile.name,
-              role: userProfile.role as UserRole,
+              name: userProfile.full_name,
+              role: actualRole,
               phone: userProfile.phone,
               avatar_url: userProfile.avatar_url,
-              business_name: userProfile.business_name,
-              business_address: userProfile.business_address,
-              business_category: userProfile.business_category,
-              business_description: userProfile.business_description,
-              is_business_setup: userProfile.is_business_setup,
-              isBusinessProfileComplete: userProfile.isBusinessProfileComplete
+              business_name: undefined,
+              business_address: undefined,
+              business_category: undefined,
+              business_description: undefined,
+              is_business_setup: actualRole === 'business' ? false : undefined,
+              isBusinessProfileComplete: false
             };
             setUser(user);
             localStorage.setItem('user', JSON.stringify(user));
@@ -120,21 +125,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       async (event, session) => {
         if (session?.user) {
           try {
-            const userProfile = await getUserProfileByEmail(session.user.email || '');
+            const { data: userProfile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
             if (userProfile) {
+              const actualRole = isAdminUser(session.user.email || '') ? 'admin' : userProfile.role;
               const user: User = {
                 id: userProfile.id,
                 email: userProfile.email,
-                name: userProfile.name,
-                role: userProfile.role as UserRole,
+                name: userProfile.full_name,
+                role: actualRole,
                 phone: userProfile.phone,
                 avatar_url: userProfile.avatar_url,
-                business_name: userProfile.business_name,
-                business_address: userProfile.business_address,
-                business_category: userProfile.business_category,
-                business_description: userProfile.business_description,
-                is_business_setup: userProfile.is_business_setup,
-                isBusinessProfileComplete: userProfile.isBusinessProfileComplete
+                business_name: undefined,
+                business_address: undefined,
+                business_category: undefined,
+                business_description: undefined,
+                is_business_setup: actualRole === 'business' ? false : undefined,
+                isBusinessProfileComplete: false
               };
               setUser(user);
               localStorage.setItem('user', JSON.stringify(user));
@@ -158,87 +168,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       
-      // Check if we're in development mode (no Supabase configured)
-      const isDevelopmentMode = import.meta.env.VITE_DEVELOPMENT_MODE === 'true' || 
-                               !import.meta.env.VITE_SUPABASE_URL || 
-                               import.meta.env.VITE_SUPABASE_URL === 'https://your-project.supabase.co';
-      
-      if (isDevelopmentMode) {
-        // Development mode - allow login with any credentials
-        console.log('Development mode: Allowing login without database connection');
-        
-        const user: User = {
-          id: `dev-${Date.now()}`,
-          email: email,
-          name: email.split('@')[0],
-          role: role,
-          avatar_url: undefined,
-          is_business_setup: role === 'business' ? false : undefined,
-          isBusinessProfileComplete: false
-        };
-        
-        setUser(user);
-        localStorage.setItem('user', JSON.stringify(user));
-        return user;
+      // Use Supabase Auth for login
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (!data.user) {
+        throw new Error('Login failed');
+      }
+
+      // Get user profile from profiles table
+      const { data: userProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileError || !userProfile) {
+        throw new Error('User profile not found');
       }
       
-      // Production mode - use Supabase
-      // Get user profile from database
-      const userProfile = await getUserProfileByEmail(email);
-      
-      // Verify password
-      const isValidPassword = await verifyPassword(password, userProfile.password_hash);
-      if (!isValidPassword) {
-        throw new Error('Invalid credentials');
-      }
+      // Determine actual user role (admin is determined by email, not database)
+      const actualRole = isAdminUser(email) ? 'admin' : userProfile.role;
       
       // Check if role matches (only for client and business)
-      if (userProfile.role !== role && userProfile.role !== 'admin') {
-        throw new Error(`This account is registered as ${userProfile.role}, not ${role}`);
+      if (actualRole !== role && actualRole !== 'admin') {
+        throw new Error(`This account is registered as ${actualRole}, not ${role}`);
       }
-      
-      // Special admin access control - admin role is determined by database, not user selection
-      if (userProfile.role === 'admin') {
-        if (!isAdminUser(email)) {
-          throw new Error('Access denied. Admin privileges not granted for this account.');
-        }
-        // Admin users are automatically redirected regardless of selected role
+
+      // Check admin access
+      if (actualRole === 'admin' && !isAdminUser(email)) {
+        throw new Error('Admin access denied');
       }
         
-      // For existing business users, check if they have business data
-      // If they have business data in their profile, they should be considered as setup complete
-      let isBusinessSetup = userProfile.is_business_setup;
-      let isBusinessProfileComplete = userProfile.isBusinessProfileComplete || false;
-      
-      if (userProfile.role === 'business' && !isBusinessSetup) {
-        // Check if user has business data in their profile
-        if (userProfile.business_name && userProfile.business_address && userProfile.business_category) {
-          isBusinessSetup = true;
-          // Update the database to reflect this
-          try {
-            await supabase
-              .from('user_profiles')
-              .update({ is_business_setup: true })
-              .eq('id', userProfile.id);
-          } catch (error) {
-            console.error('Error updating business setup status:', error);
-          }
-        }
-      }
+      // Note: Business setup logic simplifié pour le schéma actuel
 
       const user: User = {
         id: userProfile.id,
         email: userProfile.email,
-        name: userProfile.name,
-        role: userProfile.role as UserRole,
+        name: userProfile.full_name,
+        role: actualRole,
         phone: userProfile.phone,
         avatar_url: userProfile.avatar_url,
-        business_name: userProfile.business_name,
-        business_address: userProfile.business_address,
-        business_category: userProfile.business_category,
-        business_description: userProfile.business_description,
-        is_business_setup: isBusinessSetup,
-        isBusinessProfileComplete: isBusinessProfileComplete
+        business_name: undefined, // Ces champs ne sont pas dans le schéma actuel
+        business_address: undefined,
+        business_category: undefined,
+        business_description: undefined,
+        is_business_setup: actualRole === 'business' ? false : undefined,
+        isBusinessProfileComplete: false
       };
       
       setUser(user);
@@ -258,11 +240,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       setLoading(true);
-      setUser(null);
-      localStorage.removeItem('user');
       
-      // In a real app, you'd also sign out from Supabase
-      // await supabase.auth.signOut();
+      // Sign out from Supabase
+      await supabase.auth.signOut();
+      setUser(null);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -297,18 +278,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     business_description?: string;
   }) => {
     try {
-      // Check if we're in development mode
-      const isDevelopmentMode = import.meta.env.VITE_DEVELOPMENT_MODE === 'true' || 
-                               !import.meta.env.VITE_SUPABASE_URL || 
-                               import.meta.env.VITE_SUPABASE_URL === 'https://your-project.supabase.co';
-      
-      if (isDevelopmentMode) {
-        // Development mode - just return success
-        console.log('Development mode: Signup successful without database connection');
-        return { error: null };
-      }
-      
-      // Production mode - use Supabase
       // Create user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -328,11 +297,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (authData.user) {
         // Create user profile in database
         const { error: profileError } = await supabase
-          .from('user_profiles')
+          .from('profiles')
           .insert({
             id: authData.user.id,
             email,
-            name: userData.full_name,
+            full_name: userData.full_name,
             role: userData.role,
             country: userData.country,
             state: userData.state,
@@ -363,21 +332,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     
     try {
-      const userProfile = await getUserProfileByEmail(user.email);
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
       if (userProfile) {
+        const actualRole = isAdminUser(user.email) ? 'admin' : userProfile.role;
         const updatedUser: User = {
           id: userProfile.id,
           email: userProfile.email,
-          name: userProfile.name,
-          role: userProfile.role as UserRole,
+          name: userProfile.full_name,
+          role: actualRole,
           phone: userProfile.phone,
           avatar_url: userProfile.avatar_url,
-          business_name: userProfile.business_name,
-          business_address: userProfile.business_address,
-          business_category: userProfile.business_category,
-          business_description: userProfile.business_description,
-          is_business_setup: userProfile.is_business_setup,
-          isBusinessProfileComplete: userProfile.isBusinessProfileComplete
+          business_name: undefined,
+          business_address: undefined,
+          business_category: undefined,
+          business_description: undefined,
+          is_business_setup: actualRole === 'business' ? false : undefined,
+          isBusinessProfileComplete: false
         };
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
