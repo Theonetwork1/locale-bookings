@@ -60,8 +60,12 @@ const Login = () => {
         {/* Logo Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-20 h-20 bg-[#4B2AAD] rounded-2xl flex items-center justify-center shadow-xl">
-              <span className="text-white font-bold text-3xl">BS</span>
+            <div className="w-20 h-20 bg-[#4B2AAD] rounded-2xl flex items-center justify-center shadow-xl p-3">
+              <img 
+                src="/bizli_logo_-removebg-preview.png" 
+                alt="Bizli Solution" 
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <h1 className="text-4xl font-bold text-[#1A1A1A] mb-3">Bizli Solution</h1>

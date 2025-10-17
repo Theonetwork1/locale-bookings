@@ -127,8 +127,12 @@ const Auth = () => {
         {/* Logo Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-[#1A1A1A] rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-2xl">BS</span>
+            <div className="w-16 h-16 bg-[#1A1A1A] rounded-xl flex items-center justify-center shadow-lg p-2">
+              <img 
+                src="/bizli_logo_-removebg-preview.png" 
+                alt="Bizli Solution" 
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Bizli Solution</h1>

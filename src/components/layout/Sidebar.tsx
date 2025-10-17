@@ -90,8 +90,12 @@ const Sidebar = () => {
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-[#4B2AAD] rounded-md flex items-center justify-center text-white font-bold">
-                B
+              <div className="w-8 h-8 bg-[#4B2AAD] rounded-md flex items-center justify-center p-1">
+                <img 
+                  src="/bizli_logo_-removebg-preview.png" 
+                  alt="Bizli Solution" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="font-semibold text-[#1A1A1A]">Bizli Solution</span>
             </div>

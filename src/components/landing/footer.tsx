@@ -1,4 +1,4 @@
-import bizliLogo from "/bizli logo'.jpg";
+import bizliLogo from "/bizli_logo_-removebg-preview.png";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export function Footer() {

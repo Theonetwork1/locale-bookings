@@ -33,7 +33,11 @@ export function Navigation() {
           <div className="flex items-center">
             <div className="flex items-center space-x-2">
               <div className="bg-accent p-2 rounded-lg">
-                <span className="h-6 w-6 text-white font-bold text-lg flex items-center justify-center">BS</span>
+                <img 
+                  src="/bizli_logo_-removebg-preview.png" 
+                  alt="Bizli Solution" 
+                  className="h-6 w-6 object-contain"
+                />
               </div>
               <span className="text-xl font-bold text-white">Bizli Solution</span>
             </div>

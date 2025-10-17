@@ -20,7 +20,11 @@ export function DashboardHeader() {
         <div className="flex items-center space-x-8">
           <div className="flex items-center space-x-2">
             <div className="bg-accent p-2 rounded-lg">
-              <span className="text-white font-bold text-sm">SS</span>
+              <img 
+                src="/bizli_logo_-removebg-preview.png" 
+                alt="Bizli Solution" 
+                className="h-6 w-6 object-contain"
+              />
             </div>
             <span className="text-xl font-bold text-white">Bizli Solution</span>
           </div>
