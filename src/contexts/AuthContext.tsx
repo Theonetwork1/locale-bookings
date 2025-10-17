@@ -59,7 +59,7 @@ interface AuthContextType {
     business_address?: string;
     business_category?: string;
     business_description?: string;
-  }) => Promise<{ error: any }>;
+  }) => Promise<{ error: any; message?: string }>;
   signOut: () => Promise<void>;
   profile: User | null;
   refreshUser: () => Promise<void>;
@@ -290,7 +290,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           data: {
             full_name: userData.full_name,
             role: userData.role
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/auth`
         }
       });
 
@@ -324,9 +325,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (profileError) {
           return { error: profileError };
         }
+
+        // Check if email confirmation is required
+        if (authData.user && !authData.user.email_confirmed_at) {
+          return { 
+            error: null, 
+            message: "Votre compte a été créé ! Veuillez vérifier votre email pour confirmer votre inscription." 
+          };
+        }
       }
 
-      return { error: null };
+      return { error: null, message: "Compte créé avec succès ! Vous pouvez maintenant vous connecter." };
     } catch (error) {
       return { error };
     }
