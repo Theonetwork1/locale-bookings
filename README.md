@@ -1,73 +1,63 @@
-# Locale Bookings - Bizli Solution
+import React, { useState, useMemo } from 'react';
+import { Screen, Transaction, User, Message, Promotion, Role } from '../types';
+import BottomNav from '../components/BottomNav';
 
-## Project info
+// --- MOCK DATA ---
+const MOCK_TRANSACTIONS: Transaction[] = [
+{
+id: 'TRX-9823',
+type: 'transfer',
+senderName: 'Jean Avril',
+senderEmail: 'jean.avril@email.com',
+senderPhone: '+509 3744-0000',
+receiverName: 'Marie Guerrier',
+receiverPhone: '+509 3122-1122',
+amount: 250,
+fee: 12.5,
+total: 262.5,
+currency: 'USD',
+company: 'MonCash',
+status: 'In Progress',
+date: '21 Mars 2026',
+time: '14:30'
+},
+// ... autres transactions
+];
 
-**URL**: https://lovable.dev/projects/2f5a1900-1d6e-4427-8074-12f23c535a00
+// --- COMPOSANT PRINCIPAL ---
+export const Dashboard: React.FC<{ navigate: (s: Screen) => void, role: Role }> = ({ navigate, role }) => {
+const [activeTab, setActiveTab] = useState('dashboard');
+const [logo, setLogo] = useState<string | null>(null);
 
-## How can I edit this code?
+if (role === 'admin') {
+return <AdminDashboard navigate={navigate} logo={logo} setLogo={setLogo} activeTab={activeTab} setActiveTab={setActiveTab} />;
+}
 
-There are several ways of editing your application.
+return (
+<div className="pb-20">
+<div className="p-6 bg-orange-500 text-white rounded-b-3xl shadow-lg">
+<h1 className="text-2xl font-bold">Bonjour, Avril !</h1>
+<p className="opacity-90">Prêt pour votre prochain transfert ?</p>
+</div>
+{/_ Contenu Client standard ici _/}
+<BottomNav activeTab="home" navigate={navigate} />
+</div>
+);
+};
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/2f5a1900-1d6e-4427-8074-12f23c535a00) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/2f5a1900-1d6e-4427-8074-12f23c535a00) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+// --- SOUS-COMPOSANT ADMIN ---
+const AdminDashboard = ({ navigate, logo, setLogo, activeTab, setActiveTab }: any) => {
+// Logique des filtres, recherche, et pages admin (Dashboard, Users, Promo, Messages, Settings)
+// [Le code complet de l'interface admin s'insère ici...]
+return (
+<div className="flex min-h-screen bg-gray-100">
+{/_ Sidebar, Header avec Date du jour, et Switcher de pages _/}
+<aside className="w-64 bg-slate-900 text-white p-6 shadow-xl hidden md:block">
+{/_ Logo et Menu latéral _/}
+</aside>
+<main className="flex-1 p-8">
+{/_ Contenu dynamique selon activeTab _/}
+</main>
+</div>
+);
+};
