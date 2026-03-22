@@ -1,58 +1,39 @@
-import { ReactNode, useState, createContext, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Topbar from './Topbar';
+import React from "react";
 
-interface MainLayoutProps {
-  children: ReactNode;
+interface LayoutProps {
+  children: React.ReactNode;
+  className?: string;
 }
 
-interface SidebarContextType {
-  isCollapsed: boolean;
-  setIsCollapsed: (collapsed: boolean) => void;
-  toggleSidebar: () => void;
-}
-
-const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
-
-export const useSidebar = () => {
-  const context = useContext(SidebarContext);
-  if (!context) {
-    // Return safe defaults instead of throwing error
-    return {
-      isCollapsed: false,
-      setIsCollapsed: () => {},
-      toggleSidebar: () => {}
-    };
-  }
-  return context;
-};
-
-const MainLayout = ({ children }: MainLayoutProps) => {
-  const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
-
-  // Hide layout on landing, auth, onboarding, and legal pages
-  const hideLayoutPaths = ['/', '/login', '/register', '/auth', '/business-subscription-setup', '/business-onboarding', '/test', '/legal', '/terms-of-service', '/privacy-policy'];
-  if (hideLayoutPaths.includes(location.pathname)) {
-    return <>{children}</>;
-  }
-
+export const Layout: React.FC<LayoutProps> = ({ children, className = "" }) => {
   return (
-    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed, toggleSidebar }}>
-      <div className="flex min-h-screen bg-muted">
-        <Sidebar />
-        <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ${isCollapsed ? 'ml-0' : ''}`}>
-          <Topbar />
-          <main className="flex-1 overflow-auto container mx-auto px-3 sm:px-6 py-4">
-            {children}
-          </main>
-        </div>
+    <div className="min-h-screen w-full flex justify-center bg-gray-100 dark:bg-black">
+      <div
+        className={`w-full max-w-md h-full min-h-screen bg-surface dark:bg-surface-dark shadow-2xl relative flex flex-col overflow-hidden ${className}`}
+      >
+        {children}
       </div>
-    </SidebarContext.Provider>
+    </div>
   );
 };
 
-export default MainLayout;
+export const Header: React.FC<{
+  title?: string;
+  onBack?: () => void;
+  rightAction?: React.ReactNode;
+}> = ({ title, onBack, rightAction }) => (
+  <header className="sticky top-0 z-20 flex items-center bg-surface/90 dark:bg-surface-dark/90 backdrop-blur-md p-4 border-b border-gray-200/50 dark:border-gray-800/50">
+    {onBack && (
+      <button
+        onClick={onBack}
+        className="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors text-slate-900 dark:text-white"
+      >
+        <span className="material-symbols-outlined">arrow_back_ios_new</span>
+      </button>
+    )}
+    <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight flex-1 text-center px-4 truncate">
+      {title}
+    </h2>
+    <div className="w-10 flex justify-end">{rightAction}</div>
+  </header>
+);
