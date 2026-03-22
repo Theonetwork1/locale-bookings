@@ -1,52 +1,50 @@
-import React, { useState } from "react";
-import { Screen } from "../types";
-
-export const TransferScreen: React.FC<{ navigate: (s: Screen) => void }> = ({ navigate }) => {
-  return (
-    <div className="p-6 pb-24">
-      <header className="flex items-center mb-8">
-        <button onClick={() => navigate(Screen.DASHBOARD)} className="p-2 bg-gray-100 rounded-full mr-4">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path d="M15 19l-7-7 7-7"></path>
-          </svg>
-        </button>
-        <h1 className="text-xl font-bold">Transfert d'argent</h1>
-      </header>
-
-      <div className="space-y-6">
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Choisir le service</label>
-          <div className="grid grid-cols-2 gap-4">
-            <button className="p-4 border-2 border-orange-500 rounded-xl bg-orange-50 font-bold">MonCash</button>
-            <button className="p-4 border-2 border-gray-100 rounded-xl hover:border-orange-500 transition-all">
-              NatCash
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Montant à envoyer (HTG)</label>
-          <input type="number" placeholder="0.00" className="w-full text-3xl font-bold p-2 focus:outline-none" />
-          <p className="text-xs text-gray-400 mt-2">Frais: 25 HTG | Total: 275 HTG</p>
-        </div>
-
-        <button
-          onClick={() => navigate(Screen.RECEIPT)}
-          className="w-full py-4 bg-orange-500 text-white rounded-2xl font-bold shadow-lg shadow-orange-200"
-        >
-          Confirmer le transfert
-        </button>
+export const ReceiptScreen: React.FC<{ navigate: (s: Screen) => void }> = ({ navigate }) => (
+  <div className="min-h-screen bg-orange-500 flex flex-col items-center justify-center p-6">
+    <div className="bg-white w-full rounded-3xl p-8 shadow-2xl relative">
+      {/* Cercle décoratif pour l'effet de ticket */}
+      <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-500 w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
+        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+        </svg>
       </div>
-    </div>
-  );
-};
 
-export const RechargeScreen: React.FC<{ navigate: (s: Screen) => void }> = ({ navigate }) => (
-  <div className="p-6">
-    <h1 className="text-xl font-bold mb-4">Recharge Mobile</h1>
-    {/* Logique similaire au transfert */}
-    <button onClick={() => navigate(Screen.DASHBOARD)} className="text-orange-500">
-      Retour
+      <div className="text-center mt-6 mb-8">
+        <h2 className="text-2xl font-bold text-slate-800">Transfert réussi !</h2>
+        <p className="text-gray-400 text-sm">ID: #GT-8829310</p>
+      </div>
+
+      <div className="border-t border-dashed border-gray-200 py-6 space-y-4">
+        <div className="flex justify-between">
+          <span className="text-gray-400">Destinataire</span>
+          <span className="font-bold text-slate-800">Marie Louise</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-400">Service</span>
+          <span className="font-bold text-slate-800">MonCash</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-gray-400">Montant</span>
+          <span className="font-bold text-slate-800">150.00 USD</span>
+        </div>
+        <div className="flex justify-between text-lg border-t pt-4">
+          <span className="font-bold text-slate-800">Total payé</span>
+          <span className="font-bold text-orange-500">160.00 USD</span>
+        </div>
+      </div>
+
+      <button
+        onClick={() => navigate(Screen.DASHBOARD)}
+        className="w-full mt-8 py-4 bg-slate-900 text-white rounded-xl font-bold"
+      >
+        Retour à l'accueil
+      </button>
+    </div>
+
+    <button className="mt-8 text-white font-medium opacity-80 hover:opacity-100 flex items-center gap-2">
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+      </svg>
+      Télécharger le reçu (PDF)
     </button>
   </div>
 );
