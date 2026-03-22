@@ -1,181 +1,99 @@
-import React, { useState } from "react";
-import { Layout } from "../components/Layout";
-import { Screen } from "../types";
-import { BottomNav } from "../components/BottomNav";
+import React, { useState } from 'react';
+import { Screen, User } from '../types';
+import BottomNav from '../components/BottomNav';
 
-interface Props {
-  navigate: (screen: Screen) => void;
-  currentScreen: Screen;
-}
-
-export const ProfileScreen: React.FC<Props> = ({ navigate, currentScreen }) => {
+export const ProfileScreen: React.FC<{ navigate: (s: Screen) => void }> = ({ navigate }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [profile, setProfile] = useState({
-    firstName: "Theo",
-    lastName: "Avril",
-    email: "theo@example.com",
-    phone: "555-0123",
-    countryCode: "+1",
-    photo: "https://picsum.photos/seed/user1/200/200",
+  const [user, setUser] = useState<User>({
+    id: '1',
+    firstName: 'Jean',
+    lastName: 'Avril',
+    email: 'jean.avril@email.com',
+    phone: '37440000',
+    countryCode: '+509',
+    role: 'client',
+    status: 'active',
+    joinedDate: '2024-01-15',
+    balance: 1250.50
   });
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+  const [profileImage, setProfileImage] = useState("https://ui-avatars.com/api/?name=Jean+Avril&background=f97316&color=fff");
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setProfile({ ...profile, photo: event.target.result as string });
-        }
-      };
-      reader.readAsDataURL(e.target.files[0]);
+      reader.onloadend = () => setProfileImage(reader.result as string);
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
-  };
-
   return (
-    <Layout className="bg-surface dark:bg-surface-dark pb-20">
-      <div className="px-6 pt-12 pb-6 bg-white dark:bg-card-dark rounded-b-3xl shadow-sm">
-        <h1 className="text-2xl font-display font-bold text-slate-800 dark:text-white">Profil</h1>
-        <p className="text-sm text-slate-500 dark:text-gray-400 mt-1">Gérez vos informations personnelles</p>
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <div className="bg-orange-500 h-40 pt-10 px-6 rounded-b-[40px] shadow-lg">
+        <h1 className="text-white text-2xl font-bold text-center">Mon Profil</h1>
       </div>
-
-      <div className="px-6 mt-6">
-        {isSaved && (
-          <div className="mb-4 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-3 rounded-lg text-sm text-center transition-all">
-            Profil mis à jour avec succès !
-          </div>
-        )}
-        <div className="bg-white dark:bg-card-dark p-6 rounded-2xl shadow-sm">
-          <div className="flex justify-center mb-6">
-            <div className="size-24 rounded-full border-4 border-primary overflow-hidden relative">
-              <img src={profile.photo} alt="User" className="w-full h-full object-cover" />
-              {isEditing && (
-                <label className="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer">
-                  <span className="material-symbols-outlined text-white">photo_camera</span>
-                  <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
-                </label>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <label className="block text-xs font-medium text-gray-500 mb-1">Prénom</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={profile.firstName}
-                    onChange={(e) => setProfile({ ...profile, firstName: e.target.value })}
-                    className="w-full h-12 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 outline-none focus:border-primary text-sm"
-                  />
-                ) : (
-                  <div className="h-12 flex items-center px-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap">
-                    {profile.firstName}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs font-medium text-gray-500 mb-1">Nom</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={profile.lastName}
-                    onChange={(e) => setProfile({ ...profile, lastName: e.target.value })}
-                    className="w-full h-12 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 outline-none focus:border-primary text-sm"
-                  />
-                ) : (
-                  <div className="h-12 flex items-center px-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap">
-                    {profile.lastName}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
-              {isEditing ? (
-                <input
-                  type="email"
-                  value={profile.email}
-                  onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                  className="w-full h-12 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 outline-none focus:border-primary text-sm"
-                />
-              ) : (
-                <div className="h-12 flex items-center px-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap">
-                  {profile.email}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Téléphone</label>
-              {isEditing ? (
-                <div className="flex gap-2">
-                  <select
-                    value={profile.countryCode}
-                    onChange={(e) => setProfile({ ...profile, countryCode: e.target.value })}
-                    className="h-12 w-24 sm:w-28 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-2 outline-none focus:border-primary text-sm"
-                  >
-                    <option value="+1">🇺🇸 +1</option>
-                    <option value="+33">🇫🇷 +33</option>
-                    <option value="+509">🇭🇹 +509</option>
-                    <option value="+1">🇨🇦 +1</option>
-                    <option value="+44">🇬🇧 +44</option>
-                  </select>
-                  <input
-                    type="tel"
-                    value={profile.phone}
-                    onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                    className="flex-1 min-w-0 h-12 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 outline-none focus:border-primary text-sm"
-                  />
-                </div>
-              ) : (
-                <div className="h-12 flex items-center px-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap">
-                  {profile.countryCode} {profile.phone}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-8">
-            {isEditing ? (
-              <button
-                onClick={handleSave}
-                className="w-full bg-primary hover:bg-primary-dark text-white font-medium h-12 rounded-lg shadow-md transition-all"
-              >
-                Enregistrer les modifications
-              </button>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="w-full bg-white dark:bg-card-dark border border-gray-200 dark:border-gray-700 text-slate-700 dark:text-white font-medium h-12 rounded-lg shadow-sm hover:bg-gray-50 transition-all"
-              >
-                Modifier le profil
-              </button>
+      <div className="px-6 -mt-16">
+        <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-50 text-center">
+          <div className="relative w-32 h-32 mx-auto mb-6">
+            <img src={profileImage} className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover" alt="Profile" />
+            {isEditing && (
+              <label className="absolute bottom-1 right-1 bg-orange-500 p-2 rounded-full text-white cursor-pointer shadow-md border-2 border-white">
+                <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              </label>
             )}
           </div>
-
-          {!isEditing && (
-            <div className="mt-4">
-              <button
-                onClick={() => navigate(Screen.WELCOME)}
-                className="w-full bg-red-50 dark:bg-red-900/20 text-red-600 font-medium h-12 rounded-lg transition-all"
-              >
-                Se déconnecter
-              </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+            <div>
+              <label className="text-xs font-bold text-gray-400 uppercase ml-1">Prénom</label>
+              <input
+                disabled={!isEditing}
+                className="w-full p-3 bg-gray-50 rounded-xl mt-1 border border-gray-100"
+                value={user.firstName}
+                onChange={(e) => setUser({ ...user, firstName: e.target.value })}
+              />
             </div>
-          )}
+            <div>
+              <label className="text-xs font-bold text-gray-400 uppercase ml-1">Nom</label>
+              <input
+                disabled={!isEditing}
+                className="w-full p-3 bg-gray-50 rounded-xl mt-1 border border-gray-100"
+                value={user.lastName}
+                onChange={(e) => setUser({ ...user, lastName: e.target.value })}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="text-xs font-bold text-gray-400 uppercase ml-1">Téléphone</label>
+              <div className="flex gap-2 mt-1">
+                <select
+                  disabled={!isEditing}
+                  className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-sm"
+                  value={user.countryCode}
+                  onChange={(e) => setUser({ ...user, countryCode: e.target.value })}
+                >
+                  <option value="+509">🇭🇹 +509</option>
+                  <option value="+1">🇺🇸 +1</option>
+                  <option value="+33">🇫🇷 +33</option>
+                </select>
+                <input
+                  disabled={!isEditing}
+                  className="flex-1 p-3 bg-gray-50 rounded-xl border border-gray-100"
+                  value={user.phone}
+                  onChange={(e) => setUser({ ...user, phone: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className={`w-full mt-8 py-4 rounded-2xl font-bold transition-all ${isEditing ? 'bg-green-500 text-white' : 'bg-orange-500 text-white shadow-orange-200 shadow-lg'}`}
+          >
+            {isEditing ? 'Enregistrer les modifications' : 'Modifier le profil'}
+          </button>
         </div>
       </div>
-
-      <BottomNav currentScreen={currentScreen} navigate={navigate} />
-    </Layout>
+      <BottomNav activeTab="profile" navigate={navigate} />
+    </div>
   );
 };
