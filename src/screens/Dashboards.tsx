@@ -1,53 +1,77 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Screen, Role } from '../types';
 import BottomNav from '../components/BottomNav';
 
-export const Dashboard: React.FC<{ navigate: (s: Screen) => void; role: Role }> = ({ navigate, role }) => {
+export const Dashboard: React.FC<{ navigate: (s: Screen) => void; role: Role }> = ({ navigate }) => {
   return (
-    <div className="min-h-screen bg-gray-50 pb-24">
-      <div className="p-6 bg-white rounded-b-[35px] shadow-sm">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <p className="text-gray-400 text-sm">Solde actuel</p>
-            <h2 className="text-3xl font-black text-slate-800">$1,250.50 <span className="text-sm font-medium text-gray-400">USD</span></h2>
+    <div className="min-h-screen bg-gray-50 pb-24 animate-fade-in">
+      {/* Header */}
+      <div className="px-6 pt-8 pb-4 bg-white">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="https://ui-avatars.com/api/?name=Theo+A&background=888&color=fff&size=48" className="w-12 h-12 rounded-full object-cover" alt="avatar" />
+            <h2 className="text-lg font-bold" style={{ color: 'hsl(215, 35%, 15%)' }}>Bonjour, Theo 👋</h2>
           </div>
-          <div className="w-12 h-12 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-500">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: 'hsl(36, 96%, 53%)' }}>
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <button onClick={() => navigate(Screen.TRANSFER)} className="bg-orange-500 p-4 rounded-3xl text-white flex flex-col items-center gap-2 shadow-lg shadow-orange-100">
-            <div className="p-2 bg-white/20 rounded-xl">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-            </div>
-            <span className="font-bold">Transférer</span>
-          </button>
-          <button onClick={() => navigate(Screen.RECHARGE)} className="bg-slate-800 p-4 rounded-3xl text-white flex flex-col items-center gap-2 shadow-lg shadow-slate-200">
-            <div className="p-2 bg-white/20 rounded-xl">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-            </div>
-            <span className="font-bold">Recharger</span>
-          </button>
         </div>
       </div>
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-bold text-slate-800">Activités récentes</h3>
-          <button onClick={() => navigate(Screen.HISTORY)} className="text-orange-500 text-sm font-bold">Voir tout</button>
-        </div>
-        <div className="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-gray-50">
-          <div className="flex gap-3">
-            <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-500">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
+
+      {/* Actions */}
+      <div className="px-6 pt-6">
+        <h3 className="text-lg font-bold mb-4" style={{ color: 'hsl(215, 35%, 15%)' }}>Envoyer ou recharger</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            onClick={() => navigate(Screen.RECHARGE)}
+            className="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col items-start gap-3 shadow-sm hover:shadow-md transition-all"
+          >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'hsl(215, 35%, 15%)' }}>
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
             </div>
             <div>
-              <p className="font-bold text-sm">Transfert MonCash</p>
-              <p className="text-xs text-gray-400">À Marie Louise</p>
+              <p className="font-bold text-sm" style={{ color: 'hsl(215, 35%, 15%)' }}>Recharger</p>
+              <p className="text-[11px] text-gray-400">Digicel & Natcom</p>
             </div>
-          </div>
-          <p className="font-bold text-red-500">-$150.00</p>
+          </button>
+          <button
+            onClick={() => navigate(Screen.TRANSFER)}
+            className="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col items-start gap-3 shadow-sm hover:shadow-md transition-all"
+          >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'hsl(152, 60%, 45%)' }}>
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+            </div>
+            <div>
+              <p className="font-bold text-sm" style={{ color: 'hsl(215, 35%, 15%)' }}>Envoyer de l'argent</p>
+              <p className="text-[11px] text-gray-400">MonCash & NatCash</p>
+            </div>
+          </button>
         </div>
       </div>
+
+      {/* Recent Activity */}
+      <div className="px-6 pt-8">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold" style={{ color: 'hsl(215, 35%, 15%)' }}>Activité récente</h3>
+          <button onClick={() => navigate(Screen.HISTORY)} className="text-sm font-medium text-gray-400">Voir tout →</button>
+        </div>
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-between shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#FFF0E6' }}>
+              <svg className="w-5 h-5" style={{ color: 'hsl(36, 96%, 53%)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+            </div>
+            <div>
+              <p className="font-bold text-sm" style={{ color: 'hsl(215, 35%, 15%)' }}>Marie Michel</p>
+              <p className="text-[11px] text-gray-400">MonCash • Hier</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="font-bold text-sm" style={{ color: 'hsl(215, 35%, 15%)' }}>$50.00 USD</p>
+            <p className="text-[11px] font-medium" style={{ color: 'hsl(152, 60%, 45%)' }}>Complété</p>
+          </div>
+        </div>
+      </div>
+
       <BottomNav activeTab="home" navigate={navigate} />
     </div>
   );
