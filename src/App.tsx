@@ -19,36 +19,23 @@ const App: React.FC = () => {
 
   const renderScreen = () => {
     switch (currentScreen) {
-      case Screen.WELCOME:
-        return <WelcomeScreen navigate={navigate} />;
-      case Screen.ROLE_SELECTION:
-        return <RoleSelectionScreen navigate={navigate} />;
-      case Screen.LOGIN:
-        return <LoginScreen navigate={navigate} />;
-      case Screen.REGISTER:
-        return <RegisterScreen navigate={navigate} />;
-      case Screen.DASHBOARD:
-        return <Dashboard navigate={navigate} role={userRole} />;
-      case Screen.RECHARGE:
-        return <RechargeScreen navigate={navigate} />;
-      case Screen.TRANSFER:
-        return <TransferScreen navigate={navigate} />;
-      case Screen.RECEIPT:
-        return <ReceiptScreen navigate={navigate} />;
-      case Screen.PROFILE:
-        return <ProfileScreen navigate={navigate} />;
-      case Screen.HISTORY:
-        return <HistoryScreen navigate={navigate} />;
-      case Screen.CONTACT:
-        return <ContactScreen navigate={navigate} />;
-      case Screen.ABOUT:
-        return <AboutScreen navigate={navigate} />;
-      case Screen.TERMS:
-        return <TermsScreen navigate={navigate} />;
-      case Screen.PRIVACY:
-        return <PrivacyScreen navigate={navigate} />;
-      default:
-        return <WelcomeScreen navigate={navigate} />;
+      case Screen.WELCOME: return <WelcomeScreen navigate={navigate} />;
+      case Screen.ROLE_SELECTION: return <RoleSelectionScreen navigate={navigate} />;
+      case Screen.LOGIN: return <LoginScreen navigate={navigate} />;
+      case Screen.REGISTER: return <RegisterScreen navigate={navigate} />;
+      case Screen.FORGOT_PASSWORD: return <ForgotPasswordScreen navigate={navigate} />;
+      case Screen.OTP: return <OTPScreen navigate={navigate} />;
+      case Screen.DASHBOARD: return <Dashboard navigate={navigate} role={userRole} />;
+      case Screen.RECHARGE: return <RechargeScreen navigate={navigate} />;
+      case Screen.TRANSFER: return <TransferScreen navigate={navigate} />;
+      case Screen.RECEIPT: return <ReceiptScreen navigate={navigate} />;
+      case Screen.PROFILE: return <ProfileScreen navigate={navigate} />;
+      case Screen.HISTORY: return <HistoryScreen navigate={navigate} />;
+      case Screen.CONTACT: return <ContactScreen navigate={navigate} />;
+      case Screen.ABOUT: return <AboutScreen navigate={navigate} />;
+      case Screen.TERMS: return <TermsScreen navigate={navigate} />;
+      case Screen.PRIVACY: return <PrivacyScreen navigate={navigate} />;
+      default: return <WelcomeScreen navigate={navigate} />;
     }
   };
 
