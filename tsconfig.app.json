@@ -23,6 +23,7 @@
     },
     "skipLibCheck": true,
     "strict": false,
+    "diagnostics": false
     "target": "ES2020",
     "useDefineForClassFields": true
   },
